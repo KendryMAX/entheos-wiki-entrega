@@ -1,0 +1,27 @@
+<%- include('parciales/cabecera') %>
+
+<section class="bloque">
+  <h1 class="bloque-titulo">Personajes</h1>
+
+  <% if (personajes.length === 0) { %>
+    <p class="vacio">
+      Todavia no hay personajes cargados. Van a salir del vault de Entheos
+      cuando carguemos el contenido del mundo.
+    </p>
+  <% } else { %>
+    <div class="rejilla">
+      <% personajes.forEach(function (personaje) { %>
+        <article class="tarjeta">
+          <h2 class="tarjeta-titulo"><%= personaje.nombre %></h2>
+          <% if (personaje.titulo) { %><p class="tarjeta-subtitulo"><%= personaje.titulo %></p><% } %>
+          <p class="tarjeta-pie">
+            <%= personaje.raza || 'Raza desconocida' %>
+            &middot; <%= personaje.estado_vital.replace('_', ' ') %>
+          </p>
+        </article>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('parciales/pie') %>

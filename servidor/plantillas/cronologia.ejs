@@ -1,0 +1,61 @@
+<%- include('parciales/cabecera') %>
+
+<section class="bloque">
+  <h1 class="bloque-titulo">Cronologia</h1>
+
+  <div class="filtros">
+    <a class="ficha <%= !eraPedida ? 'activa' : '' %>" href="/cronologia">Todas las eras</a>
+    <% eras.forEach(function (era) { %>
+      <a class="ficha <%= eraPedida === era.id ? 'activa' : '' %>" href="/cronologia?era=<%= era.id %>">
+        <%= era.nombre %> <span class="ficha-conteo"><%= era.eventos %></span>
+      </a>
+    <% }); %>
+  </div>
+
+  <% if (eras.length === 0) { %>
+    <p class="vacio">Todavia no hay eras cargadas.</p>
+  <% } %>
+
+  <div class="linea-tiempo">
+    <% eras.forEach(function (era) { %>
+      <article class="era">
+        <h2 class="era-titulo"><%= era.nombre %></h2>
+        <p class="era-fechas">
+          <%= era.anio_inicio !== null ? era.anio_inicio : '?' %>
+          &ndash;
+          <%= era.anio_fin !== null ? era.anio_fin : 'hoy' %>
+        </p>
+        <p class="era-descripcion"><%= era.descripcion || '' %></p>
+      </article>
+    <% }); %>
+  </div>
+
+  <h2 class="bloque-titulo">Eventos</h2>
+
+  <% if (eventos.length === 0) { %>
+    <p class="vacio">Todavia no hay eventos cargados.</p>
+  <% } else { %>
+    <ul class="eventos">
+      <% eventos.forEach(function (evento) { %>
+        <li class="evento">
+          <span class="evento-fecha">
+            <%= evento.fecha ? new Date(evento.fecha).toLocaleDateString('es-AR') : (evento.anio_aproximado !== null ? evento.anio_aproximado : 'fecha desconocida') %>
+          </span>
+          <div class="evento-cuerpo">
+            <h3 class="evento-titulo"><%= evento.nombre %></h3>
+            <p class="evento-meta">
+              <%= evento.era || 'Sin era' %>
+              <% if (evento.lugar) { %> &middot; <%= evento.lugar %><% } %>
+              <% if (!evento.es_canonico) { %>
+                &middot; <span class="insignia-leyenda">leyenda</span>
+              <% } %>
+            </p>
+            <% if (evento.descripcion) { %><p class="evento-descripcion"><%= evento.descripcion %></p><% } %>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('parciales/pie') %>

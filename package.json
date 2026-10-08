@@ -1,0 +1,48 @@
+{
+  "name": "entheos-wiki",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Wiki de consulta sobre el mundo de Entheos. Proyecto final de Programacion Web.",
+  "main": "servidor/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "nodemon servidor/index.js",
+    "iniciar": "node servidor/index.js",
+    "bd:crear": "node servidor/herramientas/crear-base.js",
+    "bd:semilla": "node servidor/herramientas/crear-base.js --semilla",
+    "bd:reiniciar": "node servidor/herramientas/crear-base.js --reiniciar",
+    "admin": "node servidor/herramientas/crear-admin.js",
+    "exportar": "node servidor/herramientas/exportar.js",
+    "formato": "prettier --write \"**/*.{js,json,css,ejs,md}\"",
+    "prueba": "node --test servidor/pruebas/**/*.test.js"
+  },
+  "keywords": [
+    "wiki",
+    "entheos",
+    "express",
+    "mysql"
+  ],
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcryptjs": "3.0.3",
+    "dotenv": "18.0.5",
+    "ejs": "6.0.1",
+    "express": "5.2.1",
+    "express-rate-limit": "8.7.0",
+    "express-session": "1.19.0",
+    "helmet": "8.3.0",
+    "marked": "18.0.14",
+    "method-override": "3.0.0",
+    "mysql2": "3.24.5",
+    "nodemailer": "10.0.14",
+    "puppeteer-core": "25.12.0",
+    "sanitize-html": "2.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.14",
+    "prettier": "3.9.9"
+  }
+}

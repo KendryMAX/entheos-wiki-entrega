@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+
+# Configuracion con contrasenas: NUNCA se sube
+.env
+.env.local
+.env.*.local
+
+# Certificado local y su clave privada: NUNCA se suben
+certificados/
+
+# Archivos generados
+web/subidas/*
+!web/subidas/.gitkeep
+pdf-generados/
+*.pdf
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

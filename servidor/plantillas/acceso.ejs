@@ -1,0 +1,44 @@
+<%- include('parciales/cabecera') %>
+
+<section class="hoja">
+  <h1 class="hoja-titulo">Iniciar sesion</h1>
+
+  <% if (typeof aviso !== 'undefined' && aviso) { %>
+    <p class="alerta alerta-ok"><%= aviso %></p>
+  <% } %>
+
+  <% if (error) { %>
+    <p class="alerta alerta-error"><%= error %></p>
+  <% } %>
+
+  <form class="formulario" action="/acceso" method="POST" novalidate data-validar>
+
+    <div class="campo">
+      <label for="correo">Correo o nombre de usuario</label>
+      <input type="text" id="correo" name="correo" value="<%= correo %>" required
+             autocomplete="username" data-error="Escribi tu correo o tu nombre de usuario.">
+      <span class="campo-error" data-error-de="correo"></span>
+    </div>
+
+    <div class="campo">
+      <label for="contrasena">Contrasena</label>
+      <input type="password" id="contrasena" name="contrasena" required
+             autocomplete="current-password" data-error="Escribi tu contrasena.">
+      <span class="campo-error" data-error-de="contrasena"></span>
+    </div>
+
+    <button type="submit" class="boton boton-dorado boton-ancho">Entrar</button>
+
+    <p class="formulario-enlace">No tenes cuenta? <a href="/registro">Crear una</a>.</p>
+  </form>
+
+  <div class="panel-cuentas">
+    <h2 class="panel-cuentas-titulo">Cuentas de prueba</h2>
+    <p class="panel-cuentas-texto">
+      Kendry (Administrador), Angel (Editor) y Adriano (Lector). La contrasena de cada
+      uno es su nombre seguido de 123.
+    </p>
+  </div>
+</section>
+
+<%- include('parciales/pie') %>

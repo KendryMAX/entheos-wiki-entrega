@@ -1,0 +1,38 @@
+<%- include('parciales/cabecera') %>
+
+<section class="bloque">
+  <h1 class="bloque-titulo">Buscar</h1>
+
+  <form class="buscador-grande" action="/buscar" method="GET" role="search">
+    <label class="solo-lectores" for="q">Termino</label>
+    <input type="search" id="q" name="q" value="<%= termino %>" placeholder="Escribi al menos 2 letras..."
+           autocomplete="off" data-autocompletado autofocus>
+    <ul class="sugerencias" data-sugerencias hidden></ul>
+    <button type="submit" class="boton boton-dorado">Buscar</button>
+  </form>
+
+  <% if (termino.length < 2) { %>
+    <p class="vacio">Escribi dos letras o mas para buscar.</p>
+  <% } else if (articulos.length === 0) { %>
+    <p class="vacio">No hay articulos que coincidan con "<%= termino %>".</p>
+  <% } else { %>
+    <p class="resultados">
+      <%= articulos.length %> resultado<%= articulos.length === 1 ? '' : 's' %> para "<%= termino %>".
+    </p>
+
+    <div class="rejilla">
+      <% articulos.forEach(function (articulo) { %>
+        <article class="tarjeta">
+          <div class="tarjeta-cabecera">
+            <% if (articulo.categoria) { %><span class="ficha"><%= articulo.categoria %></span><% } %>
+          </div>
+          <h2 class="tarjeta-titulo"><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></h2>
+          <p class="tarjeta-resumen"><%= articulo.resumen || 'Sin resumen.' %></p>
+          <p class="tarjeta-pie"><%= new Date(articulo.actualizado_en).toLocaleDateString('es-AR') %></p>
+        </article>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('parciales/pie') %>

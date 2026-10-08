@@ -1,0 +1,97 @@
+<%- include('parciales/cabecera') %>
+
+<article class="articulo">
+
+  <header class="articulo-cabecera">
+    <h1 class="articulo-titulo"><%= articulo.titulo %></h1>
+
+    <div class="articulo-meta">
+      <% if (articulo.categoria) { %>
+        <span class="ficha"><%= articulo.categoria %></span>
+      <% } %>
+      <% if (articulo.estado !== 'publicado') { %>
+        <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
+      <% } %>
+      <span class="articulo-autor">
+        por <%= articulo.autor_nombre %>
+        <span class="insignia-rol insignia-rol-<%= articulo.autor_rol === 'Administrador' ? 3 : articulo.autor_rol === 'Editor' ? 2 : 1 %>"><%= articulo.autor_rol %></span>
+      </span>
+      <span class="articulo-fecha"><%= new Date(articulo.publicado_en || articulo.actualizado_en).toLocaleDateString('es-AR') %></span>
+      <span class="articulo-vistas"><%= articulo.vistas %> vista<%= articulo.vistas === 1 ? '' : 's' %></span>
+    </div>
+
+    <% if (esEditor) { %>
+      <p class="articulo-acciones">
+        <a class="boton boton-plano" href="/panel/articulos/<%= articulo.id %>/editar">Editar</a>
+        <a class="boton boton-plano" href="/panel/revision">Revision</a>
+      </p>
+    <% } %>
+  </header>
+
+  <div class="articulo-cuerpo">
+    <%- articulo.contenido_html %>
+  </div>
+
+  <% if (etiquetas.length > 0) { %>
+    <ul class="etiquetas">
+      <% etiquetas.forEach(function (etiqueta) { %>
+        <li><a class="etiqueta" href="/articulos?etiqueta=<%= encodeURIComponent(etiqueta.nombre) %>"><%= etiqueta.nombre %></a></li>
+      <% }); %>
+    </ul>
+  <% } %>
+
+  <% if (relacionadas.length > 0) { %>
+    <section class="bloque bloque-aplado">
+      <h2 class="bloque-titulo">Ver tambien</h2>
+      <ul class="lista-relaciones">
+        <% relacionadas.forEach(function (relacion) { %>
+          <li>
+            <a href="/articulos/<%= relacion.slug %>"><%= relacion.titulo %></a>
+            <span class="relacion-tipo"><%= relacion.tipo_relacion.replace(/_/g, ' ') %></span>
+          </li>
+        <% }); %>
+      </ul>
+    </section>
+  <% } %>
+
+</article>
+
+<section class="bloque" id="comentarios">
+  <h2 class="bloque-titulo">Comentarios <span class="conteo">(<%= comentarios.length %>)</span></h2>
+
+  <% if (usuario) { %>
+    <form class="formulario formulario-plano" action="/articulos/<%= articulo.slug %>/comentarios" method="POST" data-validar>
+      <div class="campo">
+        <label for="comentario">Dejar un comentario</label>
+        <textarea id="comentario" name="contenido" rows="4" required minlength="3"
+                  maxlength="2000" placeholder="Escribi tu comentario..."
+                  data-error="El comentario necesita al menos 3 caracteres."></textarea>
+        <span class="campo-error" data-error-de="comentario"></span>
+        <span class="campo-ayuda">Queda pendiente hasta que un Editor lo apruebe.</span>
+      </div>
+      <button type="submit" class="boton boton-dorado">Enviar</button>
+    </form>
+  <% } else { %>
+    <p class="aviso aviso-chico">
+      <a href="/acceso">Ingresar</a> para dejar un comentario.
+    </p>
+  <% } %>
+
+  <% if (comentarios.length === 0) { %>
+    <p class="vacio">Todavia no hay comentarios.</p>
+  <% } else { %>
+    <ul class="comentarios">
+      <% comentarios.forEach(function (comentario) { %>
+        <li class="comentario">
+          <p class="comentario-cabecera">
+            <strong><%= comentario.nombre_usuario %></strong>
+            <span class="comentario-fecha"><%= new Date(comentario.creado_en).toLocaleString('es-AR') %></span>
+          </p>
+          <p class="comentario-texto"><%= comentario.contenido %></p>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('parciales/pie') %>

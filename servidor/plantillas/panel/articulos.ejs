@@ -1,0 +1,44 @@
+<%- include('../parciales/cabecera') %>
+
+<section class="bloque">
+  <div class="bloque-cabecera">
+    <h1 class="bloque-titulo">Mis articulos</h1>
+    <a href="/panel/articulos/nuevo" class="boton boton-dorado">Nuevo articulo</a>
+  </div>
+
+  <% if (articulos.length === 0) { %>
+    <p class="vacio">Todavia no escribiste ningun articulo.</p>
+  <% } else { %>
+    <div class="tabla-envoltura">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Titulo</th>
+            <th>Autor</th>
+            <th>Estado</th>
+            <th>Actualizado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% articulos.forEach(function (articulo) { %>
+            <tr>
+              <td><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></td>
+              <td><%= articulo.autor %></td>
+              <td><span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span></td>
+              <td><%= new Date(articulo.actualizado_en).toLocaleDateString('es-AR') %></td>
+              <td class="tabla-acciones">
+                <a href="/panel/articulos/<%= articulo.id %>/editar">Editar</a>
+                <form action="/panel/articulos/<%= articulo.id %>/borrar" method="POST" class="formulario-en-linea">
+                  <button type="submit" class="boton boton-plano boton-chico">Archivar</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../parciales/pie') %>

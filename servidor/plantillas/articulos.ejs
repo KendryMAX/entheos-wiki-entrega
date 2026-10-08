@@ -1,0 +1,65 @@
+<%- include('parciales/cabecera') %>
+
+<section class="bloque">
+  <div class="bloque-cabecera">
+    <h1 class="bloque-titulo">Articulos</h1>
+    <% if (esEditor) { %>
+      <a href="/panel/articulos/nuevo" class="boton boton-dorado">Nuevo articulo</a>
+    <% } %>
+  </div>
+
+  <div class="filtros">
+    <span class="filtros-etiqueta">Categorias:</span>
+    <a class="ficha <%= !categoriaActual ? 'activa' : '' %>" href="/articulos">Todas</a>
+    <% categorias.forEach(function (categoria) { %>
+      <a class="ficha <%= categoriaActual === categoria.id ? 'activa' : '' %>"
+         href="/articulos?categoria=<%= categoria.id %>">
+        <%= categoria.nombre %> <span class="ficha-conteo"><%= categoria.articulos %></span>
+      </a>
+    <% }); %>
+  </div>
+
+  <p class="resultados"><%= total %> articulo<%= total === 1 ? '' : 's' %> encontrado<%= total === 1 ? '' : 's' %>.</p>
+
+  <% if (articulos.length === 0) { %>
+    <p class="vacio">No hay articulos todavia.</p>
+  <% } else { %>
+    <div class="rejilla">
+      <% articulos.forEach(function (articulo) { %>
+        <article class="tarjeta">
+          <div class="tarjeta-cabecera">
+            <% if (articulo.estado !== 'publicado') { %>
+              <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
+            <% } %>
+            <% if (articulo.categoria) { %>
+              <span class="tarjeta-categoria"><%= articulo.categoria %></span>
+            <% } %>
+          </div>
+          <h2 class="tarjeta-titulo"><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></h2>
+          <p class="tarjeta-resumen"><%= articulo.resumen || 'Sin resumen.' %></p>
+          <p class="tarjeta-pie">
+            por <%= articulo.autor %> &middot; <%= articulo.vistas %> vista<%= articulo.vistas === 1 ? '' : 's' %>
+            <% if (articulo.comentarios > 0) { %>
+              &middot; <%= articulo.comentarios %> comentario<%= articulo.comentarios === 1 ? '' : 's' %>
+            <% } %>
+          </p>
+        </article>
+      <% }); %>
+    </div>
+
+    <% if (paginas > 1) { %>
+      <nav class="paginacion" aria-label="Paginas">
+        <% for (let n = 1; n <= paginas; n++) { %>
+          <% if (n === pagina) { %>
+            <span class="paginacion-pagina activa"><%= n %></span>
+          <% } else { %>
+            <a class="paginacion-pagina"
+               href="/articulos?pagina=<%= n %><%= categoriaActual ? '&categoria=' + categoriaActual : '' %>"><%= n %></a>
+          <% } %>
+        <% } %>
+      </nav>
+    <% } %>
+  <% } %>
+</section>
+
+<%- include('parciales/pie') %>

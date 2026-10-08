@@ -1,0 +1,44 @@
+<%- include('../parciales/cabecera') %>
+
+<section class="bloque">
+  <h1 class="bloque-titulo">Revision de articulos</h1>
+
+  <% if (pendientes.length === 0) { %>
+    <p class="vacio">No hay articulos esperando revision.</p>
+  <% } else { %>
+    <ul class="lista-revision">
+      <% pendientes.forEach(function (articulo) { %>
+        <li class="revision">
+          <div class="revision-cuerpo">
+            <h2 class="revision-titulo"><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></h2>
+            <p class="revision-meta">
+              por <%= articulo.autor %>
+              &middot; <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
+              &middot; <%= new Date(articulo.actualizado_en).toLocaleDateString('es-AR') %>
+            </p>
+          </div>
+
+          <div class="revision-acciones">
+            <form action="/panel/revision/<%= articulo.id %>" method="POST" class="formulario-en-linea">
+              <input type="hidden" name="decision" value="aprobar">
+              <button type="submit" class="boton boton-dorado boton-chico">Aprobar</button>
+            </form>
+
+            <form action="/panel/revision/<%= articulo.id %>" method="POST" class="formulario-en-linea">
+              <input type="hidden" name="decision" value="devolver">
+              <button type="submit" class="boton boton-plano boton-chico">Devolver a borrador</button>
+            </form>
+
+            <form action="/panel/revision/<%= articulo.id %>" method="POST" class="formulario-rechazo">
+              <input type="hidden" name="decision" value="rechazar">
+              <input type="text" name="motivo" placeholder="Motivo del rechazo" maxlength="500">
+              <button type="submit" class="boton boton-plano boton-chico">Rechazar</button>
+            </form>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('../parciales/pie') %>

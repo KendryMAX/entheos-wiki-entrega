@@ -1,0 +1,67 @@
+<%- include('../parciales/cabecera') %>
+
+<section class="bloque">
+  <h1 class="bloque-titulo">Usuarios</h1>
+  <p class="bloque-bajada">
+    Solo el Administrador llega a esta pagina. Desde aca se cambia el rol, se da de
+    baja una cuenta y se reinicia una contrasena.
+  </p>
+
+  <div class="tabla-envoltura">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Articulos</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% usuarios.forEach(function (usuario) { %>
+          <tr>
+            <td>
+              <strong><%= usuario.nombre_usuario %></strong>
+              <% if (usuario.id === usuarioActual.id) { %>
+                <span class="ficha">tu</span>
+              <% } %>
+            </td>
+            <td><%= usuario.email %></td>
+            <td>
+              <form action="/panel/usuarios/<%= usuario.id %>/rol" method="POST" class="formulario-en-linea">
+                <select name="rol" class="selector-chico" <%= usuario.id === usuarioActual.id ? 'disabled' : '' %>>
+                  <% roles.forEach(function (rol) { %>
+                    <option value="<%= rol %>" <%= usuario.rol === rol ? 'selected' : '' %>><%= rol %></option>
+                  <% }); %>
+                </select>
+                <button type="submit" class="boton boton-chico" <%= usuario.id === usuarioActual.id ? 'disabled' : '' %>>Guardar</button>
+              </form>
+            </td>
+            <td><%= usuario.articulos %></td>
+            <td>
+              <span class="estado estado-<%= usuario.activo ? 'publicado' : 'rechazado' %>">
+                <%= usuario.activo ? 'activo' : 'inactivo' %>
+              </span>
+            </td>
+            <td class="tabla-acciones">
+              <form action="/panel/usuarios/<%= usuario.id %>/activo" method="POST" class="formulario-en-linea">
+                <button type="submit" class="boton boton-plano boton-chico" <%= usuario.id === usuarioActual.id ? 'disabled' : '' %>>
+                  <%= usuario.activo ? 'Dar de baja' : 'Reactivar' %>
+                </button>
+              </form>
+
+              <form action="/panel/usuarios/<%= usuario.id %>/contrasena" method="POST" class="formulario-en-linea">
+                <input type="password" name="contrasena" placeholder="Nueva contrasena" minlength="8" required>
+                <button type="submit" class="boton boton-plano boton-chico">Cambiar</button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<%- include('../parciales/pie') %>

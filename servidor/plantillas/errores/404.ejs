@@ -1,0 +1,17 @@
+<%- include('../parciales/cabecera') %>
+
+<section class="hoja hoja-error">
+  <p class="error-codigo">404</p>
+  <h1 class="hoja-titulo">Pagina no encontrada</h1>
+  <p class="error-texto">
+    No existe nada en esa direccion. Puede que el enlace este mal escrito o que
+    el articulo se haya eliminado.
+  </p>
+  <p class="error-ruta"><code><%= ruta %></code></p>
+  <p>
+    <a href="/" class="boton boton-dorado">Volver al inicio</a>
+    <a href="/articulos" class="boton boton-plano">Ver los articulos</a>
+  </p>
+</section>
+
+<%- include('../parciales/pie') %>

@@ -1,0 +1,18 @@
+<%- include('../parciales/cabecera') %>
+
+<section class="hoja hoja-error">
+  <p class="error-codigo">500</p>
+  <h1 class="hoja-titulo">Error del servidor</h1>
+  <p class="error-texto">
+    Algo fallo de nuestro lado. El error ya quedo registrado. Volve a intentar en
+    un momento.
+  </p>
+  <% if (detalle) { %>
+    <p class="error-ruta"><code><%= detalle %></code></p>
+  <% } %>
+  <p>
+    <a href="/" class="boton boton-dorado">Volver al inicio</a>
+  </p>
+</section>
+
+<%- include('../parciales/pie') %>
