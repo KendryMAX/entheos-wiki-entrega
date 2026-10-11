@@ -54,7 +54,6 @@ body {
   line-height: 1.6;
 }
 
-/* Opaca el resto de la pagina cuando se abre la medialuna para que resalte */
 body::after {
   content: "";
   position: fixed;
@@ -116,8 +115,6 @@ pre code { color: var(--dorado-claro); }
   border: 0;
 }
 
-/* ===== Barra superior con navegacion ===== */
-
 .barra-superior {
   position: sticky;
   top: 0;
@@ -126,7 +123,6 @@ pre code { color: var(--dorado-claro); }
   backdrop-filter: blur(8px);
 }
 
-/* Raya dorada normal que separa el header del body */
 .barra-superior::before {
   content: "";
   position: absolute;
@@ -138,7 +134,6 @@ pre code { color: var(--dorado-claro); }
   pointer-events: none;
 }
 
-/* Al abrir la medialuna, la raya se deforma en una silueta de detalles finos (fina en los extremos) */
 .barra-superior::after {
   content: "";
   position: absolute;
@@ -201,8 +196,6 @@ pre code { color: var(--dorado-claro); }
   justify-content: center;
   z-index: 5;
 }
-
-/* ===== Accesos rapidos (medialuna radial) ===== */
 
 .accesos-rapidos { position: relative; }
 
@@ -402,8 +395,6 @@ pre code { color: var(--dorado-claro); }
 }
 .boton-menu span { display: block; height: 2px; background: var(--dorado); border-radius: 2px; }
 
-/* ===== Columna de contadores a la izquierda ===== */
-
 .marco { display: block; }
 
 .contadores { display: none; }
@@ -445,8 +436,6 @@ pre code { color: var(--dorado-claro); }
   font-variant-numeric: tabular-nums;
 }
 .contador-texto { font-size: 0.72rem; color: var(--gris-texto); }
-
-/* ===== Contenido ===== */
 
 .contenido {
   max-width: var(--ancho-contenido);
@@ -534,8 +523,6 @@ pre code { color: var(--dorado-claro); }
 .boton-chico { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
 .boton-ancho { width: 100%; }
 
-/* ===== Cifras ===== */
-
 .cifras {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -566,8 +553,6 @@ pre code { color: var(--dorado-claro); }
   color: var(--gris-claro);
   margin-top: 0.2rem;
 }
-
-/* ===== Bloques y tarjetas ===== */
 
 .bloque { margin: 2.5rem 0; }
 .bloque-aplado { margin: 2rem 0; }
@@ -658,8 +643,6 @@ pre code { color: var(--dorado-claro); }
 .tarjeta-resumen { font-size: 0.92rem; color: var(--gris-claro); flex: 1; }
 .tarjeta-pie { font-size: 0.8rem; color: var(--gris); }
 .tarjeta-categoria { font-size: 0.75rem; color: var(--dorado-claro); text-transform: uppercase; letter-spacing: 0.06em; }
-
-/* ===== Banners de categoria (portada) ===== */
 
 .categorias {
   display: grid;
@@ -816,8 +799,6 @@ pre code { color: var(--dorado-claro); }
 .estado-aprobado { border-color: var(--dorado-oscuro); color: var(--dorado-claro); }
 .estado-pendiente { border-color: var(--dorado-oscuro); color: var(--dorado-claro); }
 
-/* ===== Tarjetas de acceso / registro / error ===== */
-
 .hoja {
   max-width: 520px;
   margin: 2rem auto;
@@ -857,7 +838,6 @@ pre code { color: var(--dorado-claro); }
 .hoja-cerrar:hover .hoja-cerrar-x,
 .hoja-cerrar:focus-visible .hoja-cerrar-x { transform: scale(1.7); }
 
-/* ===== Páginas de acceso/registro: sin columna de contadores y ventana centrada ===== */
 .pagina-auth .marco { display: block; max-width: none; }
 .pagina-auth .contadores { display: none; }
 .pagina-auth .contenido {
@@ -880,8 +860,6 @@ pre code { color: var(--dorado-claro); }
 }
 .error-texto { color: var(--gris-claro); }
 .error-ruta code { color: var(--gris-claro); background: var(--negro-3); padding: 0.2rem 0.4rem; border-radius: 6px; }
-
-/* ===== Formularios ===== */
 
 .formulario { display: flex; flex-direction: column; gap: 1.1rem; }
 .formulario-plano { max-width: 100%; }
@@ -936,8 +914,6 @@ pre code { color: var(--dorado-claro); }
 }
 .panel-cuentas-titulo { font-size: 0.95rem; margin: 0 0 0.4rem; color: var(--dorado-claro); }
 .panel-cuentas-texto { margin: 0; font-size: 0.85rem; color: var(--gris); }
-
-/* ===== Articulo ===== */
 
 .volver-articulo {
   display: inline-flex;
@@ -1131,8 +1107,6 @@ pre code { color: var(--dorado-claro); }
 .evento-meta { margin: 0; font-size: 0.8rem; color: var(--gris); display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
 .evento-descripcion { margin: 0.4rem 0 0; font-size: 0.9rem; color: var(--gris-claro); }
 
-/* ===== Pie ===== */
-
 .pie {
   border-top: var(--borde-dorado);
   background: var(--negro-2);
@@ -1152,8 +1126,6 @@ pre code { color: var(--dorado-claro); }
 .pie-enlaces a { color: var(--gris-texto); font-size: 0.88rem; }
 .pie-enlaces a:hover { color: var(--dorado-claro); }
 .pie-texto { margin: 0.2rem 0; font-size: 0.82rem; color: var(--gris); }
-
-/* ===== Escritorio amplio: contadores como columna a la izquierda, a todo el largo ===== */
 
 @media (min-width: 1101px) {
   .marco {
@@ -1189,8 +1161,6 @@ pre code { color: var(--dorado-claro); }
   .articulo-principal { order: 1; }
   .articulo-lateral { order: 2; padding: 1.6rem 1.6rem 0 0; }
 }
-
-/* ===== Responsivo ===== */
 
 @media (max-width: 900px) {
   html { scroll-padding-top: 72px; }

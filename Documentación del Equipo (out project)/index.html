@@ -181,7 +181,7 @@
 <p class="bajada">Que es el proyecto, con que esta hecho, como se levanta y como esta armado.</p></div>
 <section class="seccion" id="el-proyecto-en-una-mirada-entheos-wiki">
 <h3>Entheos Wiki</h3>
-<p>Wiki de consulta sobre el mundo de fantasía Entheos, creada desde cero para el proyecto final de Programación Web. Incluye articles, personajes, lugares, cronología, comentarios, roles, reportes en PDF y envío de correo.</p>
+<p>Wiki de consulta sobre el mundo de fantasía Entheos, creada desde cero para el proyecto final de Programación Web. Incluye artículos, personajes, lugares, cronología, comentarios, roles, reportes en PDF y envío de correo.</p>
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-stack">
 <h3>Stack</h3>
@@ -200,19 +200,21 @@ Copy-Item .env.example .env
 npm run bd:crear
 npm run dev
 </code></pre></div>
-<p>Después abrí https://entheoswiki.local en el navegador. Si todavía no configuraste el dominio con nombre, usá http://localhost.</p>
+<p>Después abrí https://entheoswiki.local en el navegador. Si todavía no configuraste el dominio con nombre, usá http://localhost:3000.</p>
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-documentos-de-ayuda">
 <h3>Documentos de ayuda</h3>
 <p>Todo está dentro de Documentación del Equipo (out project), en un único index.html que se abre con doble clic y no depende del servidor.</p>
 <div class="tabla-envoltura"><table><thead><tr><th>Documento</th><th>Para qué sirve</th></tr></thead><tbody>
+<tr><td>El proyecto en una mirada</td><td>Resumen: stack, comandos, estructura y roles</td></tr>
 <tr><td>Como esta ordenado el proyecto</td><td>Qué hay en cada carpeta y por qué</td></tr>
 <tr><td>Como arrancar</td><td>Levantar y apagar el servidor paso a paso</td></tr>
 <tr><td>Instalar en otra computadora</td><td>Instalar todo desde cero en una PC nueva</td></tr>
 <tr><td>Instalación y diagnóstico</td><td>Problemas frecuentes y detalle de MySQL</td></tr>
 <tr><td>Buenas prácticas de código</td><td>Reglas que rigen el proyecto</td></tr>
 <tr><td>Requisitos del enunciado</td><td>Checklist de lo que pide el trabajo</td></tr>
-<tr><td>Decisiones pendientes</td><td>Lo que falta decidir</td></tr>
+<tr><td>Como se construyo este proyecto</td><td>En qué orden se hizo todo</td></tr>
+<tr><td>Como se escribieron los documentos</td><td>Como está armado este sitio de ayuda</td></tr>
 </tbody></table></div>
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-direccion-con-nombre-y">
@@ -227,7 +229,7 @@ npm run dev
 <div class="bloque"><span class="etiqueta-bloque">powershell</span><pre><code>
    powershell -ExecutionPolicy Bypass -File &quot;.\servidor\herramientas\certificado.ps1&quot;
 </code></pre></div>
-<p>El script imprime la clave que hay que pegar en HTTPS_CLAVE dentro del .env. Si ninguna de las dos está, el proyecto sigue funcionando en http://localhost. El servidor escucha en ambos protocolos a la vez: HTTPS en el puerto 443 y HTTP en el puerto que diga PUERTO (80 por defecto).</p>
+<p>El script imprime la clave que hay que pegar en HTTPS_CLAVE dentro del .env. Si ninguna de las dos está, el proyecto sigue funcionando en http://localhost. El servidor escucha en ambos protocolos a la vez: HTTPS en el puerto 443 y HTTP en el puerto que diga PUERTO (3000 por defecto).</p>
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-cuentas-iniciales">
 <h3>Cuentas iniciales</h3>
@@ -247,8 +249,8 @@ npm run dev
 <tr><td>npm run bd:crear</td><td>Crea la base y aplica base-de-datos/base-de-datos.sql</td></tr>
 <tr><td>npm run bd:reiniciar</td><td>Borra la base y la vuelve a crear desde cero</td></tr>
 <tr><td>npm run admin</td><td>Alta de cuentas, cambio de contraseña y de rol</td></tr>
-<tr><td>npm run pdf</td><td>Genera los PDF de los artículos publicados</td></tr>
-<tr><td>npm run exportar</td><td>Exporta artículos y reportes a pdf-generados/reportes</td></tr>
+<tr><td>npm run exportar</td><td>Exporta artículos y reportes a pdf-generados/</td></tr>
+<tr><td>npm run importar</td><td>Importa el vault de Obsidian (herramienta interna)</td></tr>
 </tbody></table></div>
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-estructura-del-proyect">
@@ -259,7 +261,8 @@ npm run dev
 ├── package.json                Dependencias y comandos
 ├── .env                        Configuración local (no se sube)
 ├── .env.example                Plantilla de configuración
-├── certificados/               Certificado local de HTTPS (no se sube)
+├── README.md                   Resumen del proyecto y trabajo en equipo
+├── INSTALAR-OTRA-PC.txt        Guía paso a paso para otra computadora
 │
 ├── servidor/                   Todo el código que corre en Node.js
 │   ├── index.js                Arranque: servidores HTTP y HTTPS
@@ -271,7 +274,8 @@ npm run dev
 │   │   ├── inicio.js           Portada, personajes, lugares, cronología, buscar
 │   │   ├── articulos.js        Listado, detalle y comentarios
 │   │   ├── cuenta.js           Acceso, registro y cierre de sesión
-│   │   └── panel.js            Panel de Editor y Administrador
+│   │   ├── panel.js            Panel de Editor y Administrador
+│   │   └── reportes.js         Informes y su salida en PDF
 │   ├── capas/
 │   │   ├── autenticacion.js    Sesión, roles y control de acceso
 │   │   └── errores.js          403, 404, 500 y helpers de validación
@@ -279,37 +283,38 @@ npm run dev
 │   │   ├── contenido.js        Convierte Markdown a HTML seguro
 │   │   ├── correo.js           Envío de notificaciones por Gmail
 │   │   └── pdf.js              Generación de PDF con Edge
+│   ├── plantillas/             Vistas EJS
+│   │   ├── parciales/          cabecera.ejs y pie.ejs
+│   │   ├── errores/            403.ejs, 404.ejs, 500.ejs
+│   │   ├── panel/              Vistas del panel por rol
+│   │   └── *.ejs               Portada, artículos, reportes, acceso, registro, etc.
 │   ├── herramientas/
 │   │   ├── crear-base.js       Crea y puebla la base
 │   │   ├── crear-admin.js      Gestión de cuentas
 │   │   ├── exportar.js         Exporta artículos y reportes a PDF
-│   │   ├── pdf.js              Genera PDF de un artículo puntual
+│   │   ├── importar-obsidian.js Importa el vault de Obsidian (interna)
 │   │   └── certificado.ps1     Genera el certificado local de HTTPS
 │   └── pruebas/
 │       └── smoke.test.js       Verifica rutas, login, 404 y autocompletado
 │
-├── plantillas/                Plantillas EJS
-│   ├── parciales/              cabecera.ejs y pie.ejs
-│   ├── errores/                403.ejs, 404.ejs, 500.ejs
-│   ├── panel/                  Vistas del panel por rol
-│   └── *.ejs                   Portada, artículos, acceso, registro, etc.
-│
-├── web/                       Archivos que descarga el navegador
-│   ├── estilos/estilos.css      Paleta negra, gris y dorada; responsive
-│   ├── scripts/aplicacion.js   Validación de cliente y autocompletado con fetch
+├── web/                        Lo que descarga el navegador
+│   ├── estilos/estilos.css     Paleta negra, gris y dorada; responsive
+│   ├── scripts/aplicacion.js   Validación de cliente y autocompletado
 │   ├── imagenes/               Icono y recursos estáticos
-│   └── subidas/.gitkeep      Imágenes que suben los Editores
+│   ├── fuentes/                Tipografía local (Cinzel Decorative)
+│   └── subidas/                Imágenes que suben los usuarios
 │
-│   └── base-de-datos/               Base de datos
-│       ├── base-de-datos.sql          Esquema, roles, cuentas y datos iniciales
-│       └── consultas/                 Consultas SQL de los reportes
+├── base-de-datos/
+│   ├── base-de-datos.sql       Esquema, roles, cuentas y datos iniciales
+│   └── Reportes/               Consultas SQL de los reportes
 │
-├── Documentación del Equipo/   Sitio de documentación, 3 archivos
-│   ├── index.html                 Documentación completa en un solo archivo
-│   ├── estilos.css                Paleta del sitio
-│   └── app.js                     Índice lateral, buscador y scroll
+├── certificados/               Certificado local de HTTPS (no se sube)
+├── pdf-generados/              PDF exportados (se generan, no se editan)
 │
-└── pdf-generados/               PDF exportados (se generan, no se editan)
+└── Documentación del Equipo (out project)/
+    ├── index.html              Documentación completa en un solo archivo
+    ├── estilos.css             Paleta del sitio
+    └── app.js                  Índice lateral, buscador y scroll
 </code></pre></div>
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-reglas-de-codigo">
@@ -364,7 +369,7 @@ npm run dev
 <li>Integrar el envío real de correo (faltan credenciales de Gmail)</li>
 <li>Cambiar contraseñas y correos reales antes de entregar</li>
 </ul>
-<p>Los 6 reportes ya están escritos en base-de-datos/consultas/ y validados contra el esquema real. Falta presentar sus resultados en la web si el enunciado lo pide.</p>
+<p>Los 6 reportes ya están escritos en base-de-datos/Reportes/ y además expuestos en la web, en /reportes, donde se generan en PDF al pedirlos.</p>
 </section>
 </article>
 
@@ -391,6 +396,8 @@ entheoswiki/
 |-- package-lock.json           Versiones exactas
 |-- .env                        Configuracion local con secretos
 |-- .env.example                Plantilla del .env
+|-- README.md                   Guia de instalacion y trabajo en equipo
+|-- INSTALAR-OTRA-PC.txt        Guia paso a paso para otra computadora
 |
 |-- servidor/                   TODO EL CODIGO DE NODE.JS
 |   |
@@ -415,7 +422,8 @@ entheoswiki/
 |   |   |-- inicio.js           Portada, personajes, lugares, cronologia
 |   |   |-- articulos.js        Listado, detalle y comentarios
 |   |   |-- cuenta.js           Acceso, registro y cierre de sesion
-|   |   `-- panel.js            Panel de Editor y Administrador
+|   |   |-- panel.js            Panel de Editor y Administrador
+|   |   `-- reportes.js         Informes y su salida en PDF
 |   |
 |   |-- servicios/              Lo que hace trabajo grueso
 |   |   |-- contenido.js        Convierte Markdown a HTML seguro
@@ -426,7 +434,7 @@ entheoswiki/
 |   |   |-- crear-base.js       Crea y puebla la base
 |   |   |-- crear-admin.js      Gestion de cuentas
 |   |   |-- exportar.js         Exporta articulos y reportes a PDF
-|   |   |-- pdf.js              PDF de un articulo puntual
+|   |   |-- importar-obsidian.js Importa el vault de Obsidian
 |   |   `-- certificado.ps1     Genera el certificado local de HTTPS
 |   |
 |   `-- pruebas/
@@ -436,11 +444,12 @@ entheoswiki/
 |   |-- estilos/estilos.css     Paleta negra, gris y dorada; responsive
 |   |-- scripts/aplicacion.js   Validacion de cliente y autocompletado
 |   |-- imagenes/               Icono y recursos estaticos
-|   `-- subidas/                Imagenes que suben los Editores
+|   |-- fuentes/                Tipografia local (Cinzel Decorative)
+|   `-- subidas/                Imagenes que suben los usuarios
 |
 |-- base-de-datos/
 |   |-- base-de-datos.sql        Esquema, roles, cuentas y datos iniciales
-|   `-- consultas/              Consultas SQL de los reportes
+|   `-- Reportes/               Consultas SQL de los reportes
 |
 |-- certificados/               Certificado local de HTTPS
 |-- pdf-generados/               PDF exportados (se generan, no se editan)
@@ -487,7 +496,7 @@ entheoswiki/
 <p class="termino"><code>servicios/pdf.js</code></p>
 <p>Genera el PDF con Edge headless via puppeteer-core.</p>
 <p class="termino"><code>herramientas/</code></p>
-<p>Scripts que se ejecutan a mano desde la terminal, no con el servidor corriendo. crear-base.js y crear-admin.js escriben en la base; exportar.js genera PDF; certificado.ps1 crea el certificado de HTTPS.</p>
+<p>Scripts que se ejecutan a mano desde la terminal, no con el servidor corriendo. crear-base.js y crear-admin.js escriben en la base; exportar.js genera PDF; importar-obsidian.js importa el vault; certificado.ps1 crea el certificado de HTTPS.</p>
 <p>pruebas/smoke.test.js</p>
 <p>Verifica que el servidor arranque, que las rutas devuelvan lo que deben, que el login rechace claves malas, que el 404 funcione y que los archivos estaticos esten donde corresponde.</p>
 </section>
@@ -499,8 +508,8 @@ entheoswiki/
 <p>Alta de cuentas, cambio de contrasena y de rol. Para no depender de la interfaz web.</p>
 <p>exportar.js</p>
 <p>Exporta los artículos y los reportes a PDF dentro de pdf-generados/.</p>
-<p>pdf.js</p>
-<p>Genera el PDF de un articulo puntual, pasando su identificador.</p>
+<p>importar-obsidian.js</p>
+<p>Importa el vault de Obsidian hacia la base de datos: lee los archivos Markdown y crea o actualiza los articulos.</p>
 <p>certificado.ps1</p>
 <p>Crea el certificado local de HTTPS, lo instala en Windows e imprime la clave que hay que pegar en el .env.</p>
 </section>
@@ -578,7 +587,7 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <li>npm run dev</li>
 </ol>
 <ol>
-<li>Abrir el navegador en https://entheoswiki.local Para apagarlo: Ctrl + C en la terminal donde corre el servidor. Si estas en una computadora nueva, primero lee INSTALAR-OTRA-PC.txt (esta misma carpeta)</li>
+<li>Abrir el navegador en https://entheoswiki.local o en http://localhost:3000. Para apagarlo: Ctrl + C en la terminal donde corre el servidor. Si estas en una computadora nueva, primero lee INSTALAR-OTRA-PC.txt (en la raiz del proyecto).</li>
 </ol>
 </section>
 <section class="seccion" id="como-arrancar-paso-1-abrir-la-terminal">
@@ -595,7 +604,7 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 </section>
 <section class="seccion" id="como-arrancar-paso-4-arrancar-el-servidor">
 <h3>PASO 4 - ARRANCAR EL SERVIDOR</h3>
-<p>Escribir: npm run dev Debe aparecer algo asi: Base de datos conectada: entheos Entheos Wiki escuchando en https://entheoswiki.local Entheos Wiki escuchando en http://localhost:80 En ese momento la terminal queda ocupada. ES NORMAL, no esta trabada. No cerrar esa ventana: mientras siga escribiendo eso, el servidor esta vivo. El comando &quot;npm run dev&quot; usa nodemon, asi que si mas tarde guardas un cambio de codigo, el servidor se reinicia solo.</p>
+<p>Escribir: npm run dev Debe aparecer algo asi: Base de datos conectada: entheos Entheos Wiki escuchando en http://localhost:3000 (y, si se configuro, tambien en https://entheoswiki.local) En ese momento la terminal queda ocupada. ES NORMAL, no esta trabada. No cerrar esa ventana: mientras siga escribiendo eso, el servidor esta vivo. El comando &quot;npm run dev&quot; usa nodemon, asi que si mas tarde guardas un cambio de codigo, el servidor se reinicia solo.</p>
 </section>
 <section class="seccion" id="como-arrancar-paso-5-ver-la-pagina">
 <h3>PASO 5 - VER LA PAGINA</h3>
@@ -611,12 +620,12 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 </section>
 <section class="seccion" id="como-arrancar-comandos-que-se-usan-una-sola-vez">
 <h3>COMANDOS QUE SE USAN UNA SOLA VEZ</h3>
-<p>Solo la primera vez, para descargar las 175 dependencias: npm install Solo si borraste la base de datos, para volver a crearla: npm run bd:crear Para generar el certificado local otra vez, si se cambia de computadora: powershell -ExecutionPolicy Bypass -File &quot;.\servidor\herramientas\certificado.ps1&quot; Otras utiles: npm run prueba        Pruebas automaticas npm run admin        Alta de cuentas y cambio de contrasena o rol npm run pdf          Genera los PDF de los articulos npm run exportar     Exporta articulos y reportes a pdf-generados</p>
+<p>Solo la primera vez, para descargar las 175 dependencias: npm install Solo si borraste la base de datos, para volver a crearla: npm run bd:crear Para generar el certificado local otra vez, si se cambia de computadora: powershell -ExecutionPolicy Bypass -File &quot;.\servidor\herramientas\certificado.ps1&quot; Otras utiles: npm run prueba        Pruebas automaticas npm run admin        Alta de cuentas y cambio de contrasena o rol npm run exportar     Exporta articulos y reportes a pdf-generados npm run importar     Importa el vault de Obsidian a la base</p>
 </section>
 <section class="seccion" id="como-arrancar-problemas-y-soluciones">
 <h3>PROBLEMAS Y SOLUCIONES</h3>
-<p>&quot;El puerto 80 ya esta ocupado&quot;</p>
-<p>Hay otro programa usando el puerto 80. Ver quien es: Get-NetTCPConnection -LocalPort 80 -State Listen Si es otro servidor del proyecto, cerrarlo con: Get-Process node | Stop-Process -Force Si es otro programa (IIS, Skype), cerrar ese programa o cambiar PUERTO=3000 en el archivo .env y entrar por http://entheoswiki.local:3000</p>
+<p>&quot;El puerto 3000 ya esta ocupado&quot;</p>
+<p>Hay otro programa usando el puerto 3000. Ver quien es: Get-NetTCPConnection -LocalPort 3000 -State Listen Si es otro servidor del proyecto, cerrarlo con: Get-Process node | Stop-Process -Force Si es otro programa, cerrarlo o cambiar PUERTO en el archivo .env y entrar por http://localhost:PUERTO</p>
 <p>&quot;No se pudo conectar con MySQL&quot;</p>
 <p>MySQL esta apagado. Ejecutar: Start-Service MySQL96</p>
 <p>&quot;Falta la variable BD_CONTRASENA en el archivo .env&quot;</p>
@@ -641,7 +650,7 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <p>b) El certificado, en la carpeta certificados.</p>
 <p>Se regenera con: powershell -ExecutionPolicy Bypass -File &quot;.\servidor\herramientas\certificado.ps1&quot;</p>
 <p>Si ninguna de las dos esta, el proyecto sigue funcionando igual en:</p>
-<p>http://localhost</p>
+<p>http://localhost:3000</p>
 </section>
 <section class="seccion" id="como-arrancar-si-queres-quitar-el-certificado-de">
 <h3>SI QUERES QUITAR EL CERTIFICADO DE LA COMPUTADORA</h3>
@@ -707,14 +716,11 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-paso-3-copiar-el-pr">
 <h3>PASO 3 - COPIAR EL PROYECTO</h3>
-<p>Copiar la carpeta completa del proyecto a la PC nueva. Por ejemplo:</p>
+<p>Opcion A, con Git (recomendado). El repositorio es privado: primero hay que estar agregado como colaborador (KendryMAX, AngelDanielZ4914, adrianodev) y aceptar la invitacion que llega al correo o en https://github.com/KendryMAX/entheos-wiki/invitations. Despues:</p>
+<p>git clone https://github.com/KendryMAX/entheos-wiki.git cd entheos-wiki</p>
+<p>Opcion B, a mano: copiar la carpeta completa del proyecto a la PC nueva. Por ejemplo:</p>
 <p>C:\Users\TuUsuario\Desktop\Proyecto Final Programacion Web</p>
-<p>Importante: NO copiar la carpeta node_modules. EsMUY grande y se regenera sola con el paso 4. Tampoco hace falta copiar la carpeta certificados. Formas de copiar:</p>
-<ul>
-<li>Un pendrive</li>
-<li>La carpeta por la red (compartida o Drive)</li>
-<li>Un ZIP del proyecto</li>
-</ul>
+<p>Importante: NO copiar la carpeta node_modules. Es MUY grande y se regenera sola con el paso 4. Tampoco hace falta copiar la carpeta certificados ni el archivo .env.</p>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-paso-4-despendencia">
 <h3>PASO 4 - DESPENDENCIAS DE NODE</h3>
@@ -731,20 +737,22 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <p>El archivo .env NO viene con el proyecto (está en el .gitignore a proposito, porque tiene contrasenas). Hay que crearlo a partir de la plantilla.</p>
 <p>Copy-Item .env.example .env</p>
 <p>Despues abrirlo y cambiar SOLO estas lineas:</p>
-<p>BD_USUARIO=root BD_CONTRASENA=la_contrasena_que_pusiste_al_instalar_mysql SESION_SECRETO=una_cadena_larga_y_aleatoria</p>
+<p>BD_USUARIO=entheos BD_CONTRASENA=la_contrasena_que_pusiste_al_crear_el_usuario SESION_SECRETO=una_cadena_larga_y_aleatoria</p>
 <p>Para generar un SESION_SECRETO bueno:</p>
 <p>node -e &quot;console.log(require('crypto').randomBytes(32).toString('hex'))&quot; y pegar el resultado en SESION_SECRETO.</p>
 <p>Lo demas se puede dejar como esta:</p>
-<p>PUERTO=80 ENTORNO=desarrollo BD_HOST=127.0.0.1 BD_PUERTO=3306 BD_NOMBRE=entheos BD_CONEXIONES=10 SESION_MINUTOS=120 GMAIL_USUARIO= GMAIL_CONTRASENA= GMAIL_DESDE=&quot;Entheos Wiki &lt;&gt;&quot; EDGE=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe ARTICULOS_PAGINA=12</p>
+<p>PUERTO=3000 ENTORNO=desarrollo BD_HOST=127.0.0.1 BD_PUERTO=3306 BD_NOMBRE=entheos BD_CONEXIONES=10 SESION_MINUTOS=120 GMAIL_USUARIO= GMAIL_CONTRASENA= GMAIL_DESDE=&quot;Entheos Wiki &lt;&gt;&quot; EDGE=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe ARTICULOS_PAGINA=12</p>
 <p>Sobre HTTPS_PFX y HTTPS_CLAVE: se completan en el paso 7.</p>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-paso-6-crear-la-bas">
 <h3>PASO 6 - CREAR LA BASE DE DATOS</h3>
 <p>npm run bd:crear</p>
-<p>Esto lee el archivo base\base-de-datos.sql, borra lo que haya en la base &quot;entheos&quot; y crea 34 tablas, los 3 roles, las 3 cuentas del equipo y los datos iniciales. Debe terminar con algo asi:</p>
+<p>Antes, en MySQL hay que tener creado el usuario de la base (el de BD_USUARIO del .env). Si no existe, crearlo una vez:</p>
+<p>CREATE USER 'entheos'@'localhost' IDENTIFIED BY 'tu_contrasenia'; GRANT ALL PRIVILEGES ON entheos.* TO 'entheos'@'localhost'; FLUSH PRIVILEGES;</p>
+<p>Esto lee el archivo base-de-datos\base-de-datos.sql, crea o rehace la base &quot;entheos&quot; y deja las tablas, los 3 roles, las 3 cuentas del equipo y los datos iniciales. Debe terminar con algo asi:</p>
 <p>Base entheos lista. Se aplicaron N sentencias. Resumen de la base: usuario: 3 rol: 3 ... Listo. Para arrancar la app: npm run dev</p>
-<p>ATENCION: este comando BORRA el contenido de la base. Si se ejecuta por error despues de cargar articulos, se pierde todo. Para regenerar el PDF y no la base, usar en cambio:</p>
-<p>npm run pdf</p>
+<p>ATENCION: si se corre npm run bd:reiniciar, BORRA el contenido de la base. Si se ejecuta por error despues de cargar articulos, se pierde todo. Para exportar PDF sin tocar la base, usar en cambio:</p>
+<p>npm run exportar</p>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-paso-7-direccion-co">
 <h3>PASO 7 - DIRECCION CON NOMBRE Y CERTIFICADO</h3>
@@ -914,8 +922,8 @@ pdf-generados/      PDFs generados</code></pre></div>
 <p>En los outros computadores quedara en C:\Program Files\nodejs\. Es normal que sea distinto, lo importante es que el comando &quot;node&quot; funcione.</p>
 </section>
 <section class="seccion" id="instalacion-y-diagnostico-3-paso-2-git-control-d">
-<h3><span class="num">3.</span> PASO 2 - GIT  (control de versiones)   *** PENDIENTE EN ESTE EQUIPO ***</h3>
-<p>ESTE PASO TODAVIA NO ESTA HECHO. Es el unico que falta instalar. Para que esta instalado:</p>
+<h3><span class="num">3.</span> PASO 2 - GIT  (control de versiones)</h3>
+<p>Para que esta instalado:</p>
 <p>git --version</p>
 <p>Si no esta instalado, con PowerShell:</p>
 <p>winget install Git.Git</p>
@@ -982,7 +990,7 @@ pdf-generados/      PDFs generados</code></pre></div>
 <h3><span class="num">6.</span> PASO 5 - MICROSOFT EDGE  (usado para generar los PDF)</h3>
 <p>Este proyecto NO descarga ningun navegador. Se usa el Edge que ya viene en Windows para imprimir los reportes en PDF, a traves de la libreria puppeteer-core. Por eso es importante tener Edge, no basta con tener Chrome. Comprobar:</p>
 <p>Test-Path &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;</p>
-<p>Debe responder True. En Mac o en Linux esta ruta cambia y habria que modificarla en el archivo .env (la variable EDGE_PATH).</p>
+<p>Debe responder True. En Mac o en Linux esta ruta cambia y habria que modificarla en el archivo .env (la variable EDGE).</p>
 </section>
 <section class="seccion" id="instalacion-y-diagnostico-7-paso-6-editor-de-cod">
 <h3><span class="num">7.</span> PASO 6 - EDITOR DE CODIGO</h3>
@@ -1002,7 +1010,7 @@ pdf-generados/      PDFs generados</code></pre></div>
 <section class="seccion" id="instalacion-y-diagnostico-8-paso-7-librerias-del">
 <h3><span class="num">8.</span> PASO 7 - LIBRERIAS DEL PROYECTO (npm)</h3>
 <p>ESTO NO SE INSTALA A MANO. Solo funciona dentro de la carpeta del proyecto, y solo despues de clonar el repositorio. Para esto hay que hacer antes el paso 10. Dentro de la carpeta del proyecto (donde esta el archivo package.json):</p>
-<p>npm install express@5.2.1 ejs@6.0.1 mysql2@3.24.5 express-session@1.19.0 bcryptjs@3.0.3 nodemailer@10.0.14 dotenv@18.0.5 multer@2.4.0 helmet@8.3.0 express-rate-limit@8.7.0 method-override@3.0.0 marked@18.0.14 sanitize-html@2.18.0 puppeteer-core@25.12.0 npm install -D nodemon@3.1.14 prettier@3.9.9</p>
+<p>Basta con: npm install (lee package.json e instala todo). Las librerias que quedan fijadas son: express@5.2.1 ejs@6.0.1 mysql2@3.24.5 express-session@1.19.0 bcryptjs@3.0.3 nodemailer@10.0.14 dotenv@18.0.5 helmet@8.3.0 express-rate-limit@8.7.0 method-override@3.0.0 marked@18.0.14 sanitize-html@2.18.0 puppeteer-core@25.12.0 y, solo para desarrollo, nodemon@3.1.14 prettier@3.9.9</p>
 <p>Que hace cada libreria:</p>
 <div class="bloque"><span class="etiqueta-bloque">esquema</span><pre><code>express          5.2.1   Servidor web y ruteo (Node)
 ejs              6.0.1   Motor de vistas HTML en el servidor
@@ -1012,7 +1020,6 @@ express-session  1.19.0  Mantiene la sesion del usuario logueado
 bcryptjs         3.0.3   Encripta contrasenas
 nodemailer       10.0.14 Envia correos (notificaciones y recuperacion)
 dotenv           18.0.5  Lee el archivo .env
-multer           2.4.0   Sube archivos (imagenes de articulos y avatares)
 helmet           8.3.0   Cabeceras de seguridad automaticas
 express-rate-limit 8.7.0 Limita los intentos de login (evita ataques de
 fuerza bruta)
@@ -1027,18 +1034,23 @@ nodemon          3.1.14  (solo desarrollo) Reinicia el servidor al guardar
 prettier         3.9.9   (solo desarrollo) Formatea el codigo igual para
 los tres, para evitar conflictos al fusionar</code></pre></div>
 <p>NOTA SOBRE VERSIONES: estan fijadas a proposito, para que los tres tengan exactamente lo mismo. Ademas, al terminar la instalacion hay que SUBIR el archivo package-lock.json al repositorio. Ese archivo es el que garantiza que las versiones se mantengan iguales en los tres computadores. Nunca se borra. SCRIPTS DE NPM (se ejecutan con npm run ):</p>
-<div class="bloque"><span class="etiqueta-bloque">esquema</span><pre><code>npm run dev        Inicia el servidor recargandose solo al guardar cambios
-npm run start      Inicia el servidor normal
-npm run exportar   Genera la version estatica para GitHub Pages
-npm run formato    Formatea todo el codigo</code></pre></div>
+<div class="bloque"><span class="etiqueta-bloque">esquema</span><pre><code>npm run dev          Servidor con recarga automatica (nodemon)
+npm run iniciar       Servidor normal (produccion)
+npm run bd:crear      Crea la base y carga el esquema y los datos
+npm run bd:reiniciar  Borra la base y la vuelve a crear
+npm run admin         Alta de cuentas y cambio de contrasena o rol
+npm run exportar      Exporta articulos y reportes a PDF
+npm run importar      Importa el vault de Obsidian a la base
+npm run prueba        Pruebas automaticas (deben dar 10/10)
+npm run formato       Formatea el codigo con Prettier</code></pre></div>
 </section>
 <section class="seccion" id="instalacion-y-diagnostico-9-paso-8-archivo-env-c">
 <h3><span class="num">9.</span> PASO 8 - ARCHIVO .env  (configuracion)</h3>
-<p>Este archivo guarda la contrasenia de la base y la del correo. NO se sube al repositorio, por seguridad. En la carpeta del proyecto crear un archivo llamado exactamente &quot;.env&quot; (la extension es .env, no .env.txt). Contenido:</p>
-<p>PORT=3000 DB_HOST=127.0.0.1 DB_PORT=3306 DB_USER=root DB_PASSWORD=AQUI_VA_TU_CONTRASENIA_DE_MYSQL DB_NAME=entheos SESSION_SECRET=AQUI_VA_UN_CODIGO_ALEATORIO_LARGO GMAIL_USER=correo@gmail.com GMAIL_PASS=AQUI_VA_LA_CONTRASENIA_DE_APLICACION GMAIL_FROM=&quot;Entheos Wiki &quot; EDGE_PATH=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe</p>
-<p>Para generar un SESSION_SECRET aleatorio, ejecutar en PowerShell:</p>
+<p>Este archivo guarda la contrasenia de la base y la del correo. NO se sube al repositorio, por seguridad. Hay una plantilla lista: ejecutar Copy-Item .env.example .env y despues abrir el .env y ajustar. Las variables son:</p>
+<p>PUERTO=3000 ENTORNO=desarrollo BD_HOST=127.0.0.1 BD_PUERTO=3306 BD_USUARIO=entheos BD_CONTRASENA=AQUI_VA_TU_CONTRASENIA_DE_MYSQL BD_NOMBRE=entheos BD_CONEXIONES=10 SESION_SECRETO=AQUI_VA_UN_CODIGO_ALEATORIO_LARGO SESION_MINUTOS=120 GMAIL_USUARIO=correo@gmail.com GMAIL_CONTRASENA=AQUI_VA_LA_CONTRASENIA_DE_APLICACION GMAIL_DESDE=&quot;Entheos Wiki &lt;correo@gmail.com&gt;&quot; EDGE=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe ARTICULOS_PAGINA=12</p>
+<p>Para generar un SESION_SECRETO aleatorio, ejecutar en PowerShell:</p>
 <p>node -e &quot;console.log(require('crypto').randomBytes(32).toString('hex'))&quot;</p>
-<p>Lo que se copie se pega en SESSION_SECRET. No puede ser cualquier palabra. SOBRE LA CONTRASENIA DEL CORREO: Gmail no permite iniciar sesion con la contrasena normal de la cuenta. Hay que crear una &quot;contrasena de aplicacion&quot;:</p>
+<p>Lo que se copie se pega en SESION_SECRETO. No puede ser cualquier palabra. SOBRE LA CONTRASENIA DEL CORREO: Gmail no permite iniciar sesion con la contrasena normal de la cuenta. Hay que crear una &quot;contrasena de aplicacion&quot;:</p>
 <ol>
 <li>Entrar a https://myaccount.google.com/apppasswords (la cuenta debe tener verificacion en dos pasos activa)</li>
 </ol>
@@ -1046,30 +1058,27 @@ npm run formato    Formatea todo el codigo</code></pre></div>
 <li>Crear una contrasena de aplicacion llamada &quot;Entheos&quot;.</li>
 </ol>
 <ol>
-<li>Google muestra 16 caracteres. Esos van en GMAIL_PASS. Ojo: esa cadena no tiene espacios. Si aparece un espacio, es parte del valor y se deja tal cual. CREAR LA BASE DE DATOS (una sola vez, desde MySQL Workbench o desde PowerShell): CREATE DATABASE entheos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; El utf8mb4 es obligatorio: con utf8 (el de MySQL 5) las vocales acentuadas, la enye y otros caracteres especiales fallan al guardarse.</li>
+<li>Google muestra 16 caracteres. Esos van en GMAIL_CONTRASENA. Ojo: esa cadena no tiene espacios. Si aparece un espacio, es parte del valor y se deja tal cual. La base de datos NO se crea a mano: la crea npm run bd:crear con el juego de caracteres utf8mb4. El utf8mb4 es obligatorio: con utf8 (el de MySQL 5) las vocales acentuadas, la enye y otros caracteres especiales fallan al guardarse.</li>
 </ol>
 </section>
 <section class="seccion" id="instalacion-y-diagnostico-10-paso-9-crear-la-bas">
 <h3><span class="num">10.</span> PASO 9 - CREAR LA BASE Y SU USUARIO</h3>
-<p>RECOMENDADO: no usar root para la aplicacion. Crear un usuario propio:</p>
+<p>RECOMENDADO: no usar root para la aplicacion. Crear un usuario propio en MySQL:</p>
 <p>CREATE USER 'entheos'@'localhost' IDENTIFIED BY 'una_contrasenia_aqui'; GRANT ALL PRIVILEGES ON entheos.* TO 'entheos'@'localhost'; FLUSH PRIVILEGES;</p>
-<p>Con esto, en el .env:</p>
-<p>DB_USER=entheos DB_PASSWORD=una_contrasenia_aqui</p>
-<p>Aun asi, para correr los scripts que crean las tablas, usar root.</p>
+<p>Con esto, en el .env poner ese usuario y esa contrasenia:</p>
+<p>BD_USUARIO=entheos BD_CONTRASENA=una_contrasenia_aqui</p>
+<p>Despues, npm run bd:crear conecta con ese usuario y crea la base, las tablas y los datos.</p>
 </section>
 <section class="seccion" id="instalacion-y-diagnostico-11-paso-10-clonar-y-ar">
 <h3><span class="num">11.</span> PASO 10 - CLONAR Y ARRANCAR EL PROYECTO</h3>
-<p>DESPUES de tener Node, Git y MySQL:</p>
-<p>cd &quot;C:\Users\Kendry\Desktop\Ken\Proyectos\Proyecto Final Programación Web&quot; git clone URL_DEL_REPOSITORIO_ENTHEOS .</p>
-<p>El punto &quot;.&quot; del final es importante: clona el contenido dentro de la carpeta actual, sin crear una carpeta nueva adentro. Luego:</p>
-<p>npm install npm run dev</p>
+<p>DESPUES de tener Node, Git y MySQL. El repositorio es PRIVADO: hay que estar como colaborador (KendryMAX, AngelDanielZ4914, adrianodev) y aceptar la invitacion que llega al correo o en https://github.com/KendryMAX/entheos-wiki/invitations. Luego:</p>
+<p>git clone https://github.com/KendryMAX/entheos-wiki.git cd entheos-wiki npm install npm run bd:crear npm run dev</p>
 <p>Y abrir en el navegador:</p>
 <p>https://entheoswiki.local</p>
 <p>Si en esta computadora todavia no se configuro el dominio, usar:</p>
-<p>http://localhost</p>
-<p>AL TERMINAR, SUBIR EL ARCHIVO package-lock.json. Es indispensable para que los tres tengan las mismas versiones:</p>
-<p>git add package-lock.json git commit -m &quot;Configuracion de dependencias del proyecto&quot; git push</p>
-<p>SOBRE GITHUB PAGES: la version gratuita exige que el repositorio sea PUBLICO. Como la wiki es de solo lectura, se decidio aceptar que sea publico. Si en el futuro se necesita privado, habria que pagar o usar otro servicio.</p>
+<p>http://localhost:3000</p>
+<p>El archivo package-lock.json SI se sube al repositorio: es el que garantiza que los tres tengan las mismas versiones. Nunca se borra.</p>
+<p>El proyecto se publica como aplicacion Node (Express + MySQL), no como sitio estatico. No se usa GitHub Pages: el repositorio privado en GitHub es solo para compartir el codigo.</p>
 </section>
 <section class="seccion" id="instalacion-y-diagnostico-12-apartado-herramient">
 <h3><span class="num">12.</span> APARTADO - HERRAMIENTAS DE APOYO PARA TRABAJAR CON EL ASISTENTE</h3>
@@ -1097,11 +1106,11 @@ import pymupdf</code></pre></div>
 <section class="seccion" id="instalacion-y-diagnostico-13-diagnostico-problem">
 <h3><span class="num">13.</span> DIAGNOSTICO: PROBLEMAS COMUNES Y COMO ARREGLARLOS</h3>
 <p>&quot;ECONNREFUSED&quot; o &quot;Can't connect to MySQL server on '127.0.0.1'&quot;</p>
-<p>MySQL no esta corriendo. Comprobar y arrancar: Get-Service MySQL* net start MySQL96 Revisar tambien que DB_HOST, DB_PORT y DB_PASSWORD en el .env sean correctos, y que el archivo se llame &quot;.env&quot; y no &quot;.env.txt&quot;.</p>
+<p>MySQL no esta corriendo. Comprobar y arrancar: Get-Service MySQL* net start MySQL96 Revisar tambien que BD_HOST, BD_PUERTO y BD_CONTRASENA en el .env sean correctos, y que el archivo se llame &quot;.env&quot; y no &quot;.env.txt&quot;.</p>
 <p>&quot;ER_NOT_SUPPORTED_AUTH_MODE&quot; o &quot;Authentication plugin 'caching_sha2_password'&quot;</p>
 <p>mysql2 SI soporta ese metodo, asi que normalmente el problema es que el modulo esta desactualizado. Se soluciona reinstalando: npm install mysql2@3.24.5 Como ultima opcion, cambiar el metodo de autenticacion del usuario: ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'tu_contrasenia'; FLUSH PRIVILEGES;</p>
 <p>&quot;EADDRINUSE: address already in use :::3000&quot;</p>
-<p>El puerto 3000 ya lo ocupa otro programa. Cambiar PORT en el .env (por ejemplo 3001) o cerrar el otro programa.</p>
+<p>El puerto 3000 ya lo ocupa otro programa. Cambiar PUERTO en el .env (por ejemplo 3001) o cerrar el otro programa.</p>
 <p>&quot;Los acentos se ven mal&quot; o &quot;error de charset&quot;</p>
 <p>La base de datos se creo con utf8 en vez de utf8mb4. Corregir: ALTER DATABASE entheos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; y revisar que mysql2 envie la conexion con charset utf8mb4.</p>
 <p>Error de ruta en Express 5</p>
@@ -1113,7 +1122,7 @@ app.get('/articulo/*', ...)     falla en Express 5</code></pre></div>
 <p>&quot;marked&quot; no limpia el HTML y aparece HTML sospechoso en los articulos</p>
 <p>Es normal: marked solo convierte. Hay que pasarle el resultado por sanitize-html antes de enviarlo a la vista.</p>
 <p>La pagina carga pero los estilos no salen</p>
-<p>Revisar que la carpeta public/ exista y que las rutas en EJS empiecen con &quot;/&quot; (por ejemplo /estilos/estilos.css y no estilos/estilos.css).</p>
+<p>Revisar que la carpeta web/ exista y que las rutas en EJS empiecen con &quot;/&quot; (por ejemplo /estilos/estilos.css y no estilos/estilos.css).</p>
 <p>Errores de Git</p>
 <p>&quot;Updates were rejected&quot;      -&gt; primero:  git pull &quot;Please tell me who you are&quot; -&gt; falta el paso 3 de la seccion de Git &quot;Permission denied (publickey)&quot; -&gt; se acepto la invitation del repositorio, o se esta usando https en vez de ssh</p>
 <p>Instalacion limpia de dependencias (si algo quedo roto):</p>
@@ -1134,11 +1143,10 @@ Pillow ...................  instaladas   (solo para el asistente)
 Tesseract OCR ............  5.4.0        INSTALADO (solo para el
 asistente), con idioma espanol
 winget ...................  v1.29.380    DISPONIBLE
-Git ......................              PENDIENTE  &lt;-- falta instalar
+Git ......................  2.56.0       INSTALADO
 choco / scoop .............  no instalados (no hacen falta, se usa winget)
-No existe todavia ningun proyecto Node en el equipo, es decir, no hay
-todavia un package.json. Las librerias se instalaran cuando se cree el
-proyecto.</code></pre></div>
+El proyecto Node ya existe: hay un package.json en la raiz y las librerias se
+instalan con npm install.</code></pre></div>
 </section>
 <section class="seccion" id="instalacion-y-diagnostico-fin-del-documento">
 <h3>FIN DEL DOCUMENTO</h3>
@@ -1296,7 +1304,7 @@ proyecto.</code></pre></div>
 <h3>Lo que falta para poder entregar</h3>
 <ul>
 <li>[ ] ABM de las 23 entidades que faltan y de las 8 relaciones m:n</li>
-<li>[ ] Exponer los 6 reportes en la web, si el enunciado lo pide</li>
+<li>[X] Exponer los 6 reportes en la web (pagina /reportes)</li>
 <li>[ ] Resolver la duplicación entre los <code>.sql</code> y <code>servidor/herramientas/exportar.js</code></li>
 <li>[ ] Credenciales de Gmail para probar el envio real</li>
 <li>[ ] Decidir si la traducción ES/EN entra o sale del alcance</li>
@@ -1333,7 +1341,7 @@ proyecto.</code></pre></div>
 <p>Con el modelo listo se armo el servidor. Express 5 con EJS, sin framework de frente y sin build: las plantillas las llena el servidor y listo.</p>
 <p>Se eligio Express porque es lo que se enseho en el curso y porque el enunciado no pedia nada mas. No se agrego React ni Vue ni nada: no hacia falta y suma complicacion.</p>
 <p>Las rutas se agruparon por lo que hacen, no por cantidad:</p>
-<p>inicio.js      Portada, personajes, lugares, cronologia y buscar articles.js    Listado, detalle y comentarios account.js     Acceso, registro y cierre de sesion panel.js       Todo lo del Editor y el Administrador</p>
+<p>inicio.js      Portada, personajes, lugares, cronologia y buscar articulos.js   Listado, detalle y comentarios cuenta.js      Acceso, registro y cierre de sesion panel.js       Todo lo del Editor y el Administrador reportes.js    Los informes y su salida en PDF</p>
 <p>Cada ruta hace lo mismo: valida la entrada, consulta datos/base.js, y renderiza una vista. Ese patron se repite en todas, y se escribio en las reglas del proyecto para no inventar otra forma.</p>
 </section>
 <section class="seccion" id="como-se-construyo-este-proyecto-paso-3-los-roles">
@@ -1362,14 +1370,14 @@ Administrador   Todo lo anterior, mas administrar cuentas</code></pre></div>
 <p>Opcion A: una libreria como PDFKit, que genera el PDF sin navegador. Opcion B: Puppeteer, que abre una pagina y la imprime.</p>
 <p>Se eligio la segunda. Razon: el contenido ya estaba en HTML con estilos, y imprimir ese HTML con Edge headless da un PDF identico a lo que se ve en pantalla. Con PDFKit habia que construir el PDF a mano y manterlo por siempre.</p>
 <p>Se uso puppeteer-core y no puppeteer a proposito: puppeteer descarga su propio Chromium, que son unos 300 MB. Con core se usa el Edge que ya esta instalado.</p>
-<p>El resultado: <code>npm run pdf</code> genera los PDF de los articulos publicados, y <code>npm run exportar</code> genera los reportes.</p>
+<p>El resultado: <code>npm run exportar</code> genera los PDF de los articulos y los reportes dentro de pdf-generados/, y desde la pagina /reportes de la web se descarga cada reporte en PDF al pedirlo.</p>
 </section>
 <section class="seccion" id="como-se-construyo-este-proyecto-paso-5-los-repor">
 <h3>PASO 5 - LOS REPORTES</h3>
-<p>El enunciado pide al menos un reporte de dos o mas tablas por integrante. Se escribieron seis consultas SQL, cada una en su archivo dentro de base-de-datos/consultas/.</p>
+<p>El enunciado pide al menos un reporte de dos o mas tablas por integrante. Se escribieron seis consultas SQL, cada una en su archivo dentro de base-de-datos/Reportes/.</p>
 <p>Se eligieron seis porque el mundo da para seis combinaciones interesantes de dos, tres y cuatro tablas: personajes con sus facciones, articulos con su autor y sus etiquetas, articulos de una era con su cronologia, y asi.</p>
 <p>Cada consulta se valido contra el esquema real, no contra la imaginacion: se corrieron en MySQL y devolvieron filas. Eso agarro errores de tipeo en los nombres de columna antes de escribir una sola linea de JavaScript.</p>
-<p>Aqui quedo un problema anotado y todavia sin resolver: las consultas estan escritas dos veces, una en el .sql y otra dentro de exportar.js. La solucion pendiente es que el JavaScript lea los .sql, o crear vistas CREATE VIEW en MySQL.</p>
+<p>Los seis reportes se exponen en la pagina /reportes de la web (servidor/rutas/reportes.js) y tambien se exportan a PDF con npm run exportar. Queda anotado un punto a limpiar: el SQL de cada reporte esta escrito tanto en su archivo .sql como dentro de reportes.js y de exportar.js. La mejora pendiente es que el JavaScript lea los .sql, o crear vistas CREATE VIEW en MySQL.</p>
 </section>
 <section class="seccion" id="como-se-construyo-este-proyecto-paso-6-ordenar-y">
 <h3>PASO 6 - ORDENAR Y LIMPIAR EL CODIGO</h3>
@@ -1419,7 +1427,7 @@ vistas/  -&gt;  servidor/plantillas/</code></pre></div>
 <section class="seccion" id="como-se-construyo-este-proyecto-lo-que-sigue-pen">
 <h3>LO QUE SIGUE PENDIENTE</h3>
 <p>El ABM esta completo para articulo, comentario y usuario. Faltan las demas entidades y las 8 tablas puente.</p>
-<p>Las seis consultas de reportes estan escritas y validadas, pero falta presentarlas en la web si el enunciado lo pide, y resolver la duplicacion entre los .sql y exportar.js.</p>
+<p>Las seis consultas de reportes estan escritas, validadas y expuestas en la pagina /reportes; falta limpiar la duplicacion entre los .sql, reportes.js y exportar.js.</p>
 <p>El envio real de correo falta: falta tener credenciales de Gmail.</p>
 <p>Y la internationalizacion ES/EN esta planteada pero no empezada.</p>
 </section>

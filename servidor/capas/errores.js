@@ -21,13 +21,6 @@ function noEncontradoError(mensaje = 'El recurso solicitado no existe.') {
   return error;
 }
 
-function sinPermiso(req, res) {
-  res.status(403).render('errores/403', {
-    titulo: 'No tienes permiso',
-    ruta: req.originalUrl,
-  });
-}
-
 function requerido(valor, mensaje) {
   if (valor === undefined || valor === null) {
     throw noEncontradoError(mensaje);
@@ -89,7 +82,6 @@ function manejador(err, req, res, next) {
 
 module.exports = {
   noEncontrado,
-  sinPermiso,
   prohibido,
   noEncontradoError,
   requerido,

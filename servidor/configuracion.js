@@ -49,11 +49,7 @@ const rutas = {
   raiz,
   plantillas: path.join(__dirname, 'plantillas'),
   web: path.join(raiz, 'web'),
-  estilos: path.join(raiz, 'web', 'estilos'),
-  scripts: path.join(raiz, 'web', 'scripts'),
-  imagenes: path.join(raiz, 'web', 'imagenes'),
   subidas: path.join(raiz, 'web', 'subidas'),
-  base: path.join(raiz, 'base-de-datos'),
   pdf: path.join(raiz, 'pdf-generados'),
 };
 

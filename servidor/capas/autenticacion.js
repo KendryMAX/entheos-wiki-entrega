@@ -61,7 +61,6 @@ function exponerSesion(req, res, next) {
 
 module.exports = {
   NIVELES,
-  NOMBRES,
   nivelDesdeNombre,
   puede,
   requiereSesion,

@@ -1,88 +1,41 @@
 # Entheos Wiki
 
-Wiki de consulta sobre el mundo de Entheos. Proyecto final de Programacion Web.
+Wiki de consulta sobre el mundo de Entheos. Proyecto final de Programación Web.
 
 Repositorio privado: <https://github.com/KendryMAX/entheos-wiki>
 
-## Requisitos
+## Guía de instalación
 
-- Node.js 20 o superior
-- MySQL 8 (o MariaDB compatible)
-- Microsoft Edge (para generar los PDF con `puppeteer-core`)
+**La guía completa está en `INSTALAR-OTRA-PC.txt`** (en la raíz del proyecto).
+Ese archivo tiene todos los pasos para montar y ejecutar el proyecto en otra
+computadora a partir de lo subido a GitHub: requerimientos, clonar, `npm
+install`, crear el `.env`, crear la base, arrancar, probar y los problemas
+comunes.
 
-## Instalacion
+Resumen mínimo:
 
-```bash
+```powershell
 git clone https://github.com/KendryMAX/entheos-wiki.git
 cd entheos-wiki
 npm install
-copy .env.example .env
+Copy-Item .env.example .env      # y editar el .env
+npm run bd:crear
+npm run dev                       # http://localhost:3000
 ```
 
-Editar `.env` con tus valores reales (contrasena de MySQL, secreto de sesion,
-credenciales de Gmail). El archivo `.env` **nunca se sube al repositorio**: esta
-en el `.gitignore`. Cada quien tiene el suyo en su maquina.
+## Repositorio y equipo
 
-Luego crear la base de datos y el usuario admin:
+Repositorio **privado**. Para clonar hay que estar agregado como colaborador y
+aceptar la invitación (llega al correo, o en
+<https://github.com/KendryMAX/entheos-wiki/invitations>).
 
-```bash
-npm run bd:reiniciar
-npm run admin
-```
+- Colaboradores: `KendryMAX`, `AngelDanielZ4914`, `adrianodev`.
 
-## Ejecutar
-
-```bash
-npm run dev      # desarrollo, con recarga automatica (nodemon)
-npm run iniciar  # produccion
-```
-
-El servidor queda en `http://localhost:3000`.
-
-## Pruebas y formato
-
-```bash
-npm run prueba     # pruebas con node --test
-npm run formato    # formatear con prettier
-```
-
-## Estructura
-
-| Carpeta            | Contenido                                        |
-| ------------------ | ------------------------------------------------ |
-| `servidor/`        | Express: rutas, servicios, plantillas EJS, tools |
-| `web/`             | Estilos, scripts y imagenes del cliente          |
-| `base-de-datos/`   | Esquema SQL y consultas de reportes              |
-| `Documentación…/`  | Documento del equipo (fuente estatica)           |
-
-## Como trabajar en equipo
-
-1. Siempre partir de `main` actualizada:
-
-   ```bash
-   git pull origin main
-   ```
-
-2. Crear una rama por tarea o por persona:
-
-   ```bash
-   git checkout -b feat/nombre-de-la-tarea
-   ```
-
-3. Commitear con mensajes claros y subir la rama:
-
-   ```bash
-   git add .
-   git commit -m "Descripcion breve de lo que cambia"
-   git push -u origin feat/nombre-de-la-tarea
-   ```
-
-4. Abrir un Pull Request en GitHub y que otro revise antes de fusionar a `main`.
-   No hacer `git push` directo a `main`.
+Al trabajar en equipo: partir siempre de `main` actualizada, crear una rama por
+tarea, subirla y abrir un Pull Request. No hacer `git push` directo a `main`.
 
 ## Seguridad
 
-- `.env` (contrasenas) y `certificados/` (llave privada HTTPS) estan ignorados.
+- `.env` (contraseñas) y `certificados/` (llave privada HTTPS) están ignorados.
   **Nunca** hacer `git add -f` sobre ellos.
-- Si algun dia se sube una contrasena por error, cambiarla de inmediato: borrar
-  el archivo del historial no es suficiente.
+- Si alguna vez se sube una contraseña por error, cámbiala de inmediato.

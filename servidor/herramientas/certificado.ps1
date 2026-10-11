@@ -1,7 +1,5 @@
 $ErrorActionPreference = 'Stop'
 
-# Este script vive en servidor/herramientas/, pero el certificado va en la raiz
-# del proyecto (certificados/), que es donde lo busca el .env.
 $raiz = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Set-Location $raiz
 
