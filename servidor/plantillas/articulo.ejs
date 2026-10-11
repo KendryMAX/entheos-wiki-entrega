@@ -1,6 +1,105 @@
-<%- include('parciales/cabecera') %>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= titulo %> · Entheos Wiki</title>
+  <meta name="description" content="Wiki de consulta sobre el mundo de Entheos: lugares, personajes, objetos y cronología."
+  >
+  <link rel="stylesheet" href="/estilos/estilos.css">
+  <link rel="icon" href="/imagenes/icono.svg" type="image/svg+xml">
+</head>
+<body class="<%= (rutaActual === '/acceso' || rutaActual === '/registro') ? 'pagina-auth' : '' %>">
 
-<a class="volver-articulo" href="/articulos" aria-label="Volver a artículos">
+<a class="saltar" href="#contenido-principal">Saltar al contenido</a>
+
+<header class="barra-superior">
+  <div class="barra-interior">
+
+    <a class="marca" href="/">
+      <span class="marca-simbolo" aria-hidden="true">&#9670;</span>
+      <span class="marca-texto"><span class="marca-nombre">Entheos</span> <em>Wiki</em></span>
+    </a>
+
+    <nav class="navegacion" aria-label="Navegación principal">
+      <%
+        const accesos = [
+          { href: '/', texto: 'Inicio', activo: rutaActual === '/' },
+          { href: '/articulos', texto: 'Artículos', activo: rutaActual.startsWith('/articulos') },
+          { href: '/personajes', texto: 'Personajes', activo: rutaActual === '/personajes' },
+          { href: '/lugares', texto: 'Lugares', activo: rutaActual === '/lugares' },
+          { href: '/reportes', texto: 'Reportes', activo: rutaActual === '/reportes' },
+        ];
+        if (esEditor) {
+          accesos.push({ href: '/panel/articulos', texto: 'Mis artículos', activo: rutaActual.startsWith('/panel/articulos') });
+          accesos.push({ href: '/panel/revision', texto: 'Revisión', activo: rutaActual === '/panel/revision' });
+          accesos.push({ href: '/panel/comentarios', texto: 'Comentarios', activo: rutaActual === '/panel/comentarios' });
+        }
+        if (esAdministrador) {
+          accesos.push({ href: '/panel/usuarios', texto: 'Usuarios', activo: rutaActual === '/panel/usuarios' });
+        }
+        const anchoTri = 100;
+        const angulo = Math.PI / accesos.length;
+        const radio = Math.round(anchoTri / (2 * Math.sin(angulo / 2)));
+        const altoTri = radio;
+      %>
+      <div class="accesos-rapidos">
+        <button class="accesos-boton" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navegacion-principal" aria-label="Abrir accesos rápidos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2.2l.85 1.75 1.9.28-1.38 1.35.33 1.9L12 6.58l-1.7.9.33-1.9L9.25 4.23l1.9-.28z" fill="currentColor" stroke="none"/>
+            <path d="M4.8 3.4l.44.9 1 .14-.72.7.17 1-.89-.47-.89.47.17-1-.72-.7 1-.14z" fill="currentColor" stroke="none"/>
+            <path d="M19.2 3.4l.44.9 1 .14-.72.7.17 1-.89-.47-.89.47.17-1-.72-.7 1-.14z" fill="currentColor" stroke="none"/>
+            <path d="M12 8.4v10.9"/>
+            <path d="M12 8.4C10.1 7 7.6 7 5 8.3v10.8C7.6 17.8 10.1 17.8 12 19.2"/>
+            <path d="M12 8.4c1.9-1.4 4.4-1.4 7-.1v10.8c-2.6-1.3-5.1-1.3-7 .1"/>
+          </svg>
+        </button>
+
+        <ul class="medialuna" id="navegacion-principal" style="--tri-ancho: <%= anchoTri %>px; --tri-alto: <%= altoTri %>;">
+          <% accesos.forEach(function (acceso, indice) {
+               const grados = 180 - (indice + 0.5) * (180 / accesos.length);
+               const rot = Math.round(grados - 90);
+           %>
+            <li style="--rot: <%= rot %>deg;">
+              <a href="<%= acceso.href %>" class="opcion<%= acceso.activo ? ' activo' : '' %>"><span class="opcion-texto"><%= acceso.texto %></span></a>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sesion">
+      <% if (usuario) { %>
+        <span class="insignia-rol insignia-rol-<%= nivel %>"><%= rol %></span>
+        <span class="nombre-usuario" title="<%= usuario.email %>"><%= usuario.nombre_usuario %></span>
+        <form action="/salir" method="POST" class="formulario-salir">
+          <button type="submit" class="boton boton-plano boton-chico">Salir</button>
+        </form>
+      <% } else { %>
+        <a href="/acceso" class="sesion-link">Ingresar</a>
+        <a href="/registro" class="sesion-cta">Crear cuenta</a>
+      <% } %>
+    </div>
+
+  </div>
+</header>
+
+<div class="marco">
+
+<aside class="contadores" aria-label="Cantidad de contenido">
+  <ul>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.articulo %></span><span class="contador-texto">Artículos</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.personaje %></span><span class="contador-texto">Personajes</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.localidad %></span><span class="contador-texto">Lugares</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.reino_estado %></span><span class="contador-texto">Reinos</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.evento %></span><span class="contador-texto">Eventos</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.item %></span><span class="contador-texto">Objetos</span></span></li>
+  </ul>
+</aside>
+
+<main class="contenido" id="contenido-principal">
+
+<a class="volver-articulo" href="/articulos" aria-label="Volver a artícul">
   <svg class="volver-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M9 14 4 9l5-5"/>
     <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H9"/>
@@ -26,16 +125,10 @@
       <span class="articulo-fecha"><%= new Date(articulo.publicado_en || articulo.actualizado_en).toLocaleDateString('es-AR') %></span>
       <span class="articulo-vistas"><%= articulo.vistas %> vista<%= articulo.vistas === 1 ? '' : 's' %></span>
     </div>
-
-    <% if (esEditor) { %>
-      <p class="articulo-acciones">
-        <a class="boton boton-plano" href="/panel/articulos/<%= articulo.id %>/editar">Editar</a>
-        <a class="boton boton-plano" href="/panel/revision">Revisión</a>
-      </p>
-    <% } %>
   </header>
 
   <aside class="articulo-lateral">
+    
     <% if (articulo.imagen_ruta) { %>
       <img class="articulo-imagen" src="<%= articulo.imagen_ruta %>" alt="<%= articulo.titulo %>" loading="lazy">
     <% } else if (articulo.categoria === 'Personajes') { %>
@@ -71,19 +164,7 @@
     </div>
   </div>
 
-  <% if (relacionadas.length > 0) { %>
-    <section class="bloque bloque-aplado">
-      <h2 class="bloque-titulo">Ver también</h2>
-      <ul class="lista-relaciones">
-        <% relacionadas.forEach(function (relacion) { %>
-          <li>
-            <a href="/articulos/<%= relacion.slug %>"><%= relacion.titulo %></a>
-            <span class="relacion-tipo"><%= relacion.tipo_relacion.replace(/_/g, ' ') %></span>
-          </li>
-        <% }); %>
-      </ul>
-    </section>
-  <% } %>
+  
 
 </article>
 
@@ -101,28 +182,74 @@
         <span class="campo-ayuda">Queda pendiente hasta que un Editor lo apruebe.</span>
       </div>
       <button type="submit" class="boton boton-dorado">Enviar</button>
-    </form>
-  <% } else { %>
-    <p class="aviso aviso-chico">
-      <a href="/acceso">Ingresar</a> para dejar un comentario.
+    <% } else { %>
+      <p class="aviso aviso-chico">
+        <a href="/acceso">Ingresar</a> para dejar un comentario.
+      </p>
+    <% } %>
+
+    <% if (comentarios.length === 0) { %>
+      <p class="vacio">Todavía no hay comentarios.</p>
+    <% } else { %>
+      <ul class="comentarios">
+        <% comentarios.forEach(function (comentario) { %>
+          <li class="comentario">
+            <p class="comentario-cabecera">
+              <strong><%= comentario.nombre_usuario %></strong>
+              <span class="comentario-fecha"><%= new Date(comentario.creado_en).toLocaleString('es-AR') %></span>
+            </p>
+            <p class="comentario-texto"><%= comentario.contenido %></p>
+          </li>
+        <% }); %>
+      </ul>
+    <% } %>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <div class="pie-interior">
+    <p class="pie-marca"><span class="marca-nombre">Entheos</span> <em>Wiki</em></p>
+
+    <nav class="pie-enlaces" aria-label="Enlaces del pie">
+      <a href="/">Inicio</a> &middot;
+      <a href="/articulos">Artículos</a> &middot;
+      <a href="/personajes">Personajes</a> &middot;
+      <a href="/lugares">Lugares</a> &middot;
+      <a href="/cronologia">Cronología</a>
+      
+        &middot; <a href="/acceso">Ingresar</a>
+      
+      
+      
+    </nav>
+
+    <p class="pie-texto">
+      Entheos Wiki · Proyecto final de Programación Web · 2026
     </p>
-  <% } %>
+  </div>
+</footer>
 
-  <% if (comentarios.length === 0) { %>
-    <p class="vacio">Todavía no hay comentarios.</p>
-  <% } else { %>
-    <ul class="comentarios">
-      <% comentarios.forEach(function (comentario) { %>
-        <li class="comentario">
-          <p class="comentario-cabecera">
-            <strong><%= comentario.nombre_usuario %></strong>
-            <span class="comentario-fecha"><%= new Date(comentario.creado_en).toLocaleString('es-AR') %></span>
-          </p>
-          <p class="comentario-texto"><%= comentario.contenido %></p>
-        </li>
-      <% }); %>
-    </ul>
-  <% } %>
-</section>
-
-<%- include('parciales/pie') %>
+<script src="/scripts/aplicacion.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Hacer las secciones h3 expandibles/collapsibles
+  var headings = document.querySelectorAll("h3");
+  headings.forEach(function(heading) {
+    // Verificar si ya tiene un sibling de contenido
+    var content = heading.nextElementSibling;
+    if (content && content.tagName && content.tagName.toLowerCase() === "p") {
+      // Verificar si ya está envuelto en details
+      if (!heading.parentElement.classList.contains('details-wrapper')) {
+        var details = document.createElement("details");
+        var summary = document.createElement("summary");
+        summary.textContent = heading.textContent;
+        details.classList.add('details-wrapper');
+        details.appendChild(summary);
+        details.appendChild(content);
+        heading.parentNode.replaceChild(details, heading);
+      }
+    }
+  });
+});
+</script>
