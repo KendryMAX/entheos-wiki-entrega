@@ -214,11 +214,13 @@ pre code { color: var(--dorado-claro); }
   box-shadow: var(--sombra-suave);
   transition: border-color 0.18s, color 0.18s, transform 0.18s;
 }
-.accesos-boton svg { width: 24px; height: 24px; display: block; }
+.accesos-boton svg { width: 28px; height: 28px; display: block; }
 .accesos-boton:hover,
 .accesos-boton:focus-visible { border-color: var(--dorado); color: var(--dorado); outline: none; }
 .accesos-rapidos:hover .accesos-boton,
-.accesos-rapidos:focus-within .accesos-boton { border-color: var(--dorado); color: var(--dorado); transform: rotate(-8deg); }
+.accesos-rapidos:focus-within .accesos-boton,
+.accesos-rapidos:has(.medialuna:hover) .accesos-boton,
+.accesos-rapidos:has(.medialuna:focus-within) .accesos-boton { border-color: var(--dorado); color: var(--dorado); transform: rotate(-8deg); }
 
 .accesos-rapidos::before {
   content: "";
@@ -237,7 +239,9 @@ pre code { color: var(--dorado-claro); }
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .accesos-rapidos:hover::before,
-.accesos-rapidos:focus-within::before { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.accesos-rapidos:focus-within::before,
+.accesos-rapidos:has(.medialuna:hover)::before,
+.accesos-rapidos:has(.medialuna:focus-within)::before { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
 .medialuna {
   position: absolute;
@@ -263,6 +267,8 @@ pre code { color: var(--dorado-claro); }
 }
 .accesos-rapidos:hover .medialuna li,
 .accesos-rapidos:focus-within .medialuna li,
+.accesos-rapidos:has(.medialuna:hover) .medialuna li,
+.accesos-rapidos:has(.medialuna:focus-within) .medialuna li,
 .medialuna.abierta li {
   opacity: 1;
   pointer-events: auto;
@@ -285,7 +291,9 @@ pre code { color: var(--dorado-claro); }
   font-size: 0.78rem;
   text-align: center;
   text-decoration: none;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  border: 1px solid rgba(214, 179, 110, 0.25);
+  border-top: none;
 }
 .medialuna .opcion-texto {
   display: inline-block;
@@ -297,9 +305,20 @@ pre code { color: var(--dorado-claro); }
   background: conic-gradient(from 210deg, var(--negro-2), var(--negro-3));
   text-decoration: none;
 }
+.medialuna li:hover a.opcion,
+.medialuna a.opcion:focus-visible {
+  color: var(--dorado-claro);
+  background: conic-gradient(from 210deg, var(--negro-2), var(--negro-3));
+  text-decoration: none;
+  outline: none;
+  border-color: rgba(227, 192, 90, 0.6);
+}
 .medialuna a.opcion.activo {
   color: var(--dorado);
   background: conic-gradient(from 210deg, rgba(201, 162, 39, 0.16), rgba(201, 162, 39, 0.05));
+}
+.medialuna li:has(a.opcion:focus-visible) {
+  filter: drop-shadow(0 0 6px rgba(227, 192, 90, 0.4));
 }
 
 .buscador { position: relative; flex-shrink: 0; }

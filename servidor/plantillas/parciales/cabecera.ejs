@@ -60,7 +60,7 @@
                const grados = 180 - (indice + 0.5) * (180 / accesos.length);
                const rot = Math.round(grados - 90);
           %>
-            <li style="--rot: <%= rot %>deg;">
+            <li style="--rot: <%= rot %>deg;" data-rot="<%= rot %>">
               <a href="<%= acceso.href %>" class="opcion<%= acceso.activo ? ' activo' : '' %>"><span class="opcion-texto"><%= acceso.texto %></span></a>
             </li>
           <% }); %>
