@@ -4,85 +4,68 @@
   <h1 class="portada-titulo">La memoria del mundo</h1>
   <p class="portada-bajada">
     Entheos es el continente conocido por los cronistas. Consulta lugares, personajes,
-    objetos y su cronologia.
+    objetos y su cronología.
   </p>
 
   <form class="buscador-grande" action="/buscar" method="GET" role="search">
-    <label class="solo-lectores" for="q-portada">Buscar articulos</label>
-    <input type="search" id="q-portada" name="q" placeholder="Buscar articulos, lugares, personajes..."
+    <label class="solo-lectores" for="q-portada">Buscar artículos</label>
+    <input type="search" id="q-portada" name="q" placeholder="Buscar artículos, lugares, personajes..."
            autocomplete="off" data-autocompletado>
     <ul class="sugerencias" data-sugerencias hidden></ul>
     <button type="submit" class="boton boton-dorado">Buscar</button>
   </form>
 </section>
 
-<section class="cifras" aria-label="Estado de la wiki">
-  <article class="cifra">
-    <span class="cifra-numero"><%= totales.articulo %></span>
-    <span class="cifra-etiqueta">Articulos</span>
-  </article>
-  <article class="cifra">
-    <span class="cifra-numero"><%= publicados %></span>
-    <span class="cifra-etiqueta">Publicados</span>
-  </article>
-  <article class="cifra">
-    <span class="cifra-numero"><%= totales.personaje %></span>
-    <span class="cifra-etiqueta">Personajes</span>
-  </article>
-  <article class="cifra">
-    <span class="cifra-numero"><%= totales.localidad %></span>
-    <span class="cifra-etiqueta">Lugares</span>
-  </article>
-  <article class="cifra">
-    <span class="cifra-numero"><%= totales.reino_estado %></span>
-    <span class="cifra-etiqueta">Reinos</span>
-  </article>
-  <article class="cifra">
-    <span class="cifra-numero"><%= totales.evento %></span>
-    <span class="cifra-etiqueta">Eventos</span>
-  </article>
+<section class="bloque">
+  <h2 class="bloque-titulo">Explorar Contenido</h2>
+
+  <div class="categorias">
+    <% categorias.forEach(function (categoria) { %>
+      <a class="categoria-banner" href="/articulos?categoria=<%= categoria.id %>">
+        <span class="categoria-banner-marco">
+          <% if (categoria.imagen_ruta) { %>
+            <img class="categoria-banner-imagen" src="<%= categoria.imagen_ruta %>" alt="" loading="lazy">
+          <% } %>
+          <span class="categoria-banner-velo"></span>
+        </span>
+        <span class="categoria-banner-cont">
+          <span class="categoria-banner-kicker"><%= categoria.articulos %> artículo<%= categoria.articulos === 1 ? '' : 's' %></span>
+          <span class="categoria-banner-titulo"><%= categoria.nombre %></span>
+          <span class="categoria-banner-cita">&ldquo;<%= categoria.descripcion %>&rdquo;</span>
+        </span>
+      </a>
+    <% }); %>
+  </div>
 </section>
 
 <section class="bloque">
-  <h2 class="bloque-titulo">Ultimos articulos</h2>
+  <h2 class="bloque-titulo">Últimos artículos</h2>
 
   <% if (recientes.length === 0) { %>
-    <p class="vacio">Todavia no hay articulos publicados.</p>
+    <p class="vacio">Todavía no hay artículos publicados.</p>
   <% } else { %>
     <div class="rejilla">
       <% recientes.forEach(function (articulo) { %>
-        <article class="tarjeta">
-          <h3 class="tarjeta-titulo"><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></h3>
-          <p class="tarjeta-resumen"><%= articulo.resumen || 'Sin resumen.' %></p>
-          <p class="tarjeta-pie">
-            por <%= articulo.nombre_completo %>
-          </p>
-        </article>
+        <a class="tarjeta<%= articulo.categoria === 'Personajes' ? ' tarjeta--retrato' : '' %>" href="/articulos/<%= articulo.slug %>">
+          <% if (articulo.imagen_ruta) { %>
+            <img class="tarjeta-imagen" src="<%= articulo.imagen_ruta %>" alt="" loading="lazy">
+          <% } %>
+          <span class="tarjeta-cont">
+            <span class="tarjeta-titulo"><%= articulo.titulo %></span>
+            <span class="tarjeta-resumen"><%= articulo.resumen || 'Sin resumen.' %></span>
+            <span class="tarjeta-pie">por <%= articulo.nombre_completo %></span>
+          </span>
+        </a>
       <% }); %>
     </div>
   <% } %>
 </section>
 
-<% if (etiquetas.length > 0) { %>
-<section class="bloque">
-  <h2 class="bloque-titulo">Etiquetas</h2>
-  <ul class="etiquetas">
-    <% etiquetas.forEach(function (etiqueta) { %>
-      <li>
-        <a class="etiqueta" href="/articulos?etiqueta=<%= encodeURIComponent(etiqueta.nombre) %>">
-          <%= etiqueta.nombre %> <span class="etiqueta-conteo"><%= etiqueta.articulos %></span>
-        </a>
-      </li>
-    <% }); %>
-  </ul>
-</section>
-<% } %>
-
 <% if (!usuario) { %>
 <section class="bloque">
   <div class="aviso">
-    <h2 class="aviso-titulo">Registrate para comentar</h2>
-    <p class="aviso-texto">Con una cuenta podes dejar comentarios en los articulos. Toda cuenta nueva empieza con el rol Lector.</p>
+    <h2 class="aviso-titulo">Regístrate para comentar</h2>
+    <p class="aviso-texto">Con una cuenta podés dejar comentarios en los artículos. Toda cuenta nueva empieza con el rol Lector.</p>
     <a href="/registro" class="boton boton-dorado">Crear cuenta</a>
   </div>
 </section>

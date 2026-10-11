@@ -4,7 +4,7 @@ const express = require('express');
 
 const db = require('../datos/base');
 const config = require('../configuracion');
-const { markdownAHtml } = require('../servicios/contenido');
+const { markdownAHtml, articuloAHtml, separarFicha } = require('../servicios/contenido');
 const { requiereSesion } = require('../capas/autenticacion');
 const errores = require('../capas/errores');
 
@@ -46,12 +46,13 @@ router.get('/', async (req, res, next) => {
 
     const articulos = await db.consultar(
       `SELECT a.id, a.titulo, a.slug, a.resumen, a.estado, a.vistas, a.actualizado_en,
-              c.nombre AS categoria, u.nombre_usuario AS autor,
+              c.nombre AS categoria, u.nombre_usuario AS autor, i.ruta AS imagen_ruta,
               (SELECT COUNT(*) FROM comentario co
                 WHERE co.articulo_id = a.id AND co.estado = 'aprobado') AS comentarios
          FROM articulo a
          LEFT JOIN categoria c ON c.id = a.categoria_id
          LEFT JOIN usuario u ON u.id = a.autor_id
+         LEFT JOIN imagen i ON i.id = a.imagen_id
          ${donde}
         ORDER BY a.actualizado_en DESC
         LIMIT ? OFFSET ?`,
@@ -87,27 +88,32 @@ router.get('/:slug', async (req, res, next) => {
     const articulo = await db.consultarUno(
       `SELECT a.*, c.nombre AS categoria, u.nombre_usuario AS autor,
               u.nombre_completo AS autor_nombre, r.nombre AS autor_rol,
-              rev.nombre_usuario AS revisor
+              rev.nombre_usuario AS revisor, i.ruta AS imagen_ruta
          FROM articulo a
          LEFT JOIN categoria c ON c.id = a.categoria_id
          LEFT JOIN usuario u ON u.id = a.autor_id
          LEFT JOIN rol r ON r.id = u.rol_id
          LEFT JOIN usuario rev ON rev.id = a.revisor_id
+         LEFT JOIN imagen i ON i.id = a.imagen_id
         WHERE a.slug = ?
         LIMIT 1`,
       [slug]
     );
 
-    errores.requerido(articulo, 'Ese articulo no existe.');
+    errores.requerido(articulo, 'Ese artículo no existe.');
 
     if (articulo.estado !== 'publicado') {
       errores.permitido(
         res.locals.puede(res.locals.NIVELES.Editor),
-        'Ese articulo todavia no esta publicado.'
+        'Ese artículo todavía no está publicado.'
       );
     }
 
-    articulo.contenido_html = markdownAHtml(articulo.contenido_md);
+    const partes = separarFicha(articulo.contenido_md);
+    const convertido = articuloAHtml(partes.cuerpo);
+    articulo.contenido_html = convertido.html;
+    articulo.indice = convertido.indice;
+    articulo.ficha_html = partes.ficha.trim() ? markdownAHtml(partes.ficha) : '';
 
     const etiquetas = await db.consultar(
       `SELECT e.nombre FROM etiqueta e
@@ -159,7 +165,7 @@ router.post('/:slug/comentarios', requiereSesion, async (req, res, next) => {
       [String(req.params.slug)]
     );
 
-    errores.requerido(articulo, 'Ese articulo no existe.');
+    errores.requerido(articulo, 'Ese artículo no existe.');
 
     await db.ejecutar(
       'INSERT INTO comentario (articulo_id, usuario_id, contenido, estado) VALUES (?, ?, ?, ?)',

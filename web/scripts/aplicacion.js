@@ -59,15 +59,33 @@ function activarValidacion(formulario) {
 }
 
 function activarMenu() {
-  const boton = document.querySelector('.boton-menu');
   const navegacion = document.getElementById('navegacion-principal');
+  if (!navegacion) return;
 
-  if (!boton || !navegacion) return;
+  const sincronizar = (abierta) => {
+    navegacion.classList.toggle('abierta', abierta);
+    document.body.classList.toggle('menu-abierto', abierta);
+  };
 
-  boton.addEventListener('click', () => {
-    const abierta = navegacion.classList.toggle('abierta');
-    boton.setAttribute('aria-expanded', String(abierta));
+  document.querySelectorAll('.boton-menu, .accesos-boton').forEach((boton) => {
+    boton.addEventListener('click', () => {
+      const abierta = !navegacion.classList.contains('abierta');
+      sincronizar(abierta);
+      boton.setAttribute('aria-expanded', String(abierta));
+    });
   });
+
+  const accesos = document.querySelector('.accesos-rapidos');
+  if (accesos) {
+    accesos.addEventListener('mouseenter', () => {
+      document.body.classList.add('menu-abierto');
+    });
+    accesos.addEventListener('mouseleave', () => {
+      if (!navegacion.classList.contains('abierta')) {
+        document.body.classList.remove('menu-abierto');
+      }
+    });
+  }
 }
 
 function itemDeSugerencia(elemento) {
@@ -118,7 +136,7 @@ async function pedirSugerencias(termino, señal) {
     headers: { Accept: 'application/json' },
   });
 
-  if (!respuesta.ok) throw new Error(`La busqueda fallo con codigo ${respuesta.status}`);
+  if (!respuesta.ok) throw new Error(`La búsqueda falló con el código ${respuesta.status}`);
 
   return respuesta.json();
 }
@@ -200,7 +218,7 @@ function activarContadores() {
     const actualizar = () => {
       const largo = campo.value.length;
       const tope = campo.maxLength > 0 ? ` de ${campo.maxLength}` : '';
-      contador.textContent = largo + (largo === 1 ? ' caracter' : ' caracteres') + tope;
+      contador.textContent = largo + (largo === 1 ? ' carácter' : ' caracteres') + tope;
 
       if (largo < 10) return;
 

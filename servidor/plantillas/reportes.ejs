@@ -1,0 +1,24 @@
+<%- include('parciales/cabecera') %>
+
+<section class="bloque">
+  <h1 class="bloque-titulo">Reportes</h1>
+  <p class="bloque-bajada">Las distintas opciones de reportes de la wiki. Elige uno para generar y descargar su PDF.</p>
+
+  <% if (aviso) { %>
+    <p class="alerta alerta-error"><%= aviso %></p>
+  <% } %>
+
+  <div class="rejilla">
+    <% reportes.forEach(function (reporte) { %>
+      <a class="tarjeta" href="/reportes/<%= reporte.clave %>">
+        <div class="tarjeta-cont">
+          <h2 class="tarjeta-titulo"><%= reporte.titulo %></h2>
+          <p class="tarjeta-resumen"><%= reporte.descripcion %></p>
+          <p class="tarjeta-pie">Generar PDF<span aria-hidden="true"> &#8595;</span></p>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+</section>
+
+<%- include('parciales/pie') %>

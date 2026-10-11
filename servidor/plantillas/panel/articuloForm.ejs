@@ -1,7 +1,7 @@
 <%- include('../parciales/cabecera') %>
 
 <section class="hoja hoja-ancha">
-  <h1 class="hoja-titulo"><%= articulo ? 'Editar articulo' : 'Nuevo articulo' %></h1>
+  <h1 class="hoja-titulo"><%= articulo ? 'Editar artículo' : 'Nuevo artículo' %></h1>
 
   <% if (error) { %>
     <p class="alerta alerta-error"><%= error %></p>
@@ -14,37 +14,38 @@
     <% } %>
 
     <div class="campo">
-      <label for="titulo">Titulo</label>
+      <label for="titulo">Título</label>
       <input type="text" id="titulo" name="titulo" required minlength="3" maxlength="200"
+             placeholder="Faro de la Casa Lumina"
              value="<%= articulo ? articulo.titulo || '' : '' %>"
-             data-error="El titulo necesita al menos 3 caracteres." autofocus>
+             data-error="El título necesita al menos 3 caracteres." autofocus>
       <span class="campo-error" data-error-de="titulo"></span>
     </div>
 
     <div class="campo">
       <label for="resumen">Resumen</label>
       <textarea id="resumen" name="resumen" rows="2" maxlength="500"
-                placeholder="Una o dos lineas que expliquen de que trata el articulo."><%= articulo ? articulo.resumen || '' : '' %></textarea>
-      <span class="campo-ayuda">Se muestra en el listado de articulos.</span>
+                placeholder="En Portside, el viejo muelle cruje con cada marea y los pescadores cuentan que algo duerme bajo el agua."><%= articulo ? articulo.resumen || '' : '' %></textarea>
+      <span class="campo-ayuda">Se muestra en el listado de artículos.</span>
     </div>
 
     <div class="campo">
       <label for="contenido">Contenido (Markdown)</label>
       <textarea class="editor-memo" id="contenido" name="contenido" rows="16" required minlength="10"
                 data-error="El contenido necesita al menos 10 caracteres."
-                placeholder="## Titulo&#10;&#10;Escribi aqui el texto del articulo."><%= articulo ? articulo.contenido_md || '' : '' %></textarea>
+                placeholder="## La leyenda&#10;&#10;Se dice que cuando la niebla se alza sobre el puerto, el faro enciende solo: nadie sabe quién cuida la llama.&#10;&#10;## Historia&#10;&#10;Los cronistas de Portside registran la primera luz el año que se hundió la Compañía del Ámbar."><%= articulo ? articulo.contenido_md || '' : '' %></textarea>
       <span class="campo-error" data-error-de="contenido"></span>
       <span class="campo-ayuda">
-        Markdown: <code>## titulo</code>, <code>**negrita**</code>, <code>*cursiva*</code>,
+        Markdown: <code>## título</code>, <code>**negrita**</code>, <code>*cursiva*</code>,
         <code>- lista</code>, <code>&gt; cita</code>, <code>[enlace](/ruta)</code>.
       </span>
       <div class="contador" data-contador-de="contenido">0 caracteres</div>
     </div>
 
     <div class="campo">
-      <label for="categoria">Categoria</label>
+      <label for="categoria">Categoría</label>
       <select id="categoria" name="categoria_id">
-        <option value="">Sin categoria</option>
+        <option value="">Sin categoría</option>
         <% categorias.forEach(function (categoria) { %>
           <option value="<%= categoria.id %>" <%= articulo && articulo.categoria_id === categoria.id ? 'selected' : '' %>>
             <%= categoria.nombre %>
@@ -62,11 +63,11 @@
           </option>
         <% }); %>
       </select>
-      <span class="campo-ayuda">Queda publicado de inmediato si elegis "publicado".</span>
+      <span class="campo-ayuda">Queda publicado de inmediato si elegís "publicado".</span>
     </div>
 
     <button type="submit" class="boton boton-dorado">
-      <%= articulo ? 'Guardar cambios' : 'Crear articulo' %>
+      <%= articulo ? 'Guardar cambios' : 'Crear artículo' %>
     </button>
     <a href="/panel/articulos" class="boton boton-plano">Cancelar</a>
   </form>

@@ -1,7 +1,7 @@
 <%- include('parciales/cabecera') %>
 
 <section class="bloque">
-  <h1 class="bloque-titulo">Cronologia</h1>
+  <h1 class="bloque-titulo">Cronología</h1>
 
   <div class="filtros">
     <a class="ficha <%= !eraPedida ? 'activa' : '' %>" href="/cronologia">Todas las eras</a>
@@ -13,7 +13,7 @@
   </div>
 
   <% if (eras.length === 0) { %>
-    <p class="vacio">Todavia no hay eras cargadas.</p>
+    <p class="vacio">Todavía no hay eras cargadas.</p>
   <% } %>
 
   <div class="linea-tiempo">
@@ -33,7 +33,7 @@
   <h2 class="bloque-titulo">Eventos</h2>
 
   <% if (eventos.length === 0) { %>
-    <p class="vacio">Todavia no hay eventos cargados.</p>
+    <p class="vacio">Todavía no hay eventos cargados.</p>
   <% } else { %>
     <ul class="eventos">
       <% eventos.forEach(function (evento) { %>

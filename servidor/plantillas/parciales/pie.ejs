@@ -1,10 +1,31 @@
 </main>
 
+</div>
+
 <footer class="pie">
   <div class="pie-interior">
-    <p class="pie-marca">Entheos <em>Wiki</em></p>
-    <p class="pie-texto">Proyecto final de Programacion Web. Paleta de negros, grises y dorados.</p>
-    <p class="pie-texto">Los articulos con la insignia de <span class="insignia-leyenda">leyenda</span> no estan confirmados por el canon.</p>
+    <p class="pie-marca"><span class="marca-nombre">Entheos</span> <em>Wiki</em></p>
+
+    <nav class="pie-enlaces" aria-label="Enlaces del pie">
+      <a href="/">Inicio</a> &middot;
+      <a href="/articulos">Artículos</a> &middot;
+      <a href="/personajes">Personajes</a> &middot;
+      <a href="/lugares">Lugares</a> &middot;
+      <a href="/cronologia">Cronología</a>
+      <% if (!usuario) { %>
+        &middot; <a href="/acceso">Ingresar</a>
+      <% } %>
+      <% if (esEditor) { %>
+        &middot; <a href="/panel/articulos">Mis artículos</a>
+      <% } %>
+      <% if (esAdministrador) { %>
+        &middot; <a href="/panel/usuarios">Usuarios</a>
+      <% } %>
+    </nav>
+
+    <p class="pie-texto">
+      Entheos Wiki &middot; Proyecto final de Programación Web &middot; <%= new Date().getFullYear() %>
+    </p>
   </div>
 </footer>
 

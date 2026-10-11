@@ -12,7 +12,7 @@ const hashFalso = '$2b$10$NyjmXrTLHhJxD9Uu5bYt7.9KLP7pNaE5rLd0yq7Q8kXqA0eS8JbYx'
 
 function volverConError(res, correo, mensaje, estado) {
   return res.status(estado).render('acceso', {
-    titulo: 'Iniciar sesion',
+    titulo: 'Iniciar sesión',
     error: mensaje,
     aviso: null,
     correo,
@@ -25,9 +25,9 @@ router.get('/acceso', (req, res) => {
   const creado = req.query.creado === '1';
 
   res.render('acceso', {
-    titulo: 'Iniciar sesion',
+    titulo: 'Iniciar sesión',
     error: null,
-    aviso: creado ? 'Tu cuenta fue creada. Ya podes iniciar sesion.' : null,
+    aviso: creado ? 'Tu cuenta fue creada. Ya podés iniciar sesión.' : null,
     correo: '',
   });
 });
@@ -38,7 +38,7 @@ router.post('/acceso', async (req, res, next) => {
     const contrasena = String(req.body.contrasena || '');
 
     if (!correo || !contrasena) {
-      return volverConError(res, correo, 'Completa el correo y la contrasena.', 400);
+      return volverConError(res, correo, 'Completa el correo y la contraseña.', 400);
     }
 
     const usuario = await db.consultarUno(
@@ -53,17 +53,17 @@ router.post('/acceso', async (req, res, next) => {
 
     if (!usuario) {
       await bcrypt.compare(contrasena, hashFalso);
-      return volverConError(res, correo, 'Correo o contrasena incorrectos.', 401);
+      return volverConError(res, correo, 'Correo o contraseña incorrectos.', 401);
     }
 
     const coincide = await bcrypt.compare(contrasena, usuario.password_hash);
 
     if (!coincide) {
-      return volverConError(res, correo, 'Correo o contrasena incorrectos.', 401);
+      return volverConError(res, correo, 'Correo o contraseña incorrectos.', 401);
     }
 
     if (!usuario.activo) {
-      return volverConError(res, correo, 'Tu cuenta esta dada de baja. Contacta al Administrador.', 403);
+      return volverConError(res, correo, 'Tu cuenta está dada de baja. Contacta al Administrador.', 403);
     }
 
     const destino = req.session.retorno || '/';
@@ -119,19 +119,19 @@ router.post('/registro', async (req, res, next) => {
     }
 
     if (datos.nombre_completo.length < 3 || datos.nombre_completo.length > 120) {
-      problemas.push('Escribi tu nombre completo (entre 3 y 120 caracteres).');
+      problemas.push('Escribe tu nombre completo (entre 3 y 120 caracteres).');
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(datos.email)) {
-      problemas.push('El correo no tiene un formato valido.');
+      problemas.push('El correo no tiene un formato válido.');
     }
 
     if (datos.contrasena.length < 8) {
-      problemas.push('La contrasena debe tener al menos 8 caracteres.');
+      problemas.push('La contraseña debe tener al menos 8 caracteres.');
     }
 
     if (datos.contrasena !== datos.repetir) {
-      problemas.push('Las contrasenas no coinciden.');
+      problemas.push('Las contraseñas no coinciden.');
     }
 
     if (problemas.length > 0) {
@@ -150,7 +150,7 @@ router.post('/registro', async (req, res, next) => {
     if (existente) {
       return res.status(409).render('registro', {
         titulo: 'Crear cuenta',
-        error: 'Ese correo o nombre de usuario ya estan registrados.',
+        error: 'Ese correo o nombre de usuario ya están registrados.',
         datos: visibles,
       });
     }

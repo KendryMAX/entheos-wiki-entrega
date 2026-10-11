@@ -4,7 +4,7 @@
   <h1 class="bloque-titulo">Lugares</h1>
 
   <% if (lugares.length === 0) { %>
-    <p class="vacio">Todavia no hay lugares cargados.</p>
+    <p class="vacio">Todavía no hay lugares cargados.</p>
   <% } else { %>
     <div class="rejilla">
       <% lugares.forEach(function (lugar) { %>
@@ -14,7 +14,7 @@
             <% if (lugar.tipo_zona) { %><span class="estado"><%= lugar.tipo_zona %></span><% } %>
           </div>
           <h2 class="tarjeta-titulo"><%= lugar.nombre %></h2>
-          <p class="tarjeta-resumen"><%= lugar.descripcion || 'Sin descripcion.' %></p>
+          <p class="tarjeta-resumen"><%= lugar.descripcion || 'Sin descripción.' %></p>
           <p class="tarjeta-pie">
             <%= lugar.reino || 'Sin reino asignado' %>
             <% if (lugar.zona) { %> &middot; <%= lugar.zona %><% } %>

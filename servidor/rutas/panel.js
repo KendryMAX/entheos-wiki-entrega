@@ -30,7 +30,7 @@ router.get('/panel/articulos', requiereSesion, requiereEditor(), async (req, res
         LIMIT 200`
     );
 
-    res.render('panel/articulos', { titulo: 'Articulos', articulos });
+    res.render('panel/articulos', { titulo: 'Artículos', articulos });
   } catch (error) {
     next(error);
   }
@@ -39,7 +39,7 @@ router.get('/panel/articulos', requiereSesion, requiereEditor(), async (req, res
 router.get('/panel/articulos/nuevo', requiereSesion, requiereEditor(), async (req, res, next) => {
   try {
     res.render('panel/articuloForm', {
-      titulo: 'Nuevo articulo',
+      titulo: 'Nuevo artículo',
       articulo: null,
       categorias: await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre'),
       error: null,
@@ -55,10 +55,10 @@ router.get('/panel/articulos/:id/editar', requiereSesion, requiereEditor(), asyn
       Number(req.params.id),
     ]);
 
-    errores.requerido(articulo, 'Ese articulo no existe.');
+    errores.requerido(articulo, 'Ese artículo no existe.');
 
     res.render('panel/articuloForm', {
-      titulo: 'Editar articulo',
+      titulo: 'Editar artículo',
       articulo,
       categorias: await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre'),
       error: null,
@@ -82,7 +82,7 @@ router.post('/panel/articulos', requiereSesion, requiereEditor(), async (req, re
     if (problemas.length > 0) {
       const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
       return res.status(400).render('panel/articuloForm', {
-        titulo: id ? 'Editar articulo' : 'Nuevo articulo',
+        titulo: id ? 'Editar artículo' : 'Nuevo artículo',
         articulo: {
           id,
           titulo,
@@ -253,7 +253,7 @@ router.post('/panel/usuarios/:id/rol', requiereSesion, requiereAdministrador(), 
     }
 
     if (id === res.locals.usuario.id) {
-      throw errores.prohibido('No podes cambiar tu propio rol.');
+      throw errores.prohibido('No puedes cambiar tu propio rol.');
     }
 
     await db.ejecutar(
@@ -272,7 +272,7 @@ router.post('/panel/usuarios/:id/activo', requiereSesion, requiereAdministrador(
     const id = Number(req.params.id);
 
     if (id === res.locals.usuario.id) {
-      throw errores.prohibido('No podes desactivar tu propia cuenta.');
+      throw errores.prohibido('No puedes desactivar tu propia cuenta.');
     }
 
     await db.ejecutar('UPDATE usuario SET activo = 1 - activo WHERE id = ?', [id]);
@@ -288,7 +288,7 @@ router.post('/panel/usuarios/:id/contrasena', requiereSesion, requiereAdministra
     const nueva = String(req.body.contrasena || '');
 
     if (nueva.length < 8) {
-      throw errores.prohibido('La contrasena debe tener al menos 8 caracteres.');
+      throw errores.prohibido('La contraseña debe tener al menos 8 caracteres.');
     }
 
     const hash = await bcrypt.hash(nueva, 10);

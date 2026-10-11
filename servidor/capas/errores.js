@@ -9,7 +9,7 @@ function noEncontrado(req, res) {
   });
 }
 
-function prohibido(mensaje = 'No tenes permiso para hacer eso.') {
+function prohibido(mensaje = 'No tienes permiso para hacer eso.') {
   const error = new Error(mensaje);
   error.status = 403;
   return error;
@@ -23,7 +23,7 @@ function noEncontradoError(mensaje = 'El recurso solicitado no existe.') {
 
 function sinPermiso(req, res) {
   res.status(403).render('errores/403', {
-    titulo: 'No tenes permiso',
+    titulo: 'No tienes permiso',
     ruta: req.originalUrl,
   });
 }
@@ -62,7 +62,7 @@ function manejador(err, req, res, next) {
       break;
     case 'ER_ACCESS_DENIED_ERROR':
       estado = 500;
-      mensaje = 'Usuario o contrasena de la base de datos incorrectos.';
+      mensaje = 'Usuario o contraseña de la base de datos incorrectos.';
       break;
     default:
       break;

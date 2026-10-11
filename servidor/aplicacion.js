@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const config = require('./configuracion');
 const { exponerSesion } = require('./capas/autenticacion');
 const errores = require('./capas/errores');
+const db = require('./datos/base');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(
         styleSrc: ["'self'", "'unsafe-inline'"],
         scriptSrc: ["'self'"],
         imgSrc: ["'self'", 'data:'],
+        fontSrc: ["'self'"],
       },
     },
     crossOriginEmbedderPolicy: false,
@@ -65,10 +67,29 @@ app.use('/registro', app.locals.limiteAcceso);
 
 app.use(exponerSesion);
 
+app.use(async function cargarConteos(req, res, next) {
+  try {
+    const filas = await db.consultar(
+      `SELECT
+         (SELECT COUNT(*) FROM articulo)      AS articulo,
+         (SELECT COUNT(*) FROM personaje)     AS personaje,
+         (SELECT COUNT(*) FROM localidad)     AS localidad,
+         (SELECT COUNT(*) FROM reino_estado)  AS reino_estado,
+         (SELECT COUNT(*) FROM evento)        AS evento,
+         (SELECT COUNT(*) FROM item)          AS item`
+    );
+    res.locals.conteos = filas[0];
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use('/', require('./rutas/inicio'));
 app.use('/', require('./rutas/cuenta'));
 app.use('/articulos', require('./rutas/articulos'));
 app.use('/', require('./rutas/panel'));
+app.use('/', require('./rutas/reportes'));
 
 app.use(errores.noEncontrado);
 app.use(errores.manejador);

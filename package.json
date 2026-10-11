@@ -16,6 +16,7 @@
     "bd:reiniciar": "node servidor/herramientas/crear-base.js --reiniciar",
     "admin": "node servidor/herramientas/crear-admin.js",
     "exportar": "node servidor/herramientas/exportar.js",
+    "importar": "node servidor/herramientas/importar-obsidian.js",
     "formato": "prettier --write \"**/*.{js,json,css,ejs,md}\"",
     "prueba": "node --test servidor/pruebas/**/*.test.js"
   },

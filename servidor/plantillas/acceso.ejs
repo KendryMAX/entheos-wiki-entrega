@@ -1,7 +1,8 @@
 <%- include('parciales/cabecera') %>
 
 <section class="hoja">
-  <h1 class="hoja-titulo">Iniciar sesion</h1>
+  <a class="hoja-cerrar" href="/" aria-label="Cerrar y volver al inicio"><span class="hoja-cerrar-x">&times;</span></a>
+  <h1 class="hoja-titulo">Iniciar sesión</h1>
 
   <% if (typeof aviso !== 'undefined' && aviso) { %>
     <p class="alerta alerta-ok"><%= aviso %></p>
@@ -16,26 +17,26 @@
     <div class="campo">
       <label for="correo">Correo o nombre de usuario</label>
       <input type="text" id="correo" name="correo" value="<%= correo %>" required
-             autocomplete="username" data-error="Escribi tu correo o tu nombre de usuario.">
+             autocomplete="username" data-error="Escribe tu correo o tu nombre de usuario.">
       <span class="campo-error" data-error-de="correo"></span>
     </div>
 
     <div class="campo">
-      <label for="contrasena">Contrasena</label>
+      <label for="contrasena">Contraseña</label>
       <input type="password" id="contrasena" name="contrasena" required
-             autocomplete="current-password" data-error="Escribi tu contrasena.">
+             autocomplete="current-password" data-error="Escribe tu contraseña.">
       <span class="campo-error" data-error-de="contrasena"></span>
     </div>
 
-    <button type="submit" class="boton boton-dorado boton-ancho">Entrar</button>
+    <button type="submit" class="boton boton-dorado boton-ancho">Iniciar sesión</button>
 
-    <p class="formulario-enlace">No tenes cuenta? <a href="/registro">Crear una</a>.</p>
+    <p class="formulario-enlace">¿No tienes cuenta? <a href="/registro">Crea una</a>.</p>
   </form>
 
   <div class="panel-cuentas">
     <h2 class="panel-cuentas-titulo">Cuentas de prueba</h2>
     <p class="panel-cuentas-texto">
-      Kendry (Administrador), Angel (Editor) y Adriano (Lector). La contrasena de cada
+      Kendry (Administrador), Angel (Editor) y Adriano (Lector). La contraseña de cada
       uno es su nombre seguido de 123.
     </p>
   </div>

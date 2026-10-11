@@ -1,5 +1,12 @@
 <%- include('parciales/cabecera') %>
 
+<a class="volver-articulo" href="/articulos" aria-label="Volver a artículos">
+  <svg class="volver-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+    <path d="M10 4.5 L3.5 11.5 L10 19.5"/>
+    <path d="M3.5 11.5 L21 11.5"/>
+  </svg>
+</a>
+
 <article class="articulo">
 
   <header class="articulo-cabecera">
@@ -23,26 +30,50 @@
     <% if (esEditor) { %>
       <p class="articulo-acciones">
         <a class="boton boton-plano" href="/panel/articulos/<%= articulo.id %>/editar">Editar</a>
-        <a class="boton boton-plano" href="/panel/revision">Revision</a>
+        <a class="boton boton-plano" href="/panel/revision">Revisión</a>
       </p>
     <% } %>
   </header>
 
-  <div class="articulo-cuerpo">
-    <%- articulo.contenido_html %>
-  </div>
+  <aside class="articulo-lateral">
+    <% if (articulo.imagen_ruta) { %>
+      <img class="articulo-imagen" src="<%= articulo.imagen_ruta %>" alt="<%= articulo.titulo %>" loading="lazy">
+    <% } else if (articulo.categoria === 'Personajes') { %>
+      <figure class="articulo-lamina">
+        <figcaption class="articulo-lamina-texto">No había fotógrafo ni pintor.</figcaption>
+      </figure>
+    <% } %>
 
-  <% if (etiquetas.length > 0) { %>
-    <ul class="etiquetas">
-      <% etiquetas.forEach(function (etiqueta) { %>
-        <li><a class="etiqueta" href="/articulos?etiqueta=<%= encodeURIComponent(etiqueta.nombre) %>"><%= etiqueta.nombre %></a></li>
-      <% }); %>
-    </ul>
-  <% } %>
+    <% if (articulo.ficha_html) { %>
+      <section class="panel">
+        <h2 class="panel-titulo">Info</h2>
+        <div class="panel-cuerpo"><%- articulo.ficha_html %></div>
+      </section>
+    <% } %>
+
+    <% if (articulo.indice && articulo.indice.length > 0) { %>
+      <nav class="panel panel-indice" aria-label="Índice">
+        <h2 class="panel-titulo">Índice</h2>
+        <ol>
+          <% articulo.indice.forEach(function (seccion) { %>
+            <li class="indice-nivel-<%= seccion.nivel %>">
+              <a href="#<%= seccion.id %>"><%= seccion.texto %></a>
+            </li>
+          <% }); %>
+        </ol>
+      </nav>
+    <% } %>
+  </aside>
+
+  <div class="articulo-principal">
+    <div class="articulo-cuerpo">
+      <%- articulo.contenido_html %>
+    </div>
+  </div>
 
   <% if (relacionadas.length > 0) { %>
     <section class="bloque bloque-aplado">
-      <h2 class="bloque-titulo">Ver tambien</h2>
+      <h2 class="bloque-titulo">Ver también</h2>
       <ul class="lista-relaciones">
         <% relacionadas.forEach(function (relacion) { %>
           <li>
@@ -64,7 +95,7 @@
       <div class="campo">
         <label for="comentario">Dejar un comentario</label>
         <textarea id="comentario" name="contenido" rows="4" required minlength="3"
-                  maxlength="2000" placeholder="Escribi tu comentario..."
+                  maxlength="2000" placeholder="Escribe tu comentario..."
                   data-error="El comentario necesita al menos 3 caracteres."></textarea>
         <span class="campo-error" data-error-de="comentario"></span>
         <span class="campo-ayuda">Queda pendiente hasta que un Editor lo apruebe.</span>
@@ -78,7 +109,7 @@
   <% } %>
 
   <% if (comentarios.length === 0) { %>
-    <p class="vacio">Todavia no hay comentarios.</p>
+    <p class="vacio">Todavía no hay comentarios.</p>
   <% } else { %>
     <ul class="comentarios">
       <% comentarios.forEach(function (comentario) { %>

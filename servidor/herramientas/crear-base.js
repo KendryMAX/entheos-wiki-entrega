@@ -26,10 +26,31 @@ function sinComentarios(sql) {
 }
 
 function separarSentencias(sql) {
-  return sql
-    .split(';')
-    .map((parte) => parte.trim())
-    .filter((parte) => parte.length > 0 && !/^(\/\*!|SET |DROP DATABASE|USE |CREATE DATABASE)/i.test(parte));
+  const sentencias = [];
+  let actual = '';
+  let enComilla = false;
+
+  for (const caracter of sql) {
+    if (caracter === "'") {
+      enComilla = !enComilla;
+      actual += caracter;
+      continue;
+    }
+
+    if (caracter === ';' && !enComilla) {
+      sentencias.push(actual.trim());
+      actual = '';
+      continue;
+    }
+
+    actual += caracter;
+  }
+
+  if (actual.trim()) sentencias.push(actual.trim());
+
+  return sentencias.filter(
+    (parte) => parte.length > 0 && !/^(\/\*!|SET |DROP DATABASE|USE |CREATE DATABASE)/i.test(parte)
+  );
 }
 
 async function crearBase(conexion) {
@@ -49,17 +70,22 @@ async function crearBase(conexion) {
 }
 
 async function aplicarEsquema(conexion) {
-  const sql = sinComentarios(leerArchivo());
-  const sentencias = separarSentencias(sql);
+  const sentencias = separarSentencias(sinComentarios(leerArchivo()));
 
-  for (const sentencia of sentencias) {
-    try {
-      await conexion.query(sentencia);
-    } catch (error) {
-      console.error('Fallo una sentencia del archivo SQL:');
-      console.error(sentencia.slice(0, 160));
-      throw error;
+  await conexion.query('SET FOREIGN_KEY_CHECKS = 0');
+
+  try {
+    for (const sentencia of sentencias) {
+      try {
+        await conexion.query(sentencia);
+      } catch (error) {
+        console.error('Fallo una sentencia del archivo SQL:');
+        console.error(sentencia.slice(0, 160));
+        throw error;
+      }
     }
+  } finally {
+    await conexion.query('SET FOREIGN_KEY_CHECKS = 1');
   }
 
   console.log('Se aplicaron ' + sentencias.length + ' sentencias.');
