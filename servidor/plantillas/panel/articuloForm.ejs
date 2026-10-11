@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
 <%- include('../parciales/cabecera') %>
 
 <section class="hoja hoja-ancha">
@@ -37,7 +43,7 @@
       <span class="campo-error" data-error-de="contenido"></span>
       <span class="campo-ayuda">
         Markdown: <code>## título</code>, <code>**negrita**</code>, <code>*cursiva*</code>,
-        <code>- lista</code>, <code>&gt; cita</code>, <code>[enlace](/ruta)</code>.
+        <code>- lista</code>, <code>> cita</code>, <code>[enlace](/ruta)</code>.
       </span>
       <div class="contador" data-contador-de="contenido">0 caracteres</div>
     </div>
@@ -55,6 +61,19 @@
     </div>
 
     <div class="campo">
+      <label for="template">Plantilla</label>
+      <select id="template" name="template_id" onchange="cargarTemplate(this.value)">
+        <option value="">Ninguna</option>
+        <option value="raza-civilizacion">Plantilla - Raza & Civilización</option>
+        <option value="npc">Plantilla - NPC</option>
+        <option value="localidad">Plantilla - Localidad</option>
+        <option value="hecho-historico">Plantilla - Hecho Histórico</option>
+        <option value="items">Plantilla - Items</option>
+      </select>
+      <span class="campo-ayuda">Selecciona una plantilla para rellenar automáticamente el contenido.</span>
+    </div>
+
+    <div class="campo">
       <label for="estado">Estado</label>
       <select id="estado" name="estado">
         <% ['borrador', 'en_revision', 'publicado', 'archivado'].forEach(function (opcion) { %>
@@ -65,6 +84,175 @@
       </select>
       <span class="campo-ayuda">Queda publicado de inmediato si elegís "publicado".</span>
     </div>
+
+    <script>
+    function cargarTemplate(valor) {
+      const templates = {
+        'raza-civilizacion': `## Ficha
+
+| Campo | Valor |
+| --- | --- |
+| Pronunciación | |
+| Alias | |
+| Tipo | Raza |
+| Subrazas | |
+| Zona de origen | |
+| Continente de origen | |
+| Longevidad | |
+| Idioma principal | |
+| Religión principal | |
+| Localidades asociadas | |
+| Presencia | |
+
+Párrafo de introducción: describe la apariencia física básica de la raza, sus rasgos más reconocibles y la atmósfera cultural que transmiten. Cómo se perciben en el mundo, qué impresión dejan en otras razas y cuál es su papel general en la ambientación.
+
+### Biología y Fisiología
+
+Describe la morfología general: altura, complexión y rasgos físicos distintivos. Explica el ciclo vital (nacimiento, madurez, longevidad) y cualquier adaptación biológica especial. Incluye enfermedades propias, vulnerabilidades fisiológicas o capacidades únicas que los diferencien de otras razas.
+
+### Psicología y Cognición
+
+Explica el temperamento predominante y cómo perciben el tiempo, la memoria y los sueños. Señala sus miedos comunes, formas de razonamiento, actitudes sociales y lenguaje corporal característico. Muestra cómo piensan y sienten, y cómo eso condiciona su cultura.
+
+### Lengua y Comunicación
+
+Indica el idioma principal, dialectos internos, lenguajes rituales o secretos. Describe cómo se comunican (oral, simbólico, gestual) y si poseen sistemas únicos de escritura o símbolos. Añade detalles sobre la importancia cultural de la lengua y su papel en la transmisión de conocimiento.
+
+### Referencias de Diseño
+
+Indica las inspiraciones reales que guían la construcción de la raza: culturas históricas o contemporáneas que sirven de base para nombres, estética, organización social o rasgos culturales.
+
+### Población Actual
+
+### Mitos Propios y de Origen
+
+### Religiones
+
+### Descripción General
+
+### Sociedad y Cultura
+
+### Historia y Cronología
+
+### Relaciones`,
+    'npc': `## Ficha
+
+| Campo | Valor |
+| --- | --- |
+| Pronunciación | |
+| Alias | |
+| Raza | |
+| Sexo | |
+| Edad | |
+| Altura | |
+| Peso | |
+| Orientación (sex.) | |
+| Condición | |
+| Alineamiento | |
+| Ocupación | |
+| Cobro | |
+| Dinero | |
+| Distrito/Zona | |
+| Localidad | |
+| Religiones | |
+| Facciones/Grupos | |
+| Fecha de nacimiento | |
+| Fecha de fallecimiento | |
+| estado vital | |
+
+### Personalidad
+
+### Social
+
+### Mental
+
+### Gustos
+
+### Familia y Amigos
+
+### Enemistades
+
+### Personales
+
+### Profesionales
+
+### Roles
+
+### Dinero Actual
+
+### Equipamiento
+
+### Descripción General
+
+### Historia Breve
+
+### Rol en la Sociedad
+
+### Rasgos y Capacidades
+
+### Riesgos, Debilidades y Defectos
+
+### DM e Impacto Narrativo
+
+##### Ganchos Narrativos
+
+##### Detalles Secretos
+
+##### Notas de DM`,
+
+    'localidad': `## Ficha
+
+| Campo | Valor |
+| --- | --- |
+| Tipo | |
+| Nombre | |
+| Descripción | |
+| Localización | |
+| Población | |
+| Gobierno | |
+| Economía | |
+| Leyenda | |
+
+### Descripción General
+
+### Historia y Cronología
+
+### Relaciones
+
+### Recursos
+
+### Amenazas
+
+### Contactos`,
+
+    'hecho-historico': `## Ficha
+
+| Campo | Valor |
+| --- | --- |
+| Tipo | |
+| Título | |
+| Fecha | |
+| Lugares involucrados | |
+| Personajes involucrados | |
+| Resultado | `,
+
+  };
+  const textarea = document.getElementById('contenido');
+  if (templates[valor]) {
+    textarea.value = templates[valor];
+    const contador = document.querySelector('[data-contador-de="contenido"]');
+    if (contador) contador.textContent = `${textarea.value.length} caracteres`;
+  } else {
+    textarea.value = '';
+    if (contador) contador.textContent = '0 caracteres';
+  }
+}
+
+// Guardar la plantilla seleccionada en localStorage para próxima vez
+document.getElementById('template').addEventListener('change', (e) => {
+  localStorage.setItem('lastTemplate', e.target.value);
+});
+</script>
 
     <button type="submit" class="boton boton-dorado">
       <%= articulo ? 'Guardar cambios' : 'Crear artículo' %>
