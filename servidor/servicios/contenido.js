@@ -86,4 +86,21 @@ function articuloAHtml(markdown) {
   return { html: conIds, indice };
 }
 
-module.exports = { markdownAHtml, articuloAHtml, separarFicha };
+function campoFicha(markdown, etiqueta) {
+  const { ficha } = separarFicha(markdown);
+  if (!ficha) return '';
+  const objetivo = String(etiqueta).toLowerCase();
+  for (const linea of ficha.split('\n')) {
+    const celdas = linea.split('|').map((c) => c.trim());
+    if (celdas.length < 4) continue;
+    if (celdas[1].toLowerCase() === objetivo) return celdas[2];
+  }
+  return '';
+}
+
+function esSubraza(markdown) {
+  return campoFicha(markdown, 'Tipo').toLowerCase() === 'subraza'
+    || campoFicha(markdown, 'Raza principal') !== '';
+}
+
+module.exports = { markdownAHtml, articuloAHtml, separarFicha, campoFicha, esSubraza };

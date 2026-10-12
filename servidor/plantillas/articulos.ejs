@@ -14,8 +14,15 @@
     <p class="vacio">No hay artículos todavía.</p>
   <% } else { %>
     <div class="rejilla">
-      <% articulos.forEach(function (articulo) { %>
-        <a class="tarjeta<%= articulo.categoria === 'Personajes' ? ' tarjeta--retrato' : '' %>" href="/articulos/<%= articulo.slug %>">
+      <% articulos.forEach(function (articulo, indice) {
+           const esRaza = articulo.categoria === 'Razas' && !/^plantilla/i.test(articulo.titulo);
+           const anteriorRaza = indice > 0 && articulos[indice - 1].categoria === 'Razas' && !/^plantilla/i.test(articulos[indice - 1].titulo);
+           const clases = ['tarjeta'];
+           if (esRaza) clases.push('tarjeta--raza');
+           else if (articulo.categoria === 'Personajes') clases.push('tarjeta--retrato');
+           if (indice > 0 && esRaza !== anteriorRaza) clases.push('corta-fila');
+      %>
+        <a class="<%= clases.join(' ') %>" href="/articulos/<%= articulo.slug %>">
           <% if (articulo.imagen_ruta) { %>
             <img class="tarjeta-imagen" src="<%= articulo.imagen_ruta %>" alt="" loading="lazy">
           <% } %>
@@ -25,7 +32,7 @@
                 <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
               </span>
             <% } %>
-            <span class="tarjeta-titulo"><%= articulo.titulo %></span>
+            <span class="tarjeta-titulo"><%= articulo.titulo %><% if (articulo.esSubraza && !/^plantilla/i.test(articulo.titulo)) { %><span class="sello-subraza">Subraza</span><% } %></span>
             <span class="tarjeta-resumen"><%= articulo.resumen || 'Sin resumen.' %></span>
             <span class="tarjeta-pie">por <%= articulo.autor_nombre || articulo.autor %></span>
           </span>

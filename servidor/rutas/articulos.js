@@ -4,7 +4,7 @@ const express = require('express');
 
 const db = require('../datos/base');
 const config = require('../configuracion');
-const { markdownAHtml, articuloAHtml, separarFicha } = require('../servicios/contenido');
+const { markdownAHtml, articuloAHtml, separarFicha, esSubraza } = require('../servicios/contenido');
 const tablasRaza = require('../servicios/tablasRaza');
 const { reemplazarCuerpo, eliminarSeccion } = require('../servicios/secciones');
 const { requiereSesion } = require('../capas/autenticacion');
@@ -55,8 +55,9 @@ router.get('/', async (req, res, next) => {
       categoriaNombre = categoria ? categoria.nombre : null;
     }
 
-    const articulos = await db.consultar(
+    const filas = await db.consultar(
       `SELECT a.id, a.titulo, a.slug, a.resumen, a.estado, a.vistas, a.actualizado_en,
+              a.contenido_md,
               c.nombre AS categoria, u.nombre_usuario AS autor, u.nombre_completo AS autor_nombre,
               i.ruta AS imagen_ruta,
               (SELECT COUNT(*) FROM comentario co
@@ -70,6 +71,11 @@ router.get('/', async (req, res, next) => {
         LIMIT ? OFFSET ?`,
       [...valores, porPagina, desde]
     );
+
+    const articulos = filas.map(({ contenido_md, ...resto }) => ({
+      ...resto,
+      esSubraza: esSubraza(contenido_md),
+    }));
 
     const categorias = await db.consultar(
       `SELECT c.id, c.nombre,
