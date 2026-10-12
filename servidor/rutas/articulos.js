@@ -46,6 +46,15 @@ router.get('/', async (req, res, next) => {
       valores
     );
 
+    let categoriaNombre = null;
+    if (req.query.categoria) {
+      const categoria = await db.consultarUno(
+        'SELECT nombre FROM categoria WHERE id = ? LIMIT 1',
+        [Number(req.query.categoria)]
+      );
+      categoriaNombre = categoria ? categoria.nombre : null;
+    }
+
     const articulos = await db.consultar(
       `SELECT a.id, a.titulo, a.slug, a.resumen, a.estado, a.vistas, a.actualizado_en,
               c.nombre AS categoria, u.nombre_usuario AS autor, u.nombre_completo AS autor_nombre,
@@ -57,7 +66,7 @@ router.get('/', async (req, res, next) => {
          LEFT JOIN usuario u ON u.id = a.autor_id
          LEFT JOIN imagen i ON i.id = a.imagen_id
          ${donde}
-        ORDER BY a.actualizado_en DESC
+        ORDER BY a.publicado_en DESC, a.actualizado_en DESC
         LIMIT ? OFFSET ?`,
       [...valores, porPagina, desde]
     );
@@ -75,6 +84,7 @@ router.get('/', async (req, res, next) => {
       articulos,
       categorias,
       categoriaActual: req.query.categoria ? Number(req.query.categoria) : null,
+      categoriaNombre,
       pagina,
       paginas: Math.max(1, Math.ceil(total.total / porPagina)),
       total: total.total,

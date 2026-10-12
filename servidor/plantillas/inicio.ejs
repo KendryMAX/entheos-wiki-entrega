@@ -38,29 +38,6 @@
   </div>
 </section>
 
-<section class="bloque">
-  <h2 class="bloque-titulo">Últimos artículos</h2>
-
-  <% if (recientes.length === 0) { %>
-    <p class="vacio">Todavía no hay artículos publicados.</p>
-  <% } else { %>
-    <div class="rejilla">
-      <% recientes.forEach(function (articulo) { %>
-        <a class="tarjeta<%= articulo.categoria === 'Personajes' ? ' tarjeta--retrato' : '' %>" href="/articulos/<%= articulo.slug %>">
-          <% if (articulo.imagen_ruta) { %>
-            <img class="tarjeta-imagen" src="<%= articulo.imagen_ruta %>" alt="" loading="lazy">
-          <% } %>
-          <span class="tarjeta-cont">
-            <span class="tarjeta-titulo"><%= articulo.titulo %></span>
-            <span class="tarjeta-resumen"><%= articulo.resumen || 'Sin resumen.' %></span>
-            <span class="tarjeta-pie">por <%= articulo.nombre_completo %></span>
-          </span>
-        </a>
-      <% }); %>
-    </div>
-  <% } %>
-</section>
-
 <% if (!usuario) { %>
 <section class="bloque">
   <div class="aviso">

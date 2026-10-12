@@ -780,6 +780,33 @@ pre code { color: var(--dorado-claro); }
 }
 .filtros-etiqueta { font-size: 0.8rem; color: var(--gris-claro); text-transform: uppercase; letter-spacing: 0.06em; }
 
+.lista-categorias {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.4rem;
+  padding: 0;
+  margin: 0.25rem 0 0;
+}
+.lista-categorias li { line-height: 1.5; }
+.lista-categorias a {
+  color: var(--gris-texto);
+  font-size: 0.95rem;
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+}
+.lista-categorias a:hover {
+  color: var(--dorado-claro);
+  border-bottom-color: var(--dorado-oscuro);
+  text-decoration: none;
+}
+.lista-categorias a.activa { color: var(--dorado); }
+.lista-categorias .conteo {
+  color: var(--gris);
+  font-size: 0.82rem;
+  margin-left: 0.25rem;
+}
+
 .etiquetas { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 1.5rem 0 0; }
 .etiqueta {
   display: inline-block;

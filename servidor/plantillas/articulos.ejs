@@ -8,17 +8,7 @@
     <% } %>
   </div>
 
-  <div class="filtros">
-    <span class="filtros-etiqueta">Categorías:</span>
-    <% categorias.forEach(function (categoria) { %>
-      <a class="ficha <%= categoriaActual === categoria.id ? 'activa' : '' %>"
-         href="/articulos?categoria=<%= categoria.id %>">
-        <%= categoria.nombre %> <span class="ficha-conteo"><%= categoria.articulos %></span>
-      </a>
-    <% }); %>
-  </div>
-
-  <p class="resultados"><%= total %> artículo<%= total === 1 ? '' : 's' %> encontrado<%= total === 1 ? '' : 's' %>.</p>
+  <h2 class="bloque-titulo"><%= categoriaActual ? categoriaNombre || 'Artículos' : 'Últimos artículos' %></h2>
 
   <% if (articulos.length === 0) { %>
     <p class="vacio">No hay artículos todavía.</p>
@@ -56,6 +46,23 @@
       </nav>
     <% } %>
   <% } %>
+</section>
+
+<section class="bloque">
+  <h2 class="bloque-titulo">Explorar por categoría</h2>
+  <ul class="lista-categorias">
+    <% categorias.forEach(function (categoria) { %>
+      <li>
+        <a class="<%= categoriaActual === categoria.id ? 'activa' : '' %>"
+           href="/articulos?categoria=<%= categoria.id %>">
+          <%= categoria.nombre %><span class="conteo"><%= categoria.articulos %></span>
+        </a>
+      </li>
+    <% }); %>
+    <% if (categoriaActual) { %>
+      <li><a href="/articulos">Todos los artículos</a></li>
+    <% } %>
+  </ul>
 </section>
 
 <%- include('parciales/pie') %>

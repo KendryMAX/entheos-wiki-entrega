@@ -46,18 +46,6 @@ router.get('/', async (req, res, next) => {
       "SELECT COUNT(*) AS total FROM articulo WHERE estado = 'publicado'"
     );
 
-    const recientes = await db.consultar(
-      `SELECT a.id, a.titulo, a.slug, a.resumen, a.actualizado_en, u.nombre_completo,
-              c.nombre AS categoria, i.ruta AS imagen_ruta
-         FROM articulo a
-         JOIN usuario u ON u.id = a.autor_id
-         LEFT JOIN categoria c ON c.id = a.categoria_id
-         LEFT JOIN imagen i ON i.id = a.imagen_id
-        WHERE a.estado = 'publicado'
-        ORDER BY a.publicado_en DESC
-        LIMIT 6`
-    );
-
     const etiquetas = await db.consultar(
       `SELECT e.nombre, COUNT(ae.articulo_id) AS articulos
          FROM etiqueta e
@@ -95,7 +83,6 @@ router.get('/', async (req, res, next) => {
       titulo: 'Entheos Wiki',
       totales,
       publicados: publicados.total,
-      recientes,
       etiquetas,
       categorias,
     });
