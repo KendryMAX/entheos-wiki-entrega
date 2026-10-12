@@ -190,3 +190,17 @@ o se acepta en <https://github.com/KendryMAX/entheos-wiki/invitations>).
   `web/subidas/` y `pdf-generados/`. **Nunca** hacer `git add -f` sobre ellos.
 - Si una contraseña se sube por error, cambiarla de inmediato. Las cuentas de
   prueba traen contraseñas temporales: cambiarlas antes de entregar.
+
+---
+
+## ⚠️ Estado de la entrega
+
+Esta versión (rama `desarrollo/razas-colapsable`) es la **entrega final del proyecto** para la fecha límite. El desarrollo **continúa activamente** en el repositorio privado del equipo. La versión definitiva incorporará:
+
+- Revisión y ampliación de nombres provisionales (13 localidades nuevas)
+- Arte propio para todas las fichas (actualmente se reutilizan imágenes de zonas/razas)
+- Corrección de textos y coherencia de lore
+- Mejoras de UX/UI y pulido de estilos
+- Tests adicionales y cobertura
+
+Para seguir el desarrollo futuro, consultar el repositorio privado del equipo.
