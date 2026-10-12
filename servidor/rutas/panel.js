@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs');
 const db = require('../datos/base');
 const { NIVELES, requiereSesion, requiereEditor, requiereAdministrador } = require('../capas/autenticacion');
 const errores = require('../capas/errores');
+const fichas = require('../servicios/fichas');
+const etiquetas = require('../servicios/etiquetas');
 
 const router = express.Router();
 
@@ -24,70 +26,143 @@ function aSlug(texto) {
 // reino o localidad y aparece sola en las tablas que se generan al mostrarla.
 const CATEGORIAS_CON_UBICACION = ['Continentes', 'Regiones', 'Reinos y Estados', 'Localidades'];
 
-async function catalogosUbicacion() {
-  const [continentes, zonas, reinos, tipos, localidades] = await Promise.all([
-    db.consultar('SELECT id, nombre FROM continente ORDER BY nombre'),
-    db.consultar('SELECT id, nombre FROM zona_geografica ORDER BY nombre'),
-    db.consultar('SELECT id, nombre FROM reino_estado WHERE disuelto = 0 ORDER BY nombre'),
-    db.consultar('SELECT id, nombre FROM tipo_asentamiento ORDER BY nombre'),
-    db.consultar('SELECT id, nombre FROM localidad ORDER BY nombre'),
-  ]);
+// Catálogos que alimentan las listas de elección de las fichas.
+async function catalogosPanel() {
+  const [continentes, zonas, reinos, tipos, localidades, razas, tiposItem, rarezas] =
+    await Promise.all([
+      db.consultar('SELECT id, nombre FROM continente ORDER BY nombre'),
+      db.consultar('SELECT id, nombre FROM zona_geografica ORDER BY nombre'),
+      db.consultar('SELECT id, nombre FROM reino_estado WHERE disuelto = 0 ORDER BY nombre'),
+      db.consultar('SELECT id, nombre FROM tipo_asentamiento ORDER BY nombre'),
+      db.consultar('SELECT id, nombre FROM localidad ORDER BY nombre'),
+      db.consultar('SELECT id, nombre FROM raza ORDER BY nombre'),
+      db.consultar('SELECT id, nombre FROM tipo_item ORDER BY nombre'),
+      db.consultar('SELECT id, nombre FROM rareza ORDER BY orden'),
+    ]);
 
-  return { continentes, zonas, reinos, tipos, localidades };
+  return {
+    continentes,
+    zonas,
+    reinos,
+    tipos,
+    localidades,
+    razas,
+    tiposItem,
+    rarezas,
+    estadosVitales: Object.values(etiquetas.ESTADOS_VITALES).map((nombre) => ({ nombre })),
+  };
 }
 
-function ubicacionVacia() {
-  return {
+function opcionesDe(catalogo, catalogos) {
+  const lista = catalogo && catalogos[catalogo] ? catalogos[catalogo] : [];
+  return lista.map((fila) => fila.nombre);
+}
+
+// Arma los grupos de campos y secciones que ve el formulario. Se generan todos
+// los grupos (uno por categoría); el navegador muestra sólo el elegido.
+function construirCategorias(categorias, catalogos, contenido) {
+  return categorias.map((categoria) => {
+    const config = fichas.fichaDe(categoria.nombre);
+    const parseado = fichas.parsearContenido(contenido, categoria.nombre);
+
+    const secciones = [];
+    config.secciones.forEach((seccion, indice) => {
+      if (seccion.auto) return;
+      secciones.push({
+        indice,
+        titulo: seccion.titulo,
+        valor: parseado.secciones[seccion.titulo] || '',
+      });
+    });
+
+    return {
+      id: categoria.id,
+      nombre: categoria.nombre,
+      campos: config.campos.map((campo) => ({
+        etiqueta: campo.etiqueta,
+        tipo: campo.tipo,
+        valor: parseado.valores[campo.etiqueta] !== undefined ? parseado.valores[campo.etiqueta] : campo.valor || '',
+        opciones: campo.tipo === 'lista' ? opcionesDe(campo.catalogo, catalogos) : [],
+      })),
+      secciones,
+      extras: parseado.extras,
+      cuerpo: parseado.cuerpo,
+    };
+  });
+}
+
+// Traduce los nombres elegidos en la ficha a los identificadores que anclan la
+// nota en las tablas del mundo.
+function ubicacionDesdeValores(categoriaNombre, valores, catalogos) {
+  const config = fichas.fichaDe(categoriaNombre);
+  const anclajes = config.anclajes || {};
+
+  const idDe = (lista, nombre) => {
+    const objetivo = fichas.normalizar(nombre);
+    if (!objetivo) return null;
+    const fila = (lista || []).find((candidato) => fichas.normalizar(candidato.nombre) === objetivo);
+    return fila ? fila.id : null;
+  };
+
+  const ubicacion = {
     continente_id: null,
     zona_geografica_id: null,
     reino_estado_id: null,
     tipo_asentamiento_id: null,
     capital_id: null,
   };
+
+  for (const [etiqueta, destino] of Object.entries(anclajes)) {
+    const valor = valores ? valores[etiqueta] : '';
+    if (destino === 'continente') ubicacion.continente_id = idDe(catalogos.continentes, valor);
+    else if (destino === 'zona') ubicacion.zona_geografica_id = idDe(catalogos.zonas, valor);
+    else if (destino === 'reino') ubicacion.reino_estado_id = idDe(catalogos.reinos, valor);
+    else if (destino === 'tipo') ubicacion.tipo_asentamiento_id = idDe(catalogos.tipos, valor);
+    else if (destino === 'capital') ubicacion.capital_id = idDe(catalogos.localidades, valor);
+  }
+
+  return ubicacion;
 }
 
-function numerosUbicacion(fuente) {
-  const numero = (valor) => (valor ? Number(valor) : null);
-  return {
-    continente_id: numero(fuente && fuente.continente_id),
-    zona_geografica_id: numero(fuente && fuente.zona_geografica_id),
-    reino_estado_id: numero(fuente && fuente.reino_estado_id),
-    tipo_asentamiento_id: numero(fuente && fuente.tipo_asentamiento_id),
-    capital_id: numero(fuente && fuente.capital_id),
-  };
+function leerCampos(body, categoriaId, categoriaNombre) {
+  const config = fichas.fichaDe(categoriaNombre);
+  const prefijo = `f_${categoriaId}_`;
+  const valores = {};
+
+  config.campos.forEach((campo, indice) => {
+    const valor = body[`${prefijo}${indice}`];
+    valores[campo.etiqueta] = String(valor === undefined || valor === null ? '' : valor).trim();
+  });
+
+  return valores;
 }
 
-async function ubicacionDeArticulo(articulo, categorias) {
-  if (!articulo || !articulo.categoria_id) return ubicacionVacia();
+function leerSecciones(body, categoriaId, categoriaNombre) {
+  const config = fichas.fichaDe(categoriaNombre);
+  const prefijo = `s_${categoriaId}_`;
+  const secciones = {};
 
-  const categoria = categorias.find((c) => c.id === articulo.categoria_id);
-  const nombre = categoria ? categoria.nombre : null;
+  config.secciones.forEach((seccion, indice) => {
+    if (seccion.auto) return;
+    const valor = body[`${prefijo}${indice}`];
+    secciones[seccion.titulo] = String(valor === undefined || valor === null ? '' : valor).trim();
+  });
 
-  if (nombre === 'Localidades') {
-    const fila = await db.consultarUno(
-      'SELECT zona_geografica_id, reino_estado_id, tipo_asentamiento_id FROM localidad WHERE nombre = ? LIMIT 1',
-      [articulo.titulo]
-    );
-    return fila ? numerosUbicacion(fila) : ubicacionVacia();
-  }
+  return secciones;
+}
 
-  if (nombre === 'Regiones') {
-    const fila = await db.consultarUno(
-      'SELECT continente_id, reino_estado_id FROM zona_geografica WHERE nombre = ? LIMIT 1',
-      [articulo.titulo]
-    );
-    return fila ? numerosUbicacion(fila) : ubicacionVacia();
-  }
+function leerCuerpo(body, categoriaId) {
+  const valor = body[`cuerpo_${categoriaId}`];
+  return String(valor === undefined || valor === null ? '' : valor);
+}
 
-  if (nombre === 'Reinos y Estados') {
-    const fila = await db.consultarUno(
-      'SELECT continente_id, capital_id FROM reino_estado WHERE nombre = ? LIMIT 1',
-      [articulo.titulo]
-    );
-    return fila ? numerosUbicacion(fila) : ubicacionVacia();
-  }
+function leerExtras(body, categoriaId) {
+  const etiquetasEnviadas = body[`extra_etiqueta_${categoriaId}`];
+  const valoresEnviados = body[`extra_valor_${categoriaId}`];
+  const etiquetas = etiquetasEnviadas ? [].concat(etiquetasEnviadas) : [];
+  const valores = valoresEnviados ? [].concat(valoresEnviados) : [];
 
-  return ubicacionVacia();
+  return etiquetas.map((etiqueta, indice) => ({ etiqueta, valor: valores[indice] || '' }));
 }
 
 async function guardarUbicacion(categoriaNombre, titulo, resumen, ubicacion) {
@@ -126,16 +201,37 @@ async function guardarUbicacion(categoriaNombre, titulo, resumen, ubicacion) {
 
 router.get('/panel/articulos', requiereSesion, requiereEditor(), async (req, res, next) => {
   try {
+    const autorId = res.locals.usuario.id;
+
     const articulos = await db.consultar(
       `SELECT a.id, a.titulo, a.slug, a.estado, a.actualizado_en,
               u.nombre_usuario AS autor
          FROM articulo a
          JOIN usuario u ON u.id = a.autor_id
+        WHERE a.autor_id = ?
         ORDER BY a.actualizado_en DESC
-        LIMIT 200`
+        LIMIT 200`,
+      [autorId]
     );
 
-    res.render('panel/articulos', { titulo: 'Artículos', articulos });
+    const borradores = articulos.filter((articulo) => articulo.estado === 'borrador');
+    const todos = res.locals.esAdministrador
+      ? await db.consultar(
+          `SELECT a.id, a.titulo, a.slug, a.estado, a.actualizado_en,
+                  u.nombre_usuario AS autor
+             FROM articulo a
+             JOIN usuario u ON u.id = a.autor_id
+            ORDER BY a.actualizado_en DESC
+            LIMIT 200`
+        )
+      : null;
+
+    res.render('panel/articulos', {
+      titulo: 'Mis artículos',
+      articulos,
+      borradores,
+      todos,
+    });
   } catch (error) {
     next(error);
   }
@@ -144,14 +240,13 @@ router.get('/panel/articulos', requiereSesion, requiereEditor(), async (req, res
 router.get('/panel/articulos/nuevo', requiereSesion, requiereEditor(), async (req, res, next) => {
   try {
     const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
-    const catalogos = await catalogosUbicacion();
+    const catalogos = await catalogosPanel();
 
     res.render('panel/articuloForm', {
       titulo: 'Nuevo artículo',
       articulo: null,
       categorias,
-      catalogos,
-      ubicacion: ubicacionVacia(),
+      categoriasForm: construirCategorias(categorias, catalogos, ''),
       error: null,
     });
   } catch (error) {
@@ -168,15 +263,13 @@ router.get('/panel/articulos/:id/editar', requiereSesion, requiereEditor(), asyn
     errores.requerido(articulo, 'Ese artículo no existe.');
 
     const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
-    const catalogos = await catalogosUbicacion();
-    const ubicacion = await ubicacionDeArticulo(articulo, categorias);
+    const catalogos = await catalogosPanel();
 
     res.render('panel/articuloForm', {
       titulo: 'Editar artículo',
       articulo,
       categorias,
-      catalogos,
-      ubicacion,
+      categoriasForm: construirCategorias(categorias, catalogos, articulo.contenido_md),
       error: null,
     });
   } catch (error) {
@@ -186,44 +279,59 @@ router.get('/panel/articulos/:id/editar', requiereSesion, requiereEditor(), asyn
 
 router.post('/panel/articulos', requiereSesion, requiereEditor(), async (req, res, next) => {
   try {
-    const titulo = String(req.body.titulo || '').trim();
-    const contenido = String(req.body.contenido || '').trim();
     const id = req.body.id ? Number(req.body.id) : null;
+    const titulo = String(req.body.titulo || '').trim();
+    const resumen = String(req.body.resumen || '').slice(0, 500);
+    const categoriaId = req.body.categoria_id ? Number(req.body.categoria_id) : null;
+
+    const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
+    const categoria = categorias.find((c) => c.id === categoriaId);
+    const categoriaNombre = categoria ? categoria.nombre : null;
+
+    const valores = categoriaNombre ? leerCampos(req.body, categoriaId, categoriaNombre) : {};
+    const secciones = categoriaNombre ? leerSecciones(req.body, categoriaId, categoriaNombre) : {};
+    const cuerpo = leerCuerpo(req.body, categoriaId);
+    const extras = categoriaNombre ? leerExtras(req.body, categoriaId) : [];
+
+    const contenido = categoriaNombre
+      ? fichas.componerContenido(categoriaNombre, valores, secciones, cuerpo, extras)
+      : String(cuerpo || '').trim();
+
+    const catalogos = await catalogosPanel();
+    const ubicacion = categoriaNombre
+      ? ubicacionDesdeValores(categoriaNombre, valores, catalogos)
+      : {};
 
     const problemas = [];
 
-    if (titulo.length < 3) problemas.push('El titulo debe tener al menos 3 caracteres.');
-    if (contenido.length < 10) problemas.push('El contenido debe tener al menos 10 caracteres.');
+    if (!categoriaNombre) problemas.push('Elegí una categoría.');
+    if (titulo.length < 3) problemas.push('El título debe tener al menos 3 caracteres.');
 
-    const resumen = String(req.body.resumen || '').slice(0, 500);
-    const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
-    const categoriaId = req.body.categoria_id ? Number(req.body.categoria_id) : null;
-    const categoria = categorias.find((c) => c.id === categoriaId);
-    const categoriaNombre = categoria ? categoria.nombre : null;
-    const ubicacion = numerosUbicacion(req.body);
+    const escrito =
+      Object.values(valores).join(' ').length +
+      Object.values(secciones).join(' ').length +
+      cuerpo.length;
+    if (escrito < 10) problemas.push('Rellená algún campo de la ficha o escribí algo en el cuerpo.');
 
     if (categoriaNombre === 'Localidades' && !ubicacion.tipo_asentamiento_id) {
-      problemas.push('Elegí un tipo de asentamiento para la localidad.');
+      problemas.push('Elegí el tipo de asentamiento de la localidad.');
     }
     if (categoriaNombre === 'Reinos y Estados' && !ubicacion.continente_id) {
       problemas.push('Elegí el continente del reino o estado.');
     }
 
     if (problemas.length > 0) {
-      const catalogos = await catalogosUbicacion();
       return res.status(400).render('panel/articuloForm', {
         titulo: id ? 'Editar artículo' : 'Nuevo artículo',
         articulo: {
           id,
           titulo,
           resumen,
-          contenido_md: contenido,
-          estado: req.body.estado,
           categoria_id: categoriaId,
+          contenido_md: contenido,
         },
         categorias,
-        catalogos,
-        ubicacion,
+        categoriasForm: construirCategorias(categorias, catalogos, contenido),
         error: problemas.join(' '),
       });
     }
@@ -241,9 +349,9 @@ router.post('/panel/articulos', requiereSesion, requiereEditor(), async (req, re
       slug = `${slugBase}-${++intento}`;
     }
 
-    const estado = ['borrador', 'en_revision', 'publicado', 'archivado'].includes(req.body.estado)
-      ? req.body.estado
-      : 'borrador';
+    // Los dos botones guardan como borrador o mandan a revisión. El estado deja
+    // de elegirse a mano.
+    const estado = req.body.accion === 'correccion' ? 'en_revision' : 'borrador';
 
     if (id) {
       await db.ejecutar(
@@ -254,9 +362,9 @@ router.post('/panel/articulos', requiereSesion, requiereEditor(), async (req, re
       );
     } else {
       await db.ejecutar(
-        `INSERT INTO articulo (titulo, slug, resumen, contenido_md, estado, autor_id, categoria_id, publicado_en)
-         VALUES (?, ?, ?, ?, ?, ?, ?, IF(? = 'publicado', NOW(), NULL))`,
-        [titulo, slug, resumen, contenido, estado, res.locals.usuario.id, categoriaId, estado]
+        `INSERT INTO articulo (titulo, slug, resumen, contenido_md, estado, autor_id, categoria_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [titulo, slug, resumen, contenido, estado, res.locals.usuario.id, categoriaId]
       );
     }
 
@@ -281,17 +389,28 @@ router.post('/panel/articulos/:id/borrar', requiereSesion, requiereEditor(), asy
   }
 });
 
+router.post('/panel/articulos/:id/eliminar', requiereSesion, requiereAdministrador(), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+
+    await db.ejecutar('DELETE FROM articulo WHERE id = ?', [id]);
+    res.redirect('/panel/articulos');
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/panel/revision', requiereSesion, requiereEditor(), async (req, res, next) => {
   try {
     const pendientes = await db.consultar(
-      `SELECT a.id, a.titulo, a.estado, a.actualizado_en, u.nombre_usuario AS autor
+      `SELECT a.id, a.titulo, a.slug, a.estado, a.actualizado_en, u.nombre_usuario AS autor
          FROM articulo a
          JOIN usuario u ON u.id = a.autor_id
-        WHERE a.estado IN ('en_revision', 'borrador')
+        WHERE a.estado = 'en_revision'
         ORDER BY a.actualizado_en DESC`
     );
 
-    res.render('panel/revision', { titulo: 'Revision', pendientes });
+    res.render('panel/revision', { titulo: 'Revisión', pendientes });
   } catch (error) {
     next(error);
   }

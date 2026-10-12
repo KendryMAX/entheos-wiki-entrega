@@ -7,6 +7,22 @@
     <a href="/panel/articulos/nuevo" class="boton boton-dorado">Nuevo artículo</a>
   </div>
 
+  <% if (borradores.length > 0) { %>
+    <div class="bloque-borradores">
+      <h2 class="bloque-subtitulo">Tus borradores</h2>
+      <p class="bloque-bajada">Seguí escribiendo donde lo dejaste o mandá el artículo a corrección.</p>
+      <ul class="lista-borradores">
+        <% borradores.forEach(function (borrador) { %>
+          <li class="borrador">
+            <span class="borrador-titulo"><%= borrador.titulo %></span>
+            <span class="borrador-fecha">Actualizado el <%= new Date(borrador.actualizado_en).toLocaleDateString('es-AR') %></span>
+            <a href="/panel/articulos/<%= borrador.id %>/editar" class="boton boton-plano boton-chico">Continuar editando</a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  <% } %>
+
   <% if (articulos.length === 0) { %>
     <p class="vacio">Todavía no escribiste ningún artículo.</p>
   <% } else { %>
@@ -15,7 +31,6 @@
         <thead>
           <tr>
             <th>Título</th>
-            <th>Autor</th>
             <th>Estado</th>
             <th>Actualizado</th>
             <th>Acciones</th>
@@ -25,14 +40,15 @@
           <% articulos.forEach(function (articulo) { %>
             <tr>
               <td><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></td>
-              <td><%= articulo.autor %></td>
               <td><span class="estado estado-<%= articulo.estado %>"><%= etiquetas.estado(articulo.estado) %></span></td>
               <td><%= new Date(articulo.actualizado_en).toLocaleDateString('es-AR') %></td>
               <td class="tabla-acciones">
                 <a href="/panel/articulos/<%= articulo.id %>/editar">Editar</a>
-                <form action="/panel/articulos/<%= articulo.id %>/borrar" method="POST" class="formulario-en-linea">
-                  <button type="submit" class="boton boton-plano boton-chico">Archivar</button>
-                </form>
+                <% if (articulo.estado !== 'archivado') { %>
+                  <form action="/panel/articulos/<%= articulo.id %>/borrar" method="POST" class="formulario-en-linea">
+                    <button type="submit" class="boton boton-plano boton-chico">Archivar</button>
+                  </form>
+                <% } %>
               </td>
             </tr>
           <% }); %>
@@ -41,5 +57,39 @@
     </div>
   <% } %>
 </section>
+
+<% if (todos) { %>
+  <section class="bloque">
+    <h2 class="bloque-titulo">Todos los artículos</h2>
+    <p class="bloque-bajada">Como Administrador ves el trabajo de todo el equipo.</p>
+
+    <% if (todos.length === 0) { %>
+      <p class="vacio">Todavía no hay artículos.</p>
+    <% } else { %>
+      <div class="tabla-envoltura">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Estado</th>
+              <th>Actualizado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% todos.forEach(function (articulo) { %>
+              <tr>
+                <td><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></td>
+                <td><%= articulo.autor %></td>
+                <td><span class="estado estado-<%= articulo.estado %>"><%= etiquetas.estado(articulo.estado) %></span></td>
+                <td><%= new Date(articulo.actualizado_en).toLocaleDateString('es-AR') %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </section>
+<% } %>
 
 <%- include('../parciales/pie') %>

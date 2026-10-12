@@ -7,8 +7,18 @@
 <%- include('../parciales/cabecera') %>
 <%- include('_navegacion') %>
 
+<%
+  // Compara dos valores sin importar tildes ni mayúsculas, para marcar la opción
+  // elegida en las listas de la ficha.
+  function coincide(a, b) {
+    const limpia = (v) => String(v === null || v === undefined ? '' : v)
+      .trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return limpia(a) === limpia(b);
+  }
+%>
+
 <section class="hoja hoja-ancha">
-  <h1 class="hoja-titulo"><%= articulo ? 'Editar artículo' : 'Nuevo artículo' %></h1>
+  <h1 class="hoja-titulo"><%= articulo && articulo.id ? 'Editar artículo' : 'Nuevo artículo' %></h1>
 
   <% if (error) { %>
     <p class="alerta alerta-error"><%= error %></p>
@@ -21,281 +31,107 @@
     <% } %>
 
     <div class="campo">
-      <label for="titulo">Título</label>
-      <input type="text" id="titulo" name="titulo" required minlength="3" maxlength="200"
-             placeholder="Faro de la Casa Lumina"
-             value="<%= articulo ? articulo.titulo || '' : '' %>"
-             data-error="El título necesita al menos 3 caracteres." autofocus>
-      <span class="campo-error" data-error-de="titulo"></span>
-    </div>
-
-    <div class="campo">
-      <label for="resumen">Resumen</label>
-      <textarea id="resumen" name="resumen" rows="2" maxlength="500"
-                placeholder="En Portside, el viejo muelle cruje con cada marea y los pescadores cuentan que algo duerme bajo el agua."><%= articulo ? articulo.resumen || '' : '' %></textarea>
-      <span class="campo-ayuda">Se muestra en el listado de artículos.</span>
-    </div>
-
-    <div class="campo">
-      <label for="contenido">Contenido (Markdown)</label>
-      <textarea class="editor-memo" id="contenido" name="contenido" rows="16" required minlength="10"
-                data-error="El contenido necesita al menos 10 caracteres."
-                placeholder="## La leyenda&#10;&#10;Se dice que cuando la niebla se alza sobre el puerto, el faro enciende solo: nadie sabe quién cuida la llama.&#10;&#10;## Historia&#10;&#10;Los cronistas de Portside registran la primera luz el año que se hundió la Compañía del Ámbar."><%= articulo ? articulo.contenido_md || '' : '' %></textarea>
-      <span class="campo-error" data-error-de="contenido"></span>
-      <span class="campo-ayuda">
-        Markdown: <code>## título</code>, <code>**negrita**</code>, <code>*cursiva*</code>,
-        <code>- lista</code>, <code>> cita</code>, <code>[enlace](/ruta)</code>.
-      </span>
-      <div class="contador" data-contador-de="contenido">0 caracteres</div>
-    </div>
-
-    <div class="campo">
       <label for="categoria">Categoría</label>
-      <select id="categoria" name="categoria_id">
-        <option value="">Sin categoría</option>
+      <select id="categoria" name="categoria_id" required>
+        <option value="">Elegí una categoría</option>
         <% categorias.forEach(function (categoria) { %>
-          <option value="<%= categoria.id %>" <%= articulo && articulo.categoria_id === categoria.id ? 'selected' : '' %>>
-            <%= categoria.nombre %>
-          </option>
+          <option value="<%= categoria.id %>" <%= articulo && articulo.categoria_id === categoria.id ? 'selected' : '' %>><%= categoria.nombre %></option>
         <% }); %>
       </select>
+      <span class="campo-ayuda">Primero elegí la categoría: define los campos y las partes del artículo.</span>
     </div>
 
-    <div class="campo" id="ubicacion" style="display:none">
-      <p class="campo-ayuda"><strong>Ubicación en el mundo</strong></p>
-      <span class="campo-ayuda">
-        Colocá la nota en su continente, zona, reino o localidad. Con eso aparece
-        sola en las tablas que la relacionan.
-      </span>
+    <p class="campo-ayuda" id="sin-categoria">Elegí una categoría para ver los campos y las partes del artículo.</p>
 
-      <div class="ubicacion-campo" data-categorias="Regiones,Reinos y Estados,Localidades">
-        <label for="continente_id">Continente</label>
-        <select id="continente_id" name="continente_id">
-          <option value="">Sin especificar</option>
-          <% catalogos.continentes.forEach(function (continente) { %>
-            <option value="<%= continente.id %>" <%= ubicacion.continente_id === continente.id ? 'selected' : '' %>><%= continente.nombre %></option>
-          <% }); %>
-        </select>
+    <div id="ficha-categoria" hidden>
+
+      <div class="campo">
+        <label for="titulo">Título</label>
+        <input type="text" id="titulo" name="titulo" required minlength="3" maxlength="200"
+               placeholder="Faro de la Casa Lumina"
+               value="<%= articulo ? articulo.titulo || '' : '' %>"
+               data-error="El título necesita al menos 3 caracteres.">
+        <span class="campo-error" data-error-de="titulo"></span>
+        <span class="campo-ayuda">Es libre: si no existe, se crea la localidad, región, reino o continente con ese nombre.</span>
       </div>
 
-      <div class="ubicacion-campo" data-categorias="Localidades">
-        <label for="zona_geografica_id">Zona geográfica</label>
-        <select id="zona_geografica_id" name="zona_geografica_id">
-          <option value="">Sin especificar</option>
-          <% catalogos.zonas.forEach(function (zona) { %>
-            <option value="<%= zona.id %>" <%= ubicacion.zona_geografica_id === zona.id ? 'selected' : '' %>><%= zona.nombre %></option>
-          <% }); %>
-        </select>
-        <span class="campo-ayuda">La localidad figurará en la tabla de esta zona.</span>
+      <div class="campo">
+        <label for="resumen">Resumen</label>
+        <textarea id="resumen" name="resumen" rows="2" maxlength="500"
+                  placeholder="En Portside, el viejo muelle cruje con cada marea y los pescadores cuentan que algo duerme bajo el agua."><%= articulo ? articulo.resumen || '' : '' %></textarea>
+        <span class="campo-ayuda">Se muestra en el listado de artículos.</span>
       </div>
 
-      <div class="ubicacion-campo" data-categorias="Localidades">
-        <label for="reino_estado_id">Reino o Estado</label>
-        <select id="reino_estado_id" name="reino_estado_id">
-          <option value="">Sin especificar</option>
-          <% catalogos.reinos.forEach(function (reino) { %>
-            <option value="<%= reino.id %>" <%= ubicacion.reino_estado_id === reino.id ? 'selected' : '' %>><%= reino.nombre %></option>
-          <% }); %>
-        </select>
-      </div>
+      <% categoriasForm.forEach(function (grupo) { %>
+        <div class="grupo-categoria" data-grupo-categoria="<%= grupo.id %>" hidden>
+          <h2 class="grupo-titulo"><%= grupo.nombre %></h2>
 
-      <div class="ubicacion-campo" data-categorias="Localidades">
-        <label for="tipo_asentamiento_id">Tipo de asentamiento</label>
-        <select id="tipo_asentamiento_id" name="tipo_asentamiento_id">
-          <option value="">Sin especificar</option>
-          <% catalogos.tipos.forEach(function (tipo) { %>
-            <option value="<%= tipo.id %>" <%= ubicacion.tipo_asentamiento_id === tipo.id ? 'selected' : '' %>><%= tipo.nombre %></option>
-          <% }); %>
-        </select>
-      </div>
+          <div class="grupo-ficha">
+            <% grupo.campos.forEach(function (campo, indice) { %>
+              <div class="campo">
+                <label for="f-<%= grupo.id %>-<%= indice %>"><%= campo.etiqueta %></label>
+                <% if (campo.tipo === 'lista') { %>
+                  <select id="f-<%= grupo.id %>-<%= indice %>" name="f_<%= grupo.id %>_<%= indice %>">
+                    <option value="">Sin especificar</option>
+                    <% campo.opciones.forEach(function (opcion) { %>
+                      <option value="<%= opcion %>" <%= coincide(campo.valor, opcion) ? 'selected' : '' %>><%= opcion %></option>
+                    <% }); %>
+                  </select>
+                <% } else { %>
+                  <input type="text" id="f-<%= grupo.id %>-<%= indice %>" name="f_<%= grupo.id %>_<%= indice %>" value="<%= campo.valor %>">
+                <% } %>
+              </div>
+            <% }); %>
 
-      <div class="ubicacion-campo" data-categorias="Reinos y Estados">
-        <label for="capital_id">Capital</label>
-        <select id="capital_id" name="capital_id">
-          <option value="">Sin especificar</option>
-          <% catalogos.localidades.forEach(function (localidad) { %>
-            <option value="<%= localidad.id %>" <%= ubicacion.capital_id === localidad.id ? 'selected' : '' %>><%= localidad.nombre %></option>
-          <% }); %>
-        </select>
+            <% grupo.extras.forEach(function (extra, indice) { %>
+              <div class="campo">
+                <label for="e-<%= grupo.id %>-<%= indice %>">Otro dato de la ficha</label>
+                <div class="campo-doble">
+                  <input type="text" id="e-<%= grupo.id %>-<%= indice %>" name="extra_etiqueta_<%= grupo.id %>" value="<%= extra.etiqueta %>" placeholder="Título" aria-label="Título del dato">
+                  <input type="text" name="extra_valor_<%= grupo.id %>" value="<%= extra.valor %>" placeholder="Valor" aria-label="Valor del dato">
+                </div>
+              </div>
+            <% }); %>
+          </div>
+
+          <div class="grupo-secciones">
+            <% grupo.secciones.forEach(function (seccion) { %>
+              <div class="campo">
+                <label for="s-<%= grupo.id %>-<%= seccion.indice %>"><%= seccion.titulo %></label>
+                <textarea id="s-<%= grupo.id %>-<%= seccion.indice %>" name="s_<%= grupo.id %>_<%= seccion.indice %>" rows="4" class="editor-memo"><%= seccion.valor %></textarea>
+              </div>
+            <% }); %>
+          </div>
+
+          <div class="campo">
+            <label for="cuerpo-<%= grupo.id %>">Cuerpo libre (Markdown)</label>
+            <textarea id="cuerpo-<%= grupo.id %>" name="cuerpo_<%= grupo.id %>" rows="10" class="editor-memo"><%= grupo.cuerpo %></textarea>
+            <span class="campo-ayuda">
+              Acá va la introducción y todo lo que no entra en las partes de arriba.
+              Markdown: <code>## título</code>, <code>**negrita**</code>, <code>*cursiva*</code>,
+              <code>- lista</code>, <code>> cita</code>, <code>[enlace](/ruta)</code>.
+            </span>
+          </div>
+        </div>
+      <% }); %>
+
+      <div class="acciones-articulo">
+        <button type="submit" class="boton boton-dorado" name="accion" value="borrador">Guardar como borrador</button>
+        <button type="submit" class="boton boton-plano" name="accion" value="correccion">Enviar a corrección</button>
+        <a href="/panel/articulos" class="boton boton-plano">Cancelar</a>
+        <% if (articulo && articulo.estado === 'publicado') { %>
+          <span class="campo-ayuda">Este artículo ya está publicado: «Guardar como borrador» lo devuelve a borrador.</span>
+        <% } %>
       </div>
     </div>
-
-    <div class="campo">
-      <label for="template">Plantilla</label>
-      <select id="template" name="template_id">
-        <option value="">Ninguna</option>
-        <option value="raza-civilizacion">Plantilla - Raza & Civilización</option>
-        <option value="npc">Plantilla - NPC</option>
-        <option value="localidad">Plantilla - Localidad</option>
-        <option value="hecho-historico">Plantilla - Hecho Histórico</option>
-        <option value="items">Plantilla - Items</option>
-      </select>
-      <span class="campo-ayuda">Selecciona una plantilla para rellenar automáticamente el contenido.</span>
-    </div>
-
-    <div class="campo">
-      <label for="estado">Estado</label>
-      <select id="estado" name="estado">
-        <% Object.keys(etiquetas.ESTADOS).forEach(function (opcion) { %>
-          <option value="<%= opcion %>" <%= articulo && articulo.estado === opcion ? 'selected' : '' %>>
-            <%= etiquetas.ESTADOS[opcion] %>
-          </option>
-        <% }); %>
-      </select>
-      <span class="campo-ayuda">Queda publicado de inmediato si elegís "publicado".</span>
-    </div>
-
-    <template data-plantilla="raza-civilizacion">## Ficha
-
-| Campo | Valor |
-| --- | --- |
-| Pronunciación | |
-| Alias | |
-| Tipo | Raza |
-| Subrazas | |
-| Zona de origen | |
-| Continente de origen | |
-| Longevidad | |
-| Idioma principal | |
-| Religión principal | |
-| Localidades asociadas | |
-| Presencia | |
-
-Párrafo de introducción: describe la apariencia física básica de la raza, sus rasgos más reconocibles y la atmósfera cultural que transmiten. Cómo se perciben en el mundo, qué impresión dejan en otras razas y cuál es su papel general en la ambientación.
-
-### Biología y Fisiología
-
-Describe la morfología general: altura, complexión y rasgos físicos distintivos. Explica el ciclo vital (nacimiento, madurez, longevidad) y cualquier adaptación biológica especial. Incluye enfermedades propias, vulnerabilidades fisiológicas o capacidades únicas que los diferencien de otras razas.
-
-### Psicología y Cognición
-
-Explica el temperamento predominante y cómo perciben el tiempo, la memoria y los sueños. Señala sus miedos comunes, formas de razonamiento, actitudes sociales y lenguaje corporal característico. Muestra cómo piensan y sienten, y cómo eso condiciona su cultura.
-
-### Lengua y Comunicación
-
-Indica el idioma principal, dialectos internos, lenguajes rituales o secretos. Describe cómo se comunican (oral, simbólico, gestual) y si poseen sistemas únicos de escritura o símbolos. Añade detalles sobre la importancia cultural de la lengua y su papel en la transmisión de conocimiento.
-
-### Referencias de Diseño
-
-Indica las inspiraciones reales que guían la construcción de la raza: culturas históricas o contemporáneas que sirven de base para nombres, estética, organización social o rasgos culturales.
-
-### Población Actual
-
-### Mitos Propios y de Origen
-
-### Religiones
-
-### Descripción General
-
-### Sociedad y Cultura
-
-### Historia y Cronología
-
-### Relaciones</template>
-    <template data-plantilla="npc">## Ficha
-
-| Campo | Valor |
-| --- | --- |
-| Pronunciación | |
-| Alias | |
-| Raza | |
-| Sexo | |
-| Edad | |
-| Altura | |
-| Peso | |
-| Orientación (sex.) | |
-| Condición | |
-| Alineamiento | |
-| Ocupación | |
-| Cobro | |
-| Dinero | |
-| Localidad | |
-| Religiones | |
-| Facciones/Grupos | |
-| Fecha de nacimiento | |
-| Fecha de fallecimiento | |
-| estado vital | |
-
-### Personalidad
-
-### Social
-
-### Mental
-
-### Gustos
-
-### Familia y Amigos
-
-### Enemistades
-
-### Personales
-
-### Profesionales
-
-### Roles
-
-### Dinero Actual
-
-### Equipamiento
-
-### Descripción General
-
-### Historia Breve
-
-### Rol en la Sociedad
-
-### Rasgos y Capacidades
-
-### Riesgos, Debilidades y Defectos
-
-### DM e Impacto Narrativo
-
-##### Ganchos Narrativos
-
-##### Detalles Secretos
-
-##### Notas de DM</template>
-    <template data-plantilla="localidad">## Ficha
-
-| Campo | Valor |
-| --- | --- |
-| Tipo | |
-| Nombre | |
-| Descripción | |
-| Localización | |
-| Población | |
-| Gobierno | |
-| Economía | |
-| Leyenda | |
-
-### Descripción General
-
-### Historia y Cronología
-
-### Relaciones
-
-### Recursos
-
-### Amenazas
-
-### Contactos</template>
-    <template data-plantilla="hecho-historico">## Ficha
-
-| Campo | Valor |
-| --- | --- |
-| Tipo | |
-| Título | |
-| Fecha | |
-| Lugares involucrados | |
-| Personajes involucrados | |
-| Resultado | </template>
-
-
-    <button type="submit" class="boton boton-dorado">
-      <%= articulo ? 'Guardar cambios' : 'Crear artículo' %>
-    </button>
-    <a href="/panel/articulos" class="boton boton-plano">Cancelar</a>
   </form>
+
+  <% if (articulo && articulo.id && esAdministrador) { %>
+    <form action="/panel/articulos/<%= articulo.id %>/eliminar" method="POST"
+          class="formulario-eliminar" data-confirmar="¿Eliminar este artículo? Esta acción no se puede deshacer.">
+      <button type="submit" class="boton boton-peligro">Eliminar artículo</button>
+    </form>
+  <% } %>
 </section>
 
 <%- include('../parciales/pie') %>
