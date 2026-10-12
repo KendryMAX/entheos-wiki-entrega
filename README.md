@@ -54,8 +54,6 @@ mano.**
 | Angel   | Angel123   | Editor        |
 | Adriano | Adriano123 | Lector        |
 
-> Son contraseñas de prueba: **cambiarlas antes de entregar** (`npm run admin`).
-
 ### Si la base no se pudo crear
 
 `INSTALAR.bat` termina en `[ERROR] No se pudo crear la base de datos`. Es casi
@@ -157,58 +155,11 @@ El `.env` guarda las contraseñas y **no viaja en el repositorio** (está en
 
 ---
 
-## Rutas principales
-
-| Ruta                      | Página                                          |
-| ------------------------- | ----------------------------------------------- |
-| `/`                       | Portada con categorías y buscador               |
-| `/articulos`              | Listado, artículos recientes y categorías       |
-| `/articulos/:slug`        | Ficha de un artículo                            |
-| `/personajes`, `/lugares` | Catálogos                                       |
-| `/buscar?q=palabra`       | Búsqueda                                        |
-| `/comunidad`              | Chat y miembros de la comunidad                 |
-| `/reportes`               | Reportes exportables a PDF                      |
-| `/acceso`, `/registro`    | Iniciar sesión y registrarse                    |
-| `/panel/*`                | Panel de gestión (requiere Editor/Administrador)|
-
----
-
-## Pruebas
-
-```powershell
-npm run prueba
-```
-
-Debe terminar con **10/10** (`pass 10` / `fail 0`). Cubren las rutas públicas,
-la autenticación (acceso, sesión y cierre), los listados filtrados por la base
-o por categoría, la búsqueda, el chat y la página de error 404.
-
----
-
-## Comandos útiles
-
-```powershell
-npm install          # Descarga las librerías
-npm run dev          # Servidor con recarga automática (nodemon)
-npm run iniciar      # Servidor normal
-npm run prueba       # Pruebas automáticas (deben dar 10/10)
-npm run bd:crear     # Crea la base y carga esquema + datos
-npm run bd:reiniciar # Borra la base y la recrea desde cero
-npm run admin        # Alta de cuentas, cambio de contraseña y de rol
-npm run exportar     # Exporta artículos y reportes a PDF
-npm run importar     # Importa el vault de Obsidian (herramienta interna)
-npm run formato      # Formatea el código con Prettier
-```
-
----
-
 ## Funcionalidades
 
 - Portada con las categorías y el buscador.
 - Listado de artículos con artículos recientes, filtros por categoría y paginación.
 - Ficha de artículo en Markdown, con índice, ficha lateral y relacionadas.
-- **Fichas de raza** con tablas que se generan a partir de las relaciones
-  `raza_localidad` (Población actual) y `raza_religion` (Religiones).
 - **Comunidad**: chat donde los usuarios dejan mensajes y se listan los miembros.
 - Comentarios moderados por el Editor.
 - Roles: **Lector**, **Editor** y **Administrador**.
@@ -225,9 +176,6 @@ hay que estar agregado como colaborador y aceptar la invitación (llega al corre
 o se acepta en <https://github.com/KendryMAX/entheos-wiki/invitations>).
 
 - Colaboradores: `KendryMAX`, `AngelDanielZ4914`, `adrianodev`.
-
-Al trabajar en equipo: partir siempre de `main` actualizada, crear una rama por
-tarea, subirla y abrir un Pull Request. No hacer `git push` directo a `main`.
 
 ---
 
