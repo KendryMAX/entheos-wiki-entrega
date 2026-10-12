@@ -69,7 +69,7 @@ router.get('/', async (req, res, next) => {
          LEFT JOIN usuario u ON u.id = a.autor_id
          LEFT JOIN imagen i ON i.id = a.imagen_id
          ${donde}
-        ORDER BY a.publicado_en DESC, a.actualizado_en DESC
+        ORDER BY a.publicado_en DESC, a.actualizado_en DESC, a.id DESC
         LIMIT ? OFFSET ?`,
       [...valores, porPagina, desde]
     );
