@@ -16,7 +16,7 @@
           <% if (personaje.titulo) { %><p class="tarjeta-subtitulo"><%= personaje.titulo %></p><% } %>
           <p class="tarjeta-pie">
             <%= personaje.raza || 'Raza desconocida' %>
-            &middot; <%= personaje.estado_vital.replace('_', ' ') %>
+            &middot; <%= etiquetas.estadoVital(personaje.estado_vital) %>
           </p>
         </article>
       <% }); %>

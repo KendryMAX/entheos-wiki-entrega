@@ -66,7 +66,7 @@ router.get('/', async (req, res, next) => {
               c.nombre AS categoria, u.nombre_usuario AS autor, u.nombre_completo AS autor_nombre,
               i.ruta AS imagen_ruta,
               (SELECT COUNT(*) FROM comentario co
-                WHERE co.articulo_id = a.id AND co.estado = 'aprobado') AS comentarios
+                WHERE co.articulo_id = a.id) AS comentarios
          FROM articulo a
          LEFT JOIN categoria c ON c.id = a.categoria_id
          LEFT JOIN usuario u ON u.id = a.autor_id
@@ -217,7 +217,7 @@ router.get('/:slug', async (req, res, next) => {
       `SELECT co.id, co.contenido, co.creado_en, u.nombre_usuario, u.avatar_url
          FROM comentario co
          JOIN usuario u ON u.id = co.usuario_id
-        WHERE co.articulo_id = ? AND co.estado = 'aprobado'
+        WHERE co.articulo_id = ?
         ORDER BY co.creado_en`,
       [articulo.id]
     );
@@ -249,7 +249,7 @@ router.post('/:slug/comentarios', requiereSesion, async (req, res, next) => {
 
     await db.ejecutar(
       'INSERT INTO comentario (articulo_id, usuario_id, contenido, estado) VALUES (?, ?, ?, ?)',
-      [articulo.id, res.locals.usuario.id, contenido.slice(0, 2000), 'pendiente']
+      [articulo.id, res.locals.usuario.id, contenido.slice(0, 2000), 'aprobado']
     );
 
     res.redirect(`/articulos/${articulo.slug}#comentarios`);

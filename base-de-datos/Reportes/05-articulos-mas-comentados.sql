@@ -4,8 +4,6 @@ SELECT a.titulo,
        u.nombre_usuario AS autor,
        c.nombre AS categoria,
        COUNT(co.id) AS comentarios,
-       SUM(co.estado = 'aprobado') AS aprobados,
-       SUM(co.estado = 'pendiente') AS pendientes,
        a.vistas,
        ROUND(COUNT(co.id) / (a.vistas / 1000), 2) AS comentarios_por_mil_visitas
   FROM articulo a

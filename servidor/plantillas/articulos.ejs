@@ -29,7 +29,7 @@
           <span class="tarjeta-cont">
             <% if (articulo.estado !== 'publicado') { %>
               <span class="tarjeta-cabecera">
-                <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
+                <span class="estado estado-<%= articulo.estado %>"><%= etiquetas.estado(articulo.estado) %></span>
               </span>
             <% } %>
             <span class="tarjeta-titulo"><%= articulo.titulo %><% if (articulo.esSubraza && !/^plantilla/i.test(articulo.titulo)) { %><span class="sello-subraza">Subraza</span><% } %></span>

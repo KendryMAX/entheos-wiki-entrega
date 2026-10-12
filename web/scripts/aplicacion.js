@@ -234,8 +234,68 @@ function activarContadores() {
   });
 }
 
+// Muestra solo los campos de ubicación que corresponden a la categoría elegida.
+// Los campos ocultos igual llegan al servidor, pero este solo usa los de su
+// categoría para anclar la nota en las tablas del mundo.
+function activarUbicacion(formulario) {
+  const categoria = formulario.querySelector('#categoria');
+  const seccion = formulario.querySelector('#ubicacion');
+
+  if (!categoria || !seccion) return;
+
+  const campos = [...seccion.querySelectorAll('.ubicacion-campo')];
+  const tipo = formulario.querySelector('#tipo_asentamiento_id');
+  const continente = formulario.querySelector('#continente_id');
+
+  const actualizar = () => {
+    const opcion = categoria.options[categoria.selectedIndex];
+    const nombre = opcion ? opcion.textContent.trim() : '';
+    let visible = false;
+
+    campos.forEach((campo) => {
+      const corresponde = (campo.dataset.categorias || '').split(',').includes(nombre);
+      campo.style.display = corresponde ? '' : 'none';
+      if (corresponde) visible = true;
+    });
+
+    seccion.style.display = visible ? '' : 'none';
+    if (tipo) tipo.required = nombre === 'Localidades';
+    if (continente) continente.required = nombre === 'Reinos y Estados';
+  };
+
+  categoria.addEventListener('change', actualizar);
+  actualizar();
+}
+
+// Rellena el contenido con la plantilla elegida. Las plantillas viven en
+// etiquetas <template> de la página (inertes, no las bloquea la CSP).
+function activarPlantillas(formulario) {
+  const selector = formulario.querySelector('#template');
+  const campo = formulario.querySelector('#contenido');
+
+  if (!selector || !campo) return;
+
+  selector.addEventListener('change', () => {
+    const elegido = selector.value;
+    const plantilla = elegido
+      ? formulario.querySelector(`template[data-plantilla="${elegido}"]`)
+      : null;
+
+    if (plantilla) {
+      campo.value = plantilla.content.textContent;
+      campo.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    localStorage.setItem('lastTemplate', elegido);
+  });
+}
+
 function iniciar() {
-  document.querySelectorAll('form[data-validar]').forEach(activarValidacion);
+  document.querySelectorAll('form[data-validar]').forEach((formulario) => {
+    activarValidacion(formulario);
+    activarUbicacion(formulario);
+    activarPlantillas(formulario);
+  });
   document.querySelectorAll('[data-autocompletado]').forEach(activarAutocompletado);
   activarMenu();
   activarContadores();

@@ -19,6 +19,111 @@ function aSlug(texto) {
     .slice(0, 200);
 }
 
+// Categorías que anclan su artículo a una fila de las tablas de mundo. Así, al
+// crear o editar una nota, el editor la "coloca" en su continente, zona,
+// reino o localidad y aparece sola en las tablas que se generan al mostrarla.
+const CATEGORIAS_CON_UBICACION = ['Continentes', 'Regiones', 'Reinos y Estados', 'Localidades'];
+
+async function catalogosUbicacion() {
+  const [continentes, zonas, reinos, tipos, localidades] = await Promise.all([
+    db.consultar('SELECT id, nombre FROM continente ORDER BY nombre'),
+    db.consultar('SELECT id, nombre FROM zona_geografica ORDER BY nombre'),
+    db.consultar('SELECT id, nombre FROM reino_estado WHERE disuelto = 0 ORDER BY nombre'),
+    db.consultar('SELECT id, nombre FROM tipo_asentamiento ORDER BY nombre'),
+    db.consultar('SELECT id, nombre FROM localidad ORDER BY nombre'),
+  ]);
+
+  return { continentes, zonas, reinos, tipos, localidades };
+}
+
+function ubicacionVacia() {
+  return {
+    continente_id: null,
+    zona_geografica_id: null,
+    reino_estado_id: null,
+    tipo_asentamiento_id: null,
+    capital_id: null,
+  };
+}
+
+function numerosUbicacion(fuente) {
+  const numero = (valor) => (valor ? Number(valor) : null);
+  return {
+    continente_id: numero(fuente && fuente.continente_id),
+    zona_geografica_id: numero(fuente && fuente.zona_geografica_id),
+    reino_estado_id: numero(fuente && fuente.reino_estado_id),
+    tipo_asentamiento_id: numero(fuente && fuente.tipo_asentamiento_id),
+    capital_id: numero(fuente && fuente.capital_id),
+  };
+}
+
+async function ubicacionDeArticulo(articulo, categorias) {
+  if (!articulo || !articulo.categoria_id) return ubicacionVacia();
+
+  const categoria = categorias.find((c) => c.id === articulo.categoria_id);
+  const nombre = categoria ? categoria.nombre : null;
+
+  if (nombre === 'Localidades') {
+    const fila = await db.consultarUno(
+      'SELECT zona_geografica_id, reino_estado_id, tipo_asentamiento_id FROM localidad WHERE nombre = ? LIMIT 1',
+      [articulo.titulo]
+    );
+    return fila ? numerosUbicacion(fila) : ubicacionVacia();
+  }
+
+  if (nombre === 'Regiones') {
+    const fila = await db.consultarUno(
+      'SELECT continente_id, reino_estado_id FROM zona_geografica WHERE nombre = ? LIMIT 1',
+      [articulo.titulo]
+    );
+    return fila ? numerosUbicacion(fila) : ubicacionVacia();
+  }
+
+  if (nombre === 'Reinos y Estados') {
+    const fila = await db.consultarUno(
+      'SELECT continente_id, capital_id FROM reino_estado WHERE nombre = ? LIMIT 1',
+      [articulo.titulo]
+    );
+    return fila ? numerosUbicacion(fila) : ubicacionVacia();
+  }
+
+  return ubicacionVacia();
+}
+
+async function guardarUbicacion(categoriaNombre, titulo, resumen, ubicacion) {
+  if (!CATEGORIAS_CON_UBICACION.includes(categoriaNombre)) return;
+
+  const descripcion = resumen ? String(resumen).slice(0, 500) : null;
+
+  if (categoriaNombre === 'Continentes') {
+    await db.ejecutar(
+      `INSERT INTO continente (nombre, descripcion) VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE descripcion = VALUES(descripcion)`,
+      [titulo, descripcion]
+    );
+  } else if (categoriaNombre === 'Regiones') {
+    await db.ejecutar(
+      `INSERT INTO zona_geografica (nombre, descripcion, continente_id) VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE descripcion = VALUES(descripcion), continente_id = VALUES(continente_id)`,
+      [titulo, descripcion, ubicacion.continente_id]
+    );
+  } else if (categoriaNombre === 'Reinos y Estados') {
+    await db.ejecutar(
+      `INSERT INTO reino_estado (nombre, descripcion, continente_id, capital_id) VALUES (?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE descripcion = VALUES(descripcion), continente_id = VALUES(continente_id), capital_id = VALUES(capital_id)`,
+      [titulo, descripcion, ubicacion.continente_id, ubicacion.capital_id]
+    );
+  } else if (categoriaNombre === 'Localidades') {
+    await db.ejecutar(
+      `INSERT INTO localidad (nombre, descripcion, zona_geografica_id, reino_estado_id, tipo_asentamiento_id)
+       VALUES (?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE descripcion = VALUES(descripcion), zona_geografica_id = VALUES(zona_geografica_id),
+                               reino_estado_id = VALUES(reino_estado_id), tipo_asentamiento_id = VALUES(tipo_asentamiento_id)`,
+      [titulo, descripcion, ubicacion.zona_geografica_id, ubicacion.reino_estado_id, ubicacion.tipo_asentamiento_id]
+    );
+  }
+}
+
 router.get('/panel/articulos', requiereSesion, requiereEditor(), async (req, res, next) => {
   try {
     const articulos = await db.consultar(
@@ -38,10 +143,15 @@ router.get('/panel/articulos', requiereSesion, requiereEditor(), async (req, res
 
 router.get('/panel/articulos/nuevo', requiereSesion, requiereEditor(), async (req, res, next) => {
   try {
+    const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
+    const catalogos = await catalogosUbicacion();
+
     res.render('panel/articuloForm', {
       titulo: 'Nuevo artículo',
       articulo: null,
-      categorias: await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre'),
+      categorias,
+      catalogos,
+      ubicacion: ubicacionVacia(),
       error: null,
     });
   } catch (error) {
@@ -57,10 +167,16 @@ router.get('/panel/articulos/:id/editar', requiereSesion, requiereEditor(), asyn
 
     errores.requerido(articulo, 'Ese artículo no existe.');
 
+    const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
+    const catalogos = await catalogosUbicacion();
+    const ubicacion = await ubicacionDeArticulo(articulo, categorias);
+
     res.render('panel/articuloForm', {
       titulo: 'Editar artículo',
       articulo,
-      categorias: await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre'),
+      categorias,
+      catalogos,
+      ubicacion,
       error: null,
     });
   } catch (error) {
@@ -79,19 +195,35 @@ router.post('/panel/articulos', requiereSesion, requiereEditor(), async (req, re
     if (titulo.length < 3) problemas.push('El titulo debe tener al menos 3 caracteres.');
     if (contenido.length < 10) problemas.push('El contenido debe tener al menos 10 caracteres.');
 
+    const resumen = String(req.body.resumen || '').slice(0, 500);
+    const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
+    const categoriaId = req.body.categoria_id ? Number(req.body.categoria_id) : null;
+    const categoria = categorias.find((c) => c.id === categoriaId);
+    const categoriaNombre = categoria ? categoria.nombre : null;
+    const ubicacion = numerosUbicacion(req.body);
+
+    if (categoriaNombre === 'Localidades' && !ubicacion.tipo_asentamiento_id) {
+      problemas.push('Elegí un tipo de asentamiento para la localidad.');
+    }
+    if (categoriaNombre === 'Reinos y Estados' && !ubicacion.continente_id) {
+      problemas.push('Elegí el continente del reino o estado.');
+    }
+
     if (problemas.length > 0) {
-      const categorias = await db.consultar('SELECT id, nombre FROM categoria ORDER BY nombre');
+      const catalogos = await catalogosUbicacion();
       return res.status(400).render('panel/articuloForm', {
         titulo: id ? 'Editar artículo' : 'Nuevo artículo',
         articulo: {
           id,
           titulo,
-          resumen: String(req.body.resumen || '').slice(0, 500),
+          resumen,
           contenido_md: contenido,
           estado: req.body.estado,
-          categoria_id: req.body.categoria_id ? Number(req.body.categoria_id) : null,
+          categoria_id: categoriaId,
         },
         categorias,
+        catalogos,
+        ubicacion,
         error: problemas.join(' '),
       });
     }
@@ -113,22 +245,24 @@ router.post('/panel/articulos', requiereSesion, requiereEditor(), async (req, re
       ? req.body.estado
       : 'borrador';
 
-    const categoriaId = req.body.categoria_id ? Number(req.body.categoria_id) : null;
-
     if (id) {
       await db.ejecutar(
         `UPDATE articulo
             SET titulo = ?, slug = ?, resumen = ?, contenido_md = ?, estado = ?, categoria_id = ?
           WHERE id = ?`,
-        [titulo, slug, String(req.body.resumen || '').slice(0, 500), contenido, estado, categoriaId, id]
+        [titulo, slug, resumen, contenido, estado, categoriaId, id]
       );
     } else {
       await db.ejecutar(
         `INSERT INTO articulo (titulo, slug, resumen, contenido_md, estado, autor_id, categoria_id, publicado_en)
          VALUES (?, ?, ?, ?, ?, ?, ?, IF(? = 'publicado', NOW(), NULL))`,
-        [titulo, slug, String(req.body.resumen || '').slice(0, 500), contenido, estado, res.locals.usuario.id, categoriaId, estado]
+        [titulo, slug, resumen, contenido, estado, res.locals.usuario.id, categoriaId, estado]
       );
     }
+
+    // Ancla la nota a su continente, zona, reino o localidad: así aparece sola
+    // en las tablas de las fichas que la relacionan.
+    await guardarUbicacion(categoriaNombre, titulo, resumen, ubicacion);
 
     res.redirect('/panel/articulos');
   } catch (error) {
@@ -184,38 +318,6 @@ router.post('/panel/revision/:id', requiereSesion, requiereEditor(), async (req,
     }
 
     res.redirect('/panel/revision');
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/panel/comentarios', requiereSesion, requiereEditor(), async (req, res, next) => {
-  try {
-    const comentarios = await db.consultar(
-      `SELECT co.id, co.contenido, co.estado, co.creado_en,
-              u.nombre_usuario, a.titulo, a.slug
-         FROM comentario co
-         JOIN usuario u ON u.id = co.usuario_id
-         JOIN articulo a ON a.id = co.articulo_id
-        ORDER BY co.creado_en DESC
-        LIMIT 200`
-    );
-
-    res.render('panel/comentarios', { titulo: 'Comentarios', comentarios });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post('/panel/comentarios/:id', requiereSesion, requiereEditor(), async (req, res, next) => {
-  try {
-    const id = Number(req.params.id);
-    const decision = req.body.decision;
-
-    const destino = ['aprobar', 'rechazar'].includes(decision) ? decision : 'pendiente';
-    await db.ejecutar('UPDATE comentario SET estado = ? WHERE id = ?', [destino, id]);
-
-    res.redirect('/panel/comentarios');
   } catch (error) {
     next(error);
   }

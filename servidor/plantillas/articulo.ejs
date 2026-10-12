@@ -17,7 +17,7 @@
         <span class="ficha"><%= articulo.categoria %></span>
       <% } %>
       <% if (articulo.estado !== 'publicado') { %>
-        <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
+        <span class="estado estado-<%= articulo.estado %>"><%= etiquetas.estado(articulo.estado) %></span>
       <% } %>
       <span class="articulo-autor">
         por <%= articulo.autor_nombre %>

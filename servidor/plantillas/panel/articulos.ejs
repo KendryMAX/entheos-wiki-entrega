@@ -26,7 +26,7 @@
             <tr>
               <td><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></td>
               <td><%= articulo.autor %></td>
-              <td><span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span></td>
+              <td><span class="estado estado-<%= articulo.estado %>"><%= etiquetas.estado(articulo.estado) %></span></td>
               <td><%= new Date(articulo.actualizado_en).toLocaleDateString('es-AR') %></td>
               <td class="tabla-acciones">
                 <a href="/panel/articulos/<%= articulo.id %>/editar">Editar</a>

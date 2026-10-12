@@ -93,17 +93,15 @@ const REPORTES = [
   {
     clave: 'articulos-mas-comentados',
     titulo: 'Artículos más comentados',
-    descripcion: 'Los artículos con más comentarios, aprobados y pendientes, y su relación por cada mil vistas.',
+    descripcion: 'Los artículos ordenados por cantidad de comentarios y su relación por cada mil vistas.',
     archivo: 'reporte-articulos-mas-comentados.pdf',
-    columnas: ['titulo', 'autor', 'categoria', 'comentarios', 'aprobados', 'pendientes', 'vistas', 'comentarios_por_mil_visitas'],
-    tituloColumnas: ['Título', 'Autor', 'Categoría', 'Comentarios', 'Aprobados', 'Pendientes', 'Vistas', 'Coment. x mil vistas'],
+    columnas: ['titulo', 'autor', 'categoria', 'comentarios', 'vistas', 'comentarios_por_mil_visitas'],
+    tituloColumnas: ['Título', 'Autor', 'Categoría', 'Comentarios', 'Vistas', 'Coment. x mil vistas'],
     sql: `
       SELECT a.titulo,
              u.nombre_usuario AS autor,
              c.nombre AS categoria,
              COUNT(co.id) AS comentarios,
-             SUM(co.estado = 'aprobado') AS aprobados,
-             SUM(co.estado = 'pendiente') AS pendientes,
              a.vistas,
              ROUND(COUNT(co.id) / (a.vistas / 1000), 2) AS comentarios_por_mil_visitas
         FROM articulo a

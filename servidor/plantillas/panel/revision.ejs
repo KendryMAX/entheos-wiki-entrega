@@ -14,7 +14,7 @@
             <h2 class="revision-titulo"><a href="/articulos/<%= articulo.slug %>"><%= articulo.titulo %></a></h2>
             <p class="revision-meta">
               por <%= articulo.autor %>
-              &middot; <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
+              &middot; <span class="estado estado-<%= articulo.estado %>"><%= etiquetas.estado(articulo.estado) %></span>
               &middot; <%= new Date(articulo.actualizado_en).toLocaleDateString('es-AR') %>
             </p>
           </div>

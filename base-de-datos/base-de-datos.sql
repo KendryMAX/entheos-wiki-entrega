@@ -98,7 +98,7 @@ CREATE TABLE `comentario` (
   `articulo_id` int unsigned NOT NULL,
   `usuario_id` int unsigned NOT NULL,
   `contenido` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `estado` enum('pendiente','aprobado','rechazado') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pendiente' COMMENT 'Se modera antes de mostrar',
+  `estado` enum('pendiente','aprobado','rechazado') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'aprobado' COMMENT 'Los comentarios se muestran de inmediato',
   `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `actualizado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -106,7 +106,7 @@ CREATE TABLE `comentario` (
   KEY `ix_comentario_usuario` (`usuario_id`),
   CONSTRAINT `fk_comentario_articulo` FOREIGN KEY (`articulo_id`) REFERENCES `articulo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_comentario_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Comentarios de los lectores, moderados por el Editor';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Comentarios de los lectores, visibles al publicarse';
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `mensaje_comunidad`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -582,7 +582,7 @@ SET NAMES utf8mb4;
 
 INSERT IGNORE INTO rol (nombre, descripcion) VALUES
   ('Lector', 'Puede leer los articulos publicados y dejar comentarios.'),
-  ('Editor', 'Puede crear y editar articulos, y moderar los comentarios.'),
+  ('Editor', 'Puede crear y editar articulos y revisar los borradores.'),
   ('Administrador', 'Puede todo lo del Editor y ademas gestiona las cuentas de los usuarios.');
 
 INSERT IGNORE INTO usuario (nombre_usuario, email, password_hash, nombre_completo, biografia, rol_id) VALUES

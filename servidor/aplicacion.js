@@ -10,6 +10,7 @@ const config = require('./configuracion');
 const { exponerSesion } = require('./capas/autenticacion');
 const errores = require('./capas/errores');
 const db = require('./datos/base');
+const etiquetas = require('./servicios/etiquetas');
 
 const app = express();
 
@@ -66,6 +67,11 @@ app.use('/acceso', app.locals.limiteAcceso);
 app.use('/registro', app.locals.limiteAcceso);
 
 app.use(exponerSesion);
+
+app.use(function cargarEtiquetas(req, res, next) {
+  res.locals.etiquetas = etiquetas;
+  next();
+});
 
 app.use(async function cargarConteos(req, res, next) {
   try {
