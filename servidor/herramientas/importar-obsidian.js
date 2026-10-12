@@ -806,7 +806,6 @@ function detectarEntidad(rutaRelativa, tipo) {
   if (t === 'subraza' || t === 'sub raza') return 'subraza';
   if (t === 'item' || t === 'objeto' || t === 'equipo') return 'item';
   if (t === 'recurso' || t === 'recurso material' || t === 'mineral' || t === 'material') return 'recurso';
-  if (t === 'distritozona' || t === 'distrito' || t === 'distrito_zona' || t === 'zona urbana') return 'distrito';
   if (t === 'faccion' || t === 'facción' || t === 'organización' || t === 'organizacion' || t === 'gremio' || t === 'sociedad' || t === 'secta') return 'faccion';
   if (t === 'reino' || t === 'reino-estado' || t === 'reino estado' || t === 'reino_estado' || t === 'estado' || t === 'republica' || t === 'imperio') return 'reino_estado';
   if (t === 'punto de interés' || t === 'punto de interes' || t === 'punto_de_interes' || t === 'edificio' || t === 'lugar individual') return 'punto_interes';
@@ -817,7 +816,6 @@ function detectarEntidad(rutaRelativa, tipo) {
   if (ruta.includes('Continentes')) return 'continente';
   if (ruta.includes('Zonas Geográficas') || ruta.includes('Zonas Geograficas')) return 'zona_geografica';
   if (ruta.includes('Localidades')) return 'localidad';
-  if (ruta.includes('Distritos')) return 'distrito';
   if (ruta.includes('Reinos')) return 'reino_estado';
   if (ruta.includes('Subrazas')) return 'subraza';
   if (ruta.includes('Razas')) return 'raza';
@@ -836,7 +834,6 @@ function categoriaDe(entidad, tipoItem) {
     continente: 'Continentes',
     zona_geografica: 'Regiones',
     localidad: 'Ciudades',
-    distrito: 'Ciudades',
     reino_estado: 'Regiones',
     raza: 'Razas',
     subraza: 'Razas',
@@ -901,7 +898,6 @@ const PRIORIDAD = {
   zona_geografica: 1,
   reino_estado: 2,
   localidad: 3,
-  distrito: 4,
   raza: 5,
   subraza: 6,
   lengua: 6,
@@ -1143,16 +1139,6 @@ async function importar(aplicar, vault) {
       const tipoAsentamiento = tipoAsentamientoDe(p.nota.relativa, valorDe(p.ficha.datos, 'tipo_localidad'));
       const tipoId = (await buscarCatalogo('tipo_asentamiento', tipoAsentamiento)) || 1;
       return asegurar('localidad', nombre, { nombre, descripcion, tipo_asentamiento_id: tipoId });
-    }
-
-    if (p.entidad === 'distrito') {
-      const localidad = limpiarValor(valorDe(p.ficha.datos, 'localidad')) || path.basename(path.dirname(p.nota.relativa.replace(/[\\/]/g, '/')));
-      const localidadId = await idPorNombre('localidad', localidad);
-      if (!localidadId) {
-        if (usarBase) estadisticas.errores.push('distrito / ' + nombre + ': falta localidad valida (' + localidad + ')');
-        return 'error';
-      }
-      return asegurar('distrito', nombre, { nombre, descripcion, localidad_id: localidadId });
     }
 
     if (p.entidad === 'reino_estado') {

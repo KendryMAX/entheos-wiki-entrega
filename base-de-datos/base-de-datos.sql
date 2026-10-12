@@ -1,4 +1,4 @@
--- Base de datos completa de Entheos Wiki: borra lo que haya, crea las 33
+-- Base de datos completa de Entheos Wiki: borra lo que haya, crea las 32
 -- tablas y carga roles, cuentas del equipo y datos iniciales.
 -- ATENCION: borra el contenido de la base entheos.
 -- Uso: mysql -u root -p entheos < base-de-datos/base-de-datos.sql   o   npm run bd:crear
@@ -131,21 +131,6 @@ CREATE TABLE `continente` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_continente_nombre` (`nombre`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Continentes o grandes regiones del mundo';
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `distrito`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `distrito` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` text COLLATE utf8mb4_unicode_ci,
-  `localidad_id` int unsigned NOT NULL,
-  `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_distrito_nombre` (`nombre`),
-  KEY `ix_distrito_localidad` (`localidad_id`),
-  CONSTRAINT `fk_distrito_localidad` FOREIGN KEY (`localidad_id`) REFERENCES `localidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Barrios y distritos dentro de una localidad';
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `etiqueta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -355,17 +340,14 @@ CREATE TABLE `punto_interes` (
   `nombre` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb4_unicode_ci,
   `tipo` enum('templo','fortaleza','mercado','academia','biblioteca','taberna','puerto','mina','monumento','criadero','otro') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'otro',
-  `distrito_id` int unsigned DEFAULT NULL,
   `localidad_id` int unsigned NOT NULL,
   `latitud` decimal(10,7) DEFAULT NULL,
   `longitud` decimal(10,7) DEFAULT NULL,
   `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_punto_interes_nombre` (`nombre`),
-  KEY `fk_punto_interes_distrito` (`distrito_id`),
   KEY `ix_punto_interes_localidad` (`localidad_id`),
   KEY `ix_punto_interes_tipo` (`tipo`),
-  CONSTRAINT `fk_punto_interes_distrito` FOREIGN KEY (`distrito_id`) REFERENCES `distrito` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_punto_interes_localidad` FOREIGN KEY (`localidad_id`) REFERENCES `localidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Edificios y lugares con significado en el mundo';
 /*!40101 SET character_set_client = @saved_cs_client */;
