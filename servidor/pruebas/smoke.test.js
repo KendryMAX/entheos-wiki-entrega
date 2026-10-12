@@ -36,7 +36,7 @@ test('el listado de articulos carga', async () => {
 });
 
 test('las paginas publicas responden 200', async () => {
-  for (const ruta of ['/personajes', '/lugares', '/cronologia', '/acceso', '/registro']) {
+  for (const ruta of ['/personajes', '/lugares', '/comunidad', '/acceso', '/registro']) {
     const respuesta = await pedir(ruta);
     assert.strictEqual(respuesta.status, 200, `${ruta} deberia responder 200`);
   }

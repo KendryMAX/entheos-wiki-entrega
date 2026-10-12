@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= titulo %> · Entheos Wiki</title>
-  <meta name="description" content="Wiki de consulta sobre el mundo de Entheos: lugares, personajes, objetos y cronología.">
+  <meta name="description" content="Wiki de consulta sobre el mundo de Entheos: continentes, lugares, personajes y objetos.">
   <link rel="stylesheet" href="/estilos/estilos.css">
   <link rel="icon" href="/imagenes/icono.svg" type="image/svg+xml">
 </head>
@@ -25,18 +25,9 @@
         const accesos = [
           { href: '/', texto: 'Inicio', activo: rutaActual === '/' },
           { href: '/articulos', texto: 'Artículos', activo: rutaActual.startsWith('/articulos') },
-          { href: '/personajes', texto: 'Personajes', activo: rutaActual === '/personajes' },
-          { href: '/lugares', texto: 'Lugares', activo: rutaActual === '/lugares' },
+          { href: '/comunidad', texto: 'Comunidad', activo: rutaActual.startsWith('/comunidad') },
           { href: '/reportes', texto: 'Reportes', activo: rutaActual === '/reportes' },
         ];
-        if (esEditor) {
-          accesos.push({ href: '/panel/articulos', texto: 'Mis artículos', activo: rutaActual.startsWith('/panel/articulos') });
-          accesos.push({ href: '/panel/revision', texto: 'Revisión', activo: rutaActual === '/panel/revision' });
-          accesos.push({ href: '/panel/comentarios', texto: 'Comentarios', activo: rutaActual === '/panel/comentarios' });
-        }
-        if (esAdministrador) {
-          accesos.push({ href: '/panel/usuarios', texto: 'Usuarios', activo: rutaActual === '/panel/usuarios' });
-        }
         const anchoTri = 100;
         const angulo = Math.PI / accesos.length;
         const radio = Math.round(anchoTri / (2 * Math.sin(angulo / 2)));
@@ -70,6 +61,9 @@
 
     <div class="sesion">
       <% if (usuario) { %>
+        <% if (esEditor) { %>
+          <a class="sesion-panel" href="/panel/articulos">Panel</a>
+        <% } %>
         <span class="insignia-rol insignia-rol-<%= nivel %>"><%= rol %></span>
         <span class="nombre-usuario" title="<%= usuario.email %>"><%= usuario.nombre_usuario %></span>
         <form action="/salir" method="POST" class="formulario-salir">
@@ -92,7 +86,6 @@
     <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.personaje %></span><span class="contador-texto">Personajes</span></span></li>
     <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.localidad %></span><span class="contador-texto">Lugares</span></span></li>
     <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.reino_estado %></span><span class="contador-texto">Reinos</span></span></li>
-    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.evento %></span><span class="contador-texto">Eventos</span></span></li>
     <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.item %></span><span class="contador-texto">Objetos</span></span></li>
   </ul>
 </aside>

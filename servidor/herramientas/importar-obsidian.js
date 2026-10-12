@@ -808,13 +808,11 @@ function detectarEntidad(rutaRelativa, tipo) {
   if (t === 'recurso' || t === 'recurso material' || t === 'mineral' || t === 'material') return 'recurso';
   if (t === 'distritozona' || t === 'distrito' || t === 'distrito_zona' || t === 'zona urbana') return 'distrito';
   if (t === 'faccion' || t === 'facción' || t === 'organización' || t === 'organizacion' || t === 'gremio' || t === 'sociedad' || t === 'secta') return 'faccion';
-  if (t === 'evento' || t === 'hecho histórico' || t === 'hecho historico' || t === 'acontecimiento') return 'evento';
   if (t === 'reino' || t === 'reino-estado' || t === 'reino estado' || t === 'reino_estado' || t === 'estado' || t === 'republica' || t === 'imperio') return 'reino_estado';
   if (t === 'punto de interés' || t === 'punto de interes' || t === 'punto_de_interes' || t === 'edificio' || t === 'lugar individual') return 'punto_interes';
   if (t === 'religión' || t === 'religion' || t === 'culto' || t === 'deidad' || t === 'orden religiosa') return 'religion';
   if (t === 'lengua' || t === 'lenguaje' || t === 'lenguajes' || t === 'idioma' || t === 'alfabeto' || t === 'sistema de escritura') return 'lengua';
-  if (t === 'era' || t === 'periodo' || t === 'época' || t === 'epoca') return 'era';
-  if (t.startsWith('concepto') || t.startsWith('termino') || t.startsWith('regla') || t.startsWith('mecánica') || t.startsWith('sesión') || t.startsWith('lore') || t === 'mito' || t === 'leyenda') return null;
+  if (t.startsWith('concepto') || t.startsWith('termino') || t.startsWith('regla') || t.startsWith('mecánica') || t.startsWith('sesión') || t.startsWith('lore') || t === 'mito' || t === 'leyenda' || t === 'evento' || t === 'hecho histórico' || t === 'hecho historico' || t === 'acontecimiento' || t === 'era' || t === 'periodo' || t === 'época' || t === 'epoca') return null;
 
   if (ruta.includes('Continentes')) return 'continente';
   if (ruta.includes('Zonas Geográficas') || ruta.includes('Zonas Geograficas')) return 'zona_geografica';
@@ -827,8 +825,6 @@ function detectarEntidad(rutaRelativa, tipo) {
   if (ruta.includes('Recursos Materiales')) return 'recurso';
   if (ruta.includes('Items y Tesoros')) return 'item';
   if (ruta.includes('Sociedades y Facciones')) return 'faccion';
-  if (/(Eventos|Historia y Cronología|Historia y Cronologia)/.test(ruta)) return 'evento';
-  if (ruta.includes('Eras')) return 'era';
   if (ruta.includes('Religiones')) return 'religion';
   if (ruta.includes('Lenguajes') || ruta.includes('Lenguas') || ruta.includes('Alfabetos')) return 'lengua';
   if (ruta.includes('Puntos de Interés') || ruta.includes('Puntos de Interes') || ruta.includes('Lugares Individuales')) return 'punto_interes';
@@ -837,24 +833,22 @@ function detectarEntidad(rutaRelativa, tipo) {
 
 function categoriaDe(entidad, tipoItem) {
   const mapa = {
-    continente: 'Geografia',
+    continente: 'Continentes',
     zona_geografica: 'Regiones',
     localidad: 'Ciudades',
     distrito: 'Ciudades',
-    reino_estado: 'Geografia',
+    reino_estado: 'Regiones',
     raza: 'Razas',
     subraza: 'Razas',
     personaje: 'Personajes',
     item: tipoItem === 'Arma' ? 'Armas' : 'Objetos',
     recurso: 'Objetos',
     faccion: 'Facciones',
-    evento: 'Cronologia',
-    era: 'Cronologia',
-    punto_interes: 'Geografia',
-    religion: 'Conceptos',
+    punto_interes: 'Ciudades',
+    religion: 'Facciones',
     lengua: 'Lenguas',
   };
-  return mapa[entidad] || 'Conceptos';
+  return mapa[entidad] || 'Regiones';
 }
 
 function tipoAsentamientoDe(rutaRelativa, valor) {
@@ -916,8 +910,6 @@ const PRIORIDAD = {
   recurso: 7,
   faccion: 7,
   religion: 7,
-  evento: 8,
-  era: 8,
   punto_interes: 8,
 };
 
@@ -1236,27 +1228,6 @@ async function importar(aplicar, vault) {
 
     if (p.entidad === 'lengua') {
       return asegurar('lengua', nombre, { nombre, descripcion, hablantes: numeroDe(p.ficha.datos, 'hablantes') });
-    }
-
-    if (p.entidad === 'evento') {
-      const era = limpiarValor(valorDe(p.ficha.datos, 'era', 'era_relacionada'));
-      const canonicoTexto = normalizar(valorDe(p.ficha.datos, 'es_canonico', 'canonicidad'));
-      return asegurar('evento', nombre, {
-        nombre,
-        descripcion,
-        anio_aproximado: numeroDe(p.ficha.datos, 'anio', 'año', 'ano', 'anio_aproximado'),
-        era_id: era ? await buscarCatalogo('era', era) : null,
-        es_canonico: canonicoTexto ? (canonicoTexto === 'false' ? 0 : 1) : 1,
-      });
-    }
-
-    if (p.entidad === 'era') {
-      return asegurar('era', nombre, {
-        nombre,
-        descripcion,
-        anio_inicio: numeroDe(p.ficha.datos, 'anio_inicio', 'año_inicio', 'ano_inicio'),
-        anio_fin: numeroDe(p.ficha.datos, 'anio_fin', 'año_fin', 'ano_fin'),
-      });
     }
 
     if (p.entidad === 'punto_interes') {

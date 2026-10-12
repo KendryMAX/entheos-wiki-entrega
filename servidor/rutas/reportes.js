@@ -91,28 +91,6 @@ const REPORTES = [
        ORDER BY f.nombre, objetos DESC, p.nombre`,
   },
   {
-    clave: 'cronologia-por-faccion',
-    titulo: 'Cronología por era y facción',
-    descripcion: 'Los eventos ordenados por era, con las facciones y personajes participantes.',
-    archivo: 'reporte-cronologia-por-faccion.pdf',
-    columnas: ['era', 'evento', 'fecha', 'faccion', 'personaje', 'papel'],
-    tituloColumnas: ['Era', 'Evento', 'Fecha', 'Facción', 'Personaje', 'Papel'],
-    sql: `
-      SELECT e.nombre AS era,
-             ev.nombre AS evento,
-             ev.fecha,
-             f.nombre AS faccion,
-             p.nombre AS personaje,
-             ep.papel
-        FROM evento ev
-        JOIN era e ON e.id = ev.era_id
-        LEFT JOIN evento_participante ep ON ep.evento_id = ev.id
-        LEFT JOIN personaje p ON p.id = ep.personaje_id
-        LEFT JOIN personaje_faccion pf ON pf.personaje_id = p.id
-        LEFT JOIN faccion f ON f.id = pf.faccion_id
-       ORDER BY ev.fecha IS NULL, ev.fecha, f.nombre, p.nombre`,
-  },
-  {
     clave: 'articulos-mas-comentados',
     titulo: 'Artículos más comentados',
     descripcion: 'Los artículos con más comentarios, aprobados y pendientes, y su relación por cada mil vistas.',

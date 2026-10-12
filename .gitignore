@@ -15,6 +15,9 @@ web/subidas/*
 pdf-generados/
 *.pdf
 
+# MySQL portatil (opcional, se descarga aparte)
+mysql-portatil/
+
 # Sistema operativo y editores
 .DS_Store
 Thumbs.db

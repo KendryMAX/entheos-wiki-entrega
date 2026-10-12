@@ -4,6 +4,17 @@ const SELECTOR_VALIDO = /^[A-Za-z_][\w-]*$/;
 const ESPERA_SUGERENCIAS = 220;
 const ESPERA_FETCH = 5000;
 
+const FRASES_COMUNIDAD = [
+  '¡Qué buen trabajo con los continentes!',
+  '¿Ya vieron la nueva plantilla de razas?',
+  'Falta completar las religiones de los Aelindar.',
+  'Propongo agregar más objetos legendarios.',
+  'La sección de lenguas quedó muy linda.',
+  '¿Alguien revisó los últimos artículos?',
+  'Me gusta cómo va quedando el mapa.',
+  'Hay que ordenar las regiones del norte.',
+];
+
 function erroresDe(campo) {
   if (!campo || !campo.id || !SELECTOR_VALIDO.test(campo.id)) return null;
   return document.querySelector(`[data-error-de="${campo.id}"]`);
@@ -234,11 +245,26 @@ function activarContadores() {
   });
 }
 
+function activarMensajeAleatorio() {
+  document.querySelectorAll('[data-mensaje-aleatorio]').forEach((boton) => {
+    boton.addEventListener('click', () => {
+      const destino = document.getElementById(boton.dataset.destino);
+
+      if (!destino) return;
+
+      const frase = FRASES_COMUNIDAD[Math.floor(Math.random() * FRASES_COMUNIDAD.length)];
+      destino.value = frase;
+      destino.focus();
+    });
+  });
+}
+
 function iniciar() {
   document.querySelectorAll('form[data-validar]').forEach(activarValidacion);
   document.querySelectorAll('[data-autocompletado]').forEach(activarAutocompletado);
   activarMenu();
   activarContadores();
+  activarMensajeAleatorio();
 }
 
 if (document.readyState === 'loading') {

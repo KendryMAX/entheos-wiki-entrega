@@ -12,6 +12,15 @@ contrario. No hace falta ser administrador mas que en dos pasos puntuales
 
 Resumen: 9 pasos. Si algo falla, mirar el final (PROBLEMAS COMUNES).
 
+ATAJO PARA WINDOWS: si no queres hacer el paso 4 al 9 a mano, hay dos
+archivos en la raiz del proyecto:
+
+  INSTALAR.bat   Se ejecuta UNA sola vez: instala las librerias, crea el
+                 .env y arma la base de datos.
+  INICIAR.bat    Se ejecuta CADA VEZ para arrancar el proyecto.
+
+Si usas esos scripts, podes saltear los pasos 4, 5, 6 y 8 (los cubren).
+
 
 ----------------------------------------------------------------------------
 QUE SE NECESITA
@@ -144,8 +153,8 @@ Ahora, en PowerShell (dentro del proyecto) crear la base y cargar los datos:
 
      npm run bd:crear
 
-Debe terminar mostrando un resumen con usuario, rol, categoria, articulo,
-etiqueta y era. Eso crea las tablas Y las cuentas del equipo.
+Debe terminar mostrando un resumen con usuario, rol, categoria, articulo y
+etiqueta. Eso crea las tablas Y las cuentas del equipo.
 
 Si mas adelante hay que dejar la base como nueva, se usa:
 
@@ -224,9 +233,9 @@ Paginas utiles:
 
      /                 portada
      /articulos        listado de articulos
+     /comunidad        chat y miembros de la comunidad
      /personajes       personajes
      /lugares          lugares
-     /cronologia       cronologia
      /reportes         reportes en PDF
      /acceso           iniciar sesion
      /no-existe        pagina de error 404

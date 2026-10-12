@@ -128,7 +128,6 @@ async function main() {
       'categoria',
       'articulo',
       'etiqueta',
-      'era',
     ]);
 
     console.log('Resumen de la base:');

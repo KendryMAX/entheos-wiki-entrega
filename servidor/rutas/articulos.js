@@ -5,6 +5,8 @@ const express = require('express');
 const db = require('../datos/base');
 const config = require('../configuracion');
 const { markdownAHtml, articuloAHtml, separarFicha } = require('../servicios/contenido');
+const tablasRaza = require('../servicios/tablasRaza');
+const { reemplazarCuerpo, eliminarSeccion } = require('../servicios/secciones');
 const { requiereSesion } = require('../capas/autenticacion');
 const errores = require('../capas/errores');
 
@@ -110,7 +112,19 @@ router.get('/:slug', async (req, res, next) => {
     }
 
     const partes = separarFicha(articulo.contenido_md);
-    const convertido = articuloAHtml(partes.cuerpo);
+
+    // Fichas de raza: las secciones de Población Actual y Religiones se generan
+    // a partir de las relaciones raza_localidad y raza_religion.
+    let cuerpo = partes.cuerpo;
+    if (articulo.categoria === 'Razas') {
+      const raza = await tablasRaza.buscarRaza(articulo.titulo);
+      const tablas = raza ? await tablasRaza.tablasDeRaza(raza) : tablasRaza.ejemplos();
+      cuerpo = eliminarSeccion(cuerpo, 'Mitos Propios y de Origen');
+      cuerpo = reemplazarCuerpo(cuerpo, 'Población Actual', tablas.poblacion);
+      cuerpo = reemplazarCuerpo(cuerpo, 'Religiones', tablas.religiones);
+    }
+
+    const convertido = articuloAHtml(cuerpo);
     articulo.contenido_html = convertido.html;
     articulo.indice = convertido.indice;
     articulo.ficha_html = partes.ficha.trim() ? markdownAHtml(partes.ficha) : '';

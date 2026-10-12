@@ -1,0 +1,8 @@
+<nav class="panel-nav" aria-label="Navegación del panel">
+  <a href="/panel/articulos" class="panel-nav-enlace<%= rutaActual.startsWith('/panel/articulos') ? ' activa' : '' %>">Mis artículos</a>
+  <a href="/panel/revision" class="panel-nav-enlace<%= rutaActual === '/panel/revision' ? ' activa' : '' %>">Revisión</a>
+  <a href="/panel/comentarios" class="panel-nav-enlace<%= rutaActual === '/panel/comentarios' ? ' activa' : '' %>">Comentarios</a>
+  <% if (esAdministrador) { %>
+    <a href="/panel/usuarios" class="panel-nav-enlace<%= rutaActual === '/panel/usuarios' ? ' activa' : '' %>">Usuarios</a>
+  <% } %>
+</nav>

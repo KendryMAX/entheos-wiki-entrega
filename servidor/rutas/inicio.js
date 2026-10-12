@@ -6,14 +6,11 @@ const db = require('../datos/base');
 const router = express.Router();
 
 const DESCRIPCIONES = {
-  Geografia: 'Continentes, regiones y parajes del mundo conocido.',
-  Poblacion: 'Ciudades, pueblos y sus gentes.',
+  Continentes: 'Grandes masas de tierra del mundo conocido.',
   Personajes: 'Héroes, villanos y figuras que mueven la historia.',
   Objetos: 'Reliquias, armas y artefactos de poder.',
   Facciones: 'Órdenes, gremios y poderes en pugna.',
-  Cronologia: 'Eras y acontecimientos que marcaron el tiempo.',
   Lenguas: 'Idiomas y formas de comunicación de Entheos.',
-  Conceptos: 'Ideas, magia y leyes que rigen el mundo.',
   Ciudades: 'Grandes urbes y centros de civilización.',
   Regiones: 'Tierras y comarcas de cada continente.',
   Razas: 'Pueblos y linajes que habitan Entheos.',
@@ -21,12 +18,9 @@ const DESCRIPCIONES = {
 };
 
 const IMAGENES_POR_CATEGORIA = {
-  Geografia: '/subidas/Xi%C3%A1nor.jpeg',
-  Conceptos: '/subidas/Elaris%20-%20Nucleo.jpeg',
+  Continentes: '/subidas/Xi%C3%A1nor.jpeg',
   Facciones: '/subidas/Elaris%20-%20The%20Mills.png',
   Lenguas: '/subidas/Qasiyara.jpg',
-  Cronologia: '/subidas/Elaris%20-%20The%20Mills.png',
-  Poblacion: '/subidas/Elaris.png',
 };
 
 async function contar(tablas) {
@@ -45,7 +39,6 @@ router.get('/', async (req, res, next) => {
       'personaje',
       'localidad',
       'reino_estado',
-      'evento',
       'item',
     ]);
 
@@ -89,16 +82,6 @@ router.get('/', async (req, res, next) => {
         ORDER BY c.nombre`
     );
 
-    categorias = categorias.filter((categoria) => categoria.nombre !== 'Geografia');
-
-    if (!categorias.some((categoria) => categoria.nombre === 'Cronologia')) {
-      const cronologia = await db.consultarUno(
-        "SELECT id, nombre FROM categoria WHERE nombre = 'Cronologia'"
-      );
-      if (cronologia) {
-        categorias.push({ id: cronologia.id, nombre: cronologia.nombre, articulos: 0, imagen_ruta: null });
-      }
-    }
     categorias.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
     categorias.forEach((categoria) => {
@@ -151,34 +134,6 @@ router.get('/lugares', async (req, res, next) => {
     );
 
     res.render('lugares', { titulo: 'Lugares', lugares });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/cronologia', async (req, res, next) => {
-  try {
-    const eras = await db.consultar(
-      `SELECT e.id, e.nombre, e.descripcion, e.anio_inicio, e.anio_fin,
-              (SELECT COUNT(*) FROM evento ev WHERE ev.era_id = e.id) AS eventos
-         FROM era e
-        ORDER BY e.anio_inicio IS NULL, e.anio_inicio`
-    );
-
-    const eraPedida = req.query.era ? Number(req.query.era) : null;
-
-    const eventos = await db.consultar(
-      `SELECT ev.id, ev.nombre, ev.descripcion, ev.fecha, ev.anio_aproximado,
-              ev.es_canonico, e.nombre AS era, pi.nombre AS lugar
-         FROM evento ev
-         LEFT JOIN era e ON e.id = ev.era_id
-         LEFT JOIN punto_interes pi ON pi.id = ev.lugar_id
-        WHERE (? IS NULL OR ev.era_id = ?)
-        ORDER BY ev.fecha IS NULL, ev.fecha, ev.anio_aproximado`,
-      [eraPedida, eraPedida]
-    );
-
-    res.render('cronologia', { titulo: 'Cronologia', eras, eventos, eraPedida });
   } catch (error) {
     next(error);
   }

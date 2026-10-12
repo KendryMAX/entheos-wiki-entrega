@@ -1236,3 +1236,145 @@ pre code { color: var(--dorado-claro); }
   html { scroll-behavior: auto; }
   .tarjeta, .hoja-cerrar { transition: none; }
 }
+
+/* --- Enlace al panel en la barra de sesión --- */
+.sesion-panel {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: var(--borde);
+  color: var(--gris-texto);
+  font-size: 0.85rem;
+}
+.sesion-panel:hover { color: var(--dorado-claro); border-color: var(--dorado-oscuro); text-decoration: none; }
+
+/* --- Navegación interna del panel --- */
+.panel-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  max-width: var(--ancho);
+  margin: 1rem auto 0;
+  padding: 0 1.2rem;
+}
+.panel-nav-enlace {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: var(--borde);
+  color: var(--gris-texto);
+  font-size: 0.9rem;
+}
+.panel-nav-enlace:hover { color: var(--dorado-claro); border-color: var(--dorado-oscuro); text-decoration: none; }
+.panel-nav-enlace.activa { background: var(--negro-3); border-color: var(--dorado-oscuro); color: var(--dorado-claro); }
+
+/* --- Nota bajo el título de un bloque --- */
+.bloque-nota { color: var(--gris-claro); font-size: 0.95rem; margin: 0.3rem 0 0; }
+
+/* --- Comunidad: chat y miembros --- */
+.comunidad {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  background: var(--negro-2);
+  border: var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-suave);
+  overflow: hidden;
+}
+.chat-mensajes {
+  padding: 1rem 1.1rem;
+  max-height: 460px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.chat-mensaje { display: flex; gap: 0.7rem; }
+.chat-avatar {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--negro-3);
+  border: var(--borde-dorado);
+  color: var(--dorado-claro);
+  font-weight: 600;
+  font-family: var(--serif);
+}
+.chat-cuerpo { min-width: 0; }
+.chat-autor { margin: 0 0 0.15rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.chat-autor strong { color: var(--blanco); }
+.chat-rol {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--dorado-claro);
+  border: var(--borde-dorado);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+.chat-hora { font-size: 0.75rem; color: var(--gris); }
+.chat-texto { margin: 0; color: var(--gris-texto); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.chat-form {
+  border-top: var(--borde);
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: var(--negro-3);
+}
+.chat-form textarea {
+  width: 100%;
+  resize: vertical;
+  background: var(--negro);
+  border: var(--borde);
+  border-radius: var(--radio-chico);
+  color: var(--blanco);
+  padding: 0.6rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.chat-form textarea:focus { outline: none; border-color: var(--dorado-oscuro); }
+.chat-acciones { display: flex; justify-content: flex-end; gap: 0.5rem; }
+
+.miembros {
+  background: var(--negro-2);
+  border: var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-suave);
+  padding: 1rem 1.1rem;
+}
+.miembros-titulo { margin: 0 0 0.8rem; font-family: var(--serif); color: var(--blanco); font-size: 1.1rem; }
+.miembros-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+.miembro { display: flex; align-items: center; gap: 0.6rem; }
+.miembro-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--negro-3);
+  border: var(--borde);
+  color: var(--dorado-claro);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.miembro-datos { display: flex; flex-direction: column; min-width: 0; }
+.miembro-nombre { color: var(--blanco); font-size: 0.92rem; }
+.miembro-rol { color: var(--gris); font-size: 0.78rem; }
+
+.aviso-chico { text-align: left; padding: 1rem 1.1rem; }
+
+@media (max-width: 900px) {
+  .comunidad { grid-template-columns: 1fr; }
+  .panel-nav { padding: 0 1rem; }
+}

@@ -75,7 +75,6 @@ app.use(async function cargarConteos(req, res, next) {
          (SELECT COUNT(*) FROM personaje)     AS personaje,
          (SELECT COUNT(*) FROM localidad)     AS localidad,
          (SELECT COUNT(*) FROM reino_estado)  AS reino_estado,
-         (SELECT COUNT(*) FROM evento)        AS evento,
          (SELECT COUNT(*) FROM item)          AS item`
     );
     res.locals.conteos = filas[0];
@@ -88,6 +87,7 @@ app.use(async function cargarConteos(req, res, next) {
 app.use('/', require('./rutas/inicio'));
 app.use('/', require('./rutas/cuenta'));
 app.use('/articulos', require('./rutas/articulos'));
+app.use('/', require('./rutas/comunidad'));
 app.use('/', require('./rutas/panel'));
 app.use('/', require('./rutas/reportes'));
 

@@ -1,0 +1,68 @@
+<%- include('parciales/cabecera') %>
+
+<section class="bloque">
+  <div class="bloque-cabecera">
+    <h1 class="bloque-titulo">Comunidad</h1>
+    <p class="bloque-nota">Dejá tu mensaje en el chat y conocé a los miembros de la comunidad.</p>
+  </div>
+
+  <div class="comunidad">
+    <div class="chat">
+      <div class="chat-mensajes">
+        <% if (mensajes.length === 0) { %>
+          <p class="vacio">Todavía no hay mensajes. ¡Sé el primero en escribir!</p>
+        <% } else { %>
+          <% mensajes.forEach(function (mensaje) { %>
+            <article class="chat-mensaje">
+              <span class="chat-avatar" aria-hidden="true"><%= mensaje.nombre_usuario.charAt(0).toUpperCase() %></span>
+              <div class="chat-cuerpo">
+                <p class="chat-autor">
+                  <strong><%= mensaje.nombre_usuario %></strong>
+                  <% if (mensaje.rol) { %><span class="chat-rol"><%= mensaje.rol %></span><% } %>
+                  <time class="chat-hora"><%= new Date(mensaje.creado_en).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) %></time>
+                </p>
+                <p class="chat-texto"><%= mensaje.contenido %></p>
+              </div>
+            </article>
+          <% }); %>
+        <% } %>
+        <span id="chat-final"></span>
+      </div>
+
+      <% if (usuario) { %>
+        <form class="chat-form" action="/comunidad" method="POST" data-validar>
+          <label class="solo-lectores" for="mensaje">Mensaje</label>
+          <textarea id="mensaje" name="contenido" rows="2" maxlength="1000" required
+                    placeholder="Escribí un mensaje para la comunidad..."></textarea>
+          <div class="chat-acciones">
+            <button type="button" class="boton boton-plano boton-chico"
+                    data-mensaje-aleatorio data-destino="mensaje">Sorpréndeme</button>
+            <button type="submit" class="boton boton-dorado">Enviar</button>
+          </div>
+        </form>
+      <% } else { %>
+        <div class="aviso aviso-chico">
+          <p class="aviso-texto">Iniciá sesión para dejar tu mensaje en la comunidad.</p>
+          <a href="/acceso" class="boton boton-dorado">Ingresar</a>
+        </div>
+      <% } %>
+    </div>
+
+    <aside class="miembros" aria-label="Miembros de la comunidad">
+      <h2 class="miembros-titulo">Miembros</h2>
+      <ul class="miembros-lista">
+        <% miembros.forEach(function (miembro) { %>
+          <li class="miembro">
+            <span class="miembro-avatar" aria-hidden="true"><%= miembro.nombre_usuario.charAt(0).toUpperCase() %></span>
+            <span class="miembro-datos">
+              <span class="miembro-nombre"><%= miembro.nombre_completo || miembro.nombre_usuario %></span>
+              <span class="miembro-rol"><%= miembro.rol %> &middot; <%= miembro.mensajes %> mensaje<%= miembro.mensajes === 1 ? '' : 's' %></span>
+            </span>
+          </li>
+        <% }); %>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<%- include('parciales/pie') %>

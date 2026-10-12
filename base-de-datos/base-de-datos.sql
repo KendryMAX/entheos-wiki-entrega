@@ -1,4 +1,4 @@
--- Base de datos completa de Entheos Wiki: borra lo que haya, crea las 34
+-- Base de datos completa de Entheos Wiki: borra lo que haya, crea las 33
 -- tablas y carga roles, cuentas del equipo y datos iniciales.
 -- ATENCION: borra el contenido de la base entheos.
 -- Uso: mysql -u root -p entheos < base-de-datos/base-de-datos.sql   o   npm run bd:crear
@@ -108,6 +108,19 @@ CREATE TABLE `comentario` (
   CONSTRAINT `fk_comentario_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Comentarios de los lectores, moderados por el Editor';
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `mensaje_comunidad`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mensaje_comunidad` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `usuario_id` int unsigned NOT NULL,
+  `contenido` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ix_mensaje_comunidad_usuario` (`usuario_id`),
+  CONSTRAINT `fk_mensaje_comunidad_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Mensajes del chat de la comunidad';
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `continente`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -134,19 +147,6 @@ CREATE TABLE `distrito` (
   CONSTRAINT `fk_distrito_localidad` FOREIGN KEY (`localidad_id`) REFERENCES `localidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Barrios y distritos dentro de una localidad';
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `era`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `era` (
-  `id` tinyint unsigned NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` text COLLATE utf8mb4_unicode_ci,
-  `anio_inicio` int DEFAULT NULL COMMENT 'Negativo si es antes de nuestra era',
-  `anio_fin` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_era_nombre` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Eras y periodos historicos';
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `etiqueta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -157,41 +157,6 @@ CREATE TABLE `etiqueta` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_etiqueta_nombre` (`nombre`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Etiquetas para clasificar articulos';
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `evento`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `evento` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(180) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` mediumtext COLLATE utf8mb4_unicode_ci,
-  `fecha` date DEFAULT NULL COMMENT 'NULL si el evento solo tiene un ano aproximado',
-  `anio_aproximado` int DEFAULT NULL,
-  `era_id` tinyint unsigned DEFAULT NULL,
-  `lugar_id` int unsigned DEFAULT NULL COMMENT 'Punto de interes donde ocurrio',
-  `es_canonico` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 = leyenda o teoria no confirmada',
-  `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_evento_nombre` (`nombre`),
-  KEY `fk_evento_lugar` (`lugar_id`),
-  KEY `ix_evento_era` (`era_id`),
-  KEY `ix_evento_fecha` (`fecha`),
-  CONSTRAINT `fk_evento_era` FOREIGN KEY (`era_id`) REFERENCES `era` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_evento_lugar` FOREIGN KEY (`lugar_id`) REFERENCES `punto_interes` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Sucesos historicos';
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `evento_participante`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `evento_participante` (
-  `evento_id` int unsigned NOT NULL,
-  `personaje_id` int unsigned NOT NULL,
-  `papel` enum('protagonista','victor','derrotado','organizador','testigo','victima') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'testigo',
-  PRIMARY KEY (`evento_id`,`personaje_id`),
-  KEY `ix_evento_participante_personaje` (`personaje_id`),
-  CONSTRAINT `fk_evento_participante_evento` FOREIGN KEY (`evento_id`) REFERENCES `evento` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_evento_participante_personaje` FOREIGN KEY (`personaje_id`) REFERENCES `personaje` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Personajes que participaron en cada evento';
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `faccion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -445,6 +410,22 @@ CREATE TABLE `raza_localidad` (
   CONSTRAINT `ck_raza_localidad_porcentaje` CHECK (((`porcentaje_poblacion` is null) or (`porcentaje_poblacion` between 0 and 100)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Razas que habitan cada localidad, con su porcentaje';
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `raza_religion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `raza_religion` (
+  `raza_id` smallint unsigned NOT NULL,
+  `religion_id` smallint unsigned NOT NULL,
+  `grado` enum('mayoritaria','comun','minoritaria','perseguida') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'comun' COMMENT 'Como se relaciona la raza con la religion',
+  `porcentaje_practicantes` decimal(5,2) DEFAULT NULL COMMENT 'De 0 a 100. NULL si se desconoce',
+  `notas` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`raza_id`,`religion_id`),
+  KEY `fk_raza_religion_religion` (`religion_id`),
+  CONSTRAINT `fk_raza_religion_raza` FOREIGN KEY (`raza_id`) REFERENCES `raza` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_raza_religion_religion` FOREIGN KEY (`religion_id`) REFERENCES `religion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `ck_raza_religion_porcentaje` CHECK (((`porcentaje_practicantes` is null) or (`porcentaje_practicantes` between 0 and 100)))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Religiones que practica cada raza, con su grado';
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `recurso`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -618,6 +599,14 @@ INSERT IGNORE INTO usuario (nombre_usuario, email, password_hash, nombre_complet
    'Adriano', 'Lector del proyecto. Consulta la wiki y deja comentarios.',
    (SELECT id FROM rol WHERE nombre = 'Lector'));
 
+INSERT IGNORE INTO mensaje_comunidad (usuario_id, contenido, creado_en) VALUES
+  ((SELECT id FROM usuario WHERE nombre_usuario = 'Kendry'),  'Bienvenidos a la comunidad de Entheos. Aqui pueden dejar sus mensajes.', NOW() - INTERVAL 5 DAY),
+  ((SELECT id FROM usuario WHERE nombre_usuario = 'Angel'),   'Ya subi las notas de los Aelindar. Faltan las religiones.', NOW() - INTERVAL 4 DAY),
+  ((SELECT id FROM usuario WHERE nombre_usuario = 'Adriano'), 'Me encanta como va quedando el mapa de los continentes.', NOW() - INTERVAL 3 DAY),
+  ((SELECT id FROM usuario WHERE nombre_usuario = 'Kendry'),  'Recuerden que los comentarios se moderan antes de publicarse.', NOW() - INTERVAL 2 DAY),
+  ((SELECT id FROM usuario WHERE nombre_usuario = 'Angel'),   'Estoy revisando la plantilla de razas y civilizaciones.', NOW() - INTERVAL 30 HOUR),
+  ((SELECT id FROM usuario WHERE nombre_usuario = 'Adriano'), 'Alguien tiene ideas para la seccion de objetos?', NOW() - INTERVAL 6 HOUR);
+
 
 
 SET NAMES utf8mb4;
@@ -650,46 +639,35 @@ INSERT IGNORE INTO tipo_item (nombre, descripcion) VALUES
   ('Accesorio',  'Objeto que se lleva encima sin categoria mayor.');
 
 INSERT IGNORE INTO categoria (nombre, descripcion, categoria_padre_id) VALUES
-  ('Geografia',  'Lugares, regiones y pueblos.',                 NULL),
-  ('Poblacion',  'Razas, pueblos y grupos sociales.',            NULL),
-  ('Personajes', 'Biografias y fichas de personajes.',           NULL),
-  ('Objetos',    'Armas, herramientas y tesoros.',               NULL),
-  ('Facciones',  'Organizaciones politicas y religiosas.',       NULL),
-  ('Cronologia', 'Eventos y cronologia historica.',              NULL),
-  ('Lenguas',    'Idiomas y sistemas de escritura.',             NULL),
-  ('Conceptos',  'Terminos, reglas y mecanicas del mundo.',      NULL);
+  ('Continentes', 'Grandes masas de tierra del mundo conocido.', NULL),
+  ('Personajes',  'Biografias y fichas de personajes.',          NULL),
+  ('Objetos',     'Armas, herramientas y tesoros.',              NULL),
+  ('Facciones',   'Organizaciones politicas y religiosas.',      NULL),
+  ('Lenguas',     'Idiomas y sistemas de escritura.',            NULL);
 
-SET @cat_geografia := (SELECT id FROM categoria WHERE nombre = 'Geografia');
-SET @cat_poblacion := (SELECT id FROM categoria WHERE nombre = 'Poblacion');
 SET @cat_objetos   := (SELECT id FROM categoria WHERE nombre = 'Objetos');
 
 INSERT IGNORE INTO categoria (nombre, descripcion, categoria_padre_id) VALUES
-  ('Ciudades',   'Asentamientos de tamano urbano o mayor.', @cat_geografia),
-  ('Regiones',   'Zonas geograficas extensas.',           @cat_geografia),
-  ('Razas',      'Grupos etnicos del mundo.',            @cat_poblacion),
-  ('Armas',      'Armas y equipo de combate.',            @cat_objetos);
+  ('Ciudades',   'Asentamientos de tamano urbano o mayor.', NULL),
+  ('Regiones',   'Zonas geograficas extensas.',            NULL),
+  ('Razas',      'Grupos etnicos del mundo.',              NULL),
+  ('Armas',      'Armas y equipo de combate.',             @cat_objetos);
 
 INSERT IGNORE INTO etiqueta (nombre, descripcion) VALUES
   ('canonico',       'Confirmado por el canon de la wiki.'),
   ('leyenda',        'Relato popular sin confirmacion.'),
-  ('en_desarrollo',  'Articulo todavia incompleto.'),
-  ('requiere_fecha', 'El articulo depende de la cronologia.');
+  ('en_desarrollo',  'Articulo todavia incompleto.');
 
 INSERT IGNORE INTO continente (nombre, descripcion) VALUES
   ('Entheos', 'El continente conocido por los cronistas.');
 
-INSERT IGNORE INTO era (nombre, descripcion, anio_inicio, anio_fin) VALUES
-  ('Era Antigua', 'Desde los primeros registros escritos hasta la unificacion.', -1200, 100),
-  ('Era Media',   'Tiempo de los reinos en guerra.',                             100, 640),
-  ('Era Moderna', 'Desde el Ultimo Claro hasta el presente.',                    640, NULL);
-
 INSERT IGNORE INTO articulo (titulo, slug, resumen, contenido_md, estado, categoria_id, autor_id, publicado_en)
 SELECT 'Entheos',
        'entheos',
-       'El continente donde se desarrolla la mayor parte de la cronologia conocida.',
-       '## Que es Entheos\n\nEntheos es el continente conocido por los cronistas. Su nombre aparece por primera vez en los registros de la Era Antigua.\n\n### Caracteristicas\n\n- Es el unico continente documentado por completo.\n- Su geografia esta marcada por el mar del Norte y la cordillera de Arthe.\n\n> Los cronistas dicen que el continente recibe su nombre de la palabra *entheos*, que significa "lo que recuerda".\n\n### Cronologia breve\n\nLos periodos principales se detallan en el articulo sobre las [eras](/cronologia).',
+       'El continente donde se desarrolla la historia conocida.',
+       '## Que es Entheos\n\nEntheos es el continente conocido por los cronistas. Su nombre aparece por primera vez en los relatos mas antiguos.\n\n### Caracteristicas\n\n- Es el unico continente documentado por completo.\n- Su geografia esta marcada por el mar del Norte y la cordillera de Arthe.\n\n> Los cronistas dicen que el continente recibe su nombre de la palabra *entheos*, que significa "lo que recuerda".',
        'publicado',
-       @cat_geografia,
+       (SELECT id FROM categoria WHERE nombre = 'Continentes'),
        (SELECT id FROM usuario WHERE nombre_usuario = 'Kendry'),
        NOW()
 WHERE NOT EXISTS (SELECT 1 FROM articulo WHERE slug = 'entheos');
@@ -708,7 +686,6 @@ UNION ALL SELECT 'tipo_item', COUNT(*) FROM tipo_item
 UNION ALL SELECT 'categoria', COUNT(*) FROM categoria
 UNION ALL SELECT 'etiqueta', COUNT(*) FROM etiqueta
 UNION ALL SELECT 'continente', COUNT(*) FROM continente
-UNION ALL SELECT 'era', COUNT(*) FROM era
 UNION ALL SELECT 'articulo', COUNT(*) FROM articulo
 UNION ALL SELECT 'articulo_etiqueta', COUNT(*) FROM articulo_etiqueta;
 SET FOREIGN_KEY_CHECKS = 1;
