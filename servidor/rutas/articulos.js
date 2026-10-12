@@ -48,7 +48,8 @@ router.get('/', async (req, res, next) => {
 
     const articulos = await db.consultar(
       `SELECT a.id, a.titulo, a.slug, a.resumen, a.estado, a.vistas, a.actualizado_en,
-              c.nombre AS categoria, u.nombre_usuario AS autor, i.ruta AS imagen_ruta,
+              c.nombre AS categoria, u.nombre_usuario AS autor, u.nombre_completo AS autor_nombre,
+              i.ruta AS imagen_ruta,
               (SELECT COUNT(*) FROM comentario co
                 WHERE co.articulo_id = a.id AND co.estado = 'aprobado') AS comentarios
          FROM articulo a

@@ -30,22 +30,14 @@
             <img class="tarjeta-imagen" src="<%= articulo.imagen_ruta %>" alt="" loading="lazy">
           <% } %>
           <span class="tarjeta-cont">
-            <span class="tarjeta-cabecera">
-              <% if (articulo.estado !== 'publicado') { %>
+            <% if (articulo.estado !== 'publicado') { %>
+              <span class="tarjeta-cabecera">
                 <span class="estado estado-<%= articulo.estado %>"><%= articulo.estado.replace('_', ' ') %></span>
-              <% } %>
-              <% if (articulo.categoria) { %>
-                <span class="tarjeta-categoria"><%= articulo.categoria %></span>
-              <% } %>
-            </span>
+              </span>
+            <% } %>
             <span class="tarjeta-titulo"><%= articulo.titulo %></span>
             <span class="tarjeta-resumen"><%= articulo.resumen || 'Sin resumen.' %></span>
-            <span class="tarjeta-pie">
-              por <%= articulo.autor %> &middot; <%= articulo.vistas %> vista<%= articulo.vistas === 1 ? '' : 's' %>
-              <% if (articulo.comentarios > 0) { %>
-                &middot; <%= articulo.comentarios %> comentario<%= articulo.comentarios === 1 ? '' : 's' %>
-              <% } %>
-            </span>
+            <span class="tarjeta-pie">por <%= articulo.autor_nombre || articulo.autor %></span>
           </span>
         </a>
       <% }); %>
