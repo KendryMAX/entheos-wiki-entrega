@@ -11,7 +11,7 @@ const DESCRIPCIONES = {
   Objetos: 'Reliquias, armas y artefactos de poder.',
   Facciones: 'Órdenes, gremios y poderes en pugna.',
   Lenguas: 'Idiomas y formas de comunicación de Entheos.',
-  Ciudades: 'Grandes urbes y centros de civilización.',
+  Localidades: 'Ciudades, pueblos y aldeas de Entheos.',
   Regiones: 'Tierras y comarcas de cada continente.',
   Razas: 'Pueblos y linajes que habitan Entheos.',
   Armas: 'Acero, magia y herramientas de guerra.',

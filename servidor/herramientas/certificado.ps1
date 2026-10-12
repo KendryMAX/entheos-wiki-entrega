@@ -17,7 +17,7 @@ $rng.GetBytes($bytes)
 $clave = -join ($bytes | ForEach-Object { $_.ToString('x2') })
 
 $vistos = Get-ChildItem Cert:\CurrentUser\My |
-    Where-Object { $_.Subject -eq 'CN=entheoswiki.local' }
+    Where-Object { $_.Subject -eq 'CN=entheoswiki.localhost' }
 
 foreach ($c in $vistos) {
     $t = $c.Thumbprint
@@ -28,8 +28,8 @@ foreach ($c in $vistos) {
 Write-Host "1 de 4. Creando el certificado..."
 
 $cert = New-SelfSignedCertificate `
-    -Subject 'CN=entheoswiki.local' `
-    -DnsName @('entheoswiki.local', 'localhost') `
+    -Subject 'CN=entheoswiki.localhost' `
+    -DnsName @('entheoswiki.localhost', 'localhost') `
     -CertStoreLocation 'Cert:\CurrentUser\My' `
     -NotAfter (Get-Date).AddYears(5) `
     -KeyExportPolicy Exportable `
@@ -56,7 +56,7 @@ Write-Host "4 de 4. Instalando el certificado como confiable..."
 
 Import-Certificate -FilePath $cer -CertStoreLocation 'Cert:\CurrentUser\Root' | Out-Null
 
-$dominio = 'entheoswiki.local'
+$dominio = 'entheoswiki.localhost'
 $rutaHosts = Join-Path $env:SystemRoot 'System32\drivers\etc\hosts'
 $yaEsta = Select-String -LiteralPath $rutaHosts -Pattern ([regex]::Escape($dominio)) -Quiet
 

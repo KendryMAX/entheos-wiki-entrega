@@ -4,19 +4,20 @@ Wiki de consulta sobre el mundo de **Entheos**: continentes, regiones, ciudades,
 
 ---
 
-## Inicio rápido en Windows (recomendado)
+## Inicio rápido en Windows
 
-La forma normal de instalar y arrancar el proyecto son los dos archivos de la
-raíz. **No hace falta escribir comandos ni editar el `.env` a mano.**
+El proyecto se abre en **<http://entheoswiki.localhost>** y se instala con dos
+archivos de la raíz: **no hace falta escribir comandos ni editar el `.env` a
+mano.**
 
-### Requisitos
+### Requisitos (solo esto)
 
-1. **Node.js 20 o superior** (descargar el instalador **LTS** de <https://nodejs.org> e instalarlo con las opciones por defecto).
-2. **MySQL 8**. Dos opciones:
-   - Una **carpeta `mysql-portatil\`** con un MySQL ya armado por el equipo
-     (usuario `root`, contraseña `Kendry9922`). Los `.bat` la levantan solos.
-   - O un MySQL 8 **instalado** en la PC (cualquier instalación sirve; luego
-     hay que poner su usuario y contraseña en el `.env`).
+1. **Node.js 20 o superior** — el instalador **LTS** desde <https://nodejs.org>,
+   con las opciones por defecto.
+2. **MySQL 8 instalado** — cualquier instalación de MySQL
+   (<https://dev.mysql.com/downloads/installer/>). Durante la instalación de
+   MySQL se elige una contraseña para el usuario `root`: esa es la que vas a
+   escribir en el paso 2.
 
 ### Pasos
 
@@ -28,65 +29,76 @@ raíz. **No hace falta escribir comandos ni editar el `.env` a mano.**
    cd entheos-wiki
    ```
 
-2. **Doble clic en `INSTALAR.bat`** — se ejecuta **una sola vez**. Instala las
-   dependencias, crea el `.env` (con un secreto de sesión aleatorio), levanta el
-   MySQL portátil si existe y arma la base de datos con los datos iniciales.
+2. **Doble clic en `INSTALAR.bat`** — se ejecuta **una sola vez**. El instalador:
+   - instala las librerías (`npm install`);
+   - te pide la **contraseña de `root` de tu MySQL** y crea el `.env` solo
+     (con esa contraseña y un secreto de sesión aleatorio);
+   - agrega el dominio `entheoswiki.localhost` al archivo `hosts` de Windows
+     (si no tiene permiso, lo avisa);
+   - crea la base de datos con el esquema (32 tablas), los datos iniciales y
+     las 3 cuentas del equipo.
 
 3. **Doble clic en `INICIAR.bat`** — cada vez que se quiera usar el proyecto.
    Enciende el servidor.
 
-4. Abrir **<http://localhost:3000>** en el navegador.
+4. Abrir **<http://entheoswiki.localhost>** en el navegador.
 
-> Se puede cerrar la ventana de `INICIAR.bat` o usar `Ctrl + C` para apagar el
-> servidor. El puerto por defecto es `3000` (se cambia con `PUERTO` en `.env`).
+> Se apaga con `Ctrl + C` en la ventana de `INICIAR.bat`. El puerto por defecto
+> es `80` (se cambia con `PUERTO` en `.env`).
+
+### Cuentas creadas por la instalación
+
+| Usuario | Contraseña | Rol           |
+| ------- | ---------- | ------------- |
+| Kendry  | Kendry123  | Administrador |
+| Angel   | Angel123   | Editor        |
+| Adriano | Adriano123 | Lector        |
+
+> Son contraseñas de prueba: **cambiarlas antes de entregar** (`npm run admin`).
 
 ### Si la base no se pudo crear
 
 `INSTALAR.bat` termina en `[ERROR] No se pudo crear la base de datos`. Es casi
-siempre la contraseña del MySQL:
+siempre la contraseña del MySQL o el servicio apagado:
 
-- Si usás la carpeta `mysql-portatil\`: el `.env` ya trae las credenciales
-  correctas; avisá al equipo si el error persiste.
-- Si tenés MySQL instalado: abrí `.env` con el Bloc de notas y cambiá las
-  líneas `BD_USUARIO` y `BD_CONTRASENA` por las de tu MySQL, y volvé a ejecutar
-  `INSTALAR.bat`.
+- Verificar que el servicio de MySQL esté **encendido** (en PowerShell:
+  `Get-Service | Where-Object { $_.Name -like 'MySQL*' }`).
+- Volver a ejecutar `INSTALAR.bat` escribiendo la contraseña correcta de
+  `root`.
+- Si hace falta cambiarla después: editar `BD_CONTRASENA` en `.env` y volver a
+  correr `npm run bd:crear`.
+
+### Dominio local (`entheoswiki.localhost`)
+
+`INSTALAR.bat` agrega la línea `127.0.0.1 entheoswiki.localhost` al archivo
+`hosts` de Windows cuando tiene permiso. Si no pudo, abrir **PowerShell como
+administrador** y ejecutar:
+
+```powershell
+Add-Content -LiteralPath "$env:SystemRoot\System32\drivers\etc\hosts" -Value "127.0.0.1 entheoswiki.localhost"
+ipconfig /flushdns
+```
+
+Los navegadores modernos ya resuelven `*.localhost` a la propia PC; la línea en
+`hosts` solo hace falta si no abre.
 
 ---
 
-## Instalación manual (alternativa)
+## Configuración (`.env`)
 
-Para quien prefiera hacerlo por consola en vez de usar los `.bat`:
+El `.env` guarda las contraseñas y **no viaja en el repositorio** (está en
+`.gitignore`). `INSTALAR.bat` lo crea solo. Principales variables:
 
-```powershell
-# 1. Instalar las librerías
-npm install
-
-# 2. Crear el .env a partir de la plantilla
-Copy-Item .env.example .env
-# y editar .env: BD_USUARIO / BD_CONTRASENA de tu MySQL.
-# SESION_SECRETO se puede generar con:
-#   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-
-# 3. Crear la base, el esquema y los datos iniciales
-npm run bd:crear
-
-# 4. Levantar el servidor (con recarga automática)
-npm run dev
-```
-
-El proyecto queda en `http://localhost:3000` (o el `PUERTO` del `.env`). Para
-apagarlo: `Ctrl + C`. Sin recarga automática: `npm run iniciar`.
-
-> Por defecto el `.env` espera `root / Kendry9922` (la configuración del MySQL
-> portátil). Si preferís un usuario dedicado de MySQL:
-
-> ```sql
-> CREATE USER 'entheos'@'localhost' IDENTIFIED BY 'LaClaveQueElijas123';
-> GRANT ALL PRIVILEGES ON entheos.* TO 'entheos'@'localhost';
-> FLUSH PRIVILEGES;
-> ```
-
-> y poner ese usuario/contraseña en el `.env`.
+| Variable          | Qué es                                   | Valor típico                          |
+| ----------------- | ---------------------------------------- | ------------------------------------- |
+| `BD_USUARIO`      | Usuario de MySQL                         | `root`                                |
+| `BD_CONTRASENA`   | Contraseña de MySQL                      | la que pusiste al instalar MySQL      |
+| `BD_HOST`/`BD_PUERTO`/`BD_NOMBRE` | Servidor, puerto y base | `127.0.0.1` / `3306` / `entheos` |
+| `PUERTO`          | Puerto HTTP                              | `80`                                  |
+| `SESION_SECRETO`  | Secreto de sesión (lo genera el instalador) | valor aleatorio largo              |
+| `EDGE`            | Ruta de `msedge.exe` para los PDF        | `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe` |
+| `GMAIL_USUARIO`/`GMAIL_CONTRASENA`/`GMAIL_DESDE` | Correo de salida (opcional) | ejemplo en `.env.example` |
+| `HTTPS_PFX`/`HTTPS_CLAVE` | Certificado HTTPS local (opcional) | `certificados/entheoswiki.pfx` |
 
 ---
 
@@ -129,7 +141,7 @@ apagarlo: `Ctrl + C`. Sin recarga automática: `npm run iniciar`.
 │   ├── rutas/                    # inicio, articulos, comunidad, cuenta, panel, reportes
 │   ├── servicios/                # contenido, tablas de raza, secciones, PDF, correo
 │   ├── plantillas/               # Vistas EJS (parciales/, panel/, errores/)
-│   ├── herramientas/             # crear-base, preparar-env, crear-admin, importar, exportar
+│   ├── herramientas/             # crear-base, preparar-env, hosts, crear-admin, importar, exportar
 │   └── pruebas/smoke.test.js     # Pruebas automáticas (node:test)
 ├── web/                          # Archivos públicos
 │   ├── estilos/estilos.css
@@ -137,11 +149,39 @@ apagarlo: `Ctrl + C`. Sin recarga automática: `npm run iniciar`.
 │   ├── imagenes/
 │   ├── fuentes/
 │   └── subidas/                  # Imágenes subidas (no va al repo)
-├── INSTALAR.bat                  # Instalación (una sola vez) ★ camino principal
-├── INICIAR.bat                   # Arranque (cada vez) ★ camino principal
+├── INSTALAR.bat                  # Instalación (una sola vez) — camino único
+├── INICIAR.bat                   # Arranque (cada vez) — camino único
 ├── .env.example                  # Plantilla de configuración
 └── package.json
 ```
+
+---
+
+## Rutas principales
+
+| Ruta                      | Página                                          |
+| ------------------------- | ----------------------------------------------- |
+| `/`                       | Portada con categorías y buscador               |
+| `/articulos`              | Listado, artículos recientes y categorías       |
+| `/articulos/:slug`        | Ficha de un artículo                            |
+| `/personajes`, `/lugares` | Catálogos                                       |
+| `/buscar?q=palabra`       | Búsqueda                                        |
+| `/comunidad`              | Chat y miembros de la comunidad                 |
+| `/reportes`               | Reportes exportables a PDF                      |
+| `/acceso`, `/registro`    | Iniciar sesión y registrarse                    |
+| `/panel/*`                | Panel de gestión (requiere Editor/Administrador)|
+
+---
+
+## Pruebas
+
+```powershell
+npm run prueba
+```
+
+Debe terminar con **10/10** (`pass 10` / `fail 0`). Cubren las rutas públicas,
+la autenticación (acceso, sesión y cierre), los listados filtrados por la base
+o por categoría, la búsqueda, el chat y la página de error 404.
 
 ---
 
@@ -164,8 +204,8 @@ npm run formato      # Formatea el código con Prettier
 
 ## Funcionalidades
 
-- Portada con las categorías y los últimos artículos.
-- Listado de artículos con filtros por categoría y paginación.
+- Portada con las categorías y el buscador.
+- Listado de artículos con artículos recientes, filtros por categoría y paginación.
 - Ficha de artículo en Markdown, con índice, ficha lateral y relacionadas.
 - **Fichas de raza** con tablas que se generan a partir de las relaciones
   `raza_localidad` (Población actual) y `raza_religion` (Religiones).
@@ -175,20 +215,6 @@ npm run formato      # Formatea el código con Prettier
 - Panel de gestión: artículos, revisión, comentarios y usuarios.
 - Reportes exportables a PDF.
 - Diseño responsivo en español.
-
----
-
-## Cuentas de prueba
-
-Creadas por `INSTALAR.bat` / `npm run bd:crear`:
-
-| Usuario | Contraseña | Rol           |
-| ------- | ---------- | ------------- |
-| Kendry  | Kendry123  | Administrador |
-| Angel   | Angel123   | Editor        |
-| Adriano | Adriano123 | Lector        |
-
-> Son contraseñas de prueba: **cambiarlas antes de entregar**.
 
 ---
 
@@ -203,15 +229,16 @@ o se acepta en <https://github.com/KendryMAX/entheos-wiki/invitations>).
 Al trabajar en equipo: partir siempre de `main` actualizada, crear una rama por
 tarea, subirla y abrir un Pull Request. No hacer `git push` directo a `main`.
 
+---
+
 ## Notas
 
-- El servidor usa HTTP por defecto. Para HTTPS local (`https://entheoswiki.local`)
-  hay que agregar una línea en el archivo `hosts` y generar un certificado; ver
-  `INSTALAR-OTRA-PC.txt`, paso 7.
-- La guía detallada de instalación paso a paso está en
-  **`INSTALAR-OTRA-PC.txt`**.
+- El servidor usa HTTP por defecto en `http://entheoswiki.localhost`. Para
+  HTTPS local (`https://entheoswiki.localhost`) hay que generar el certificado:
+  `powershell -ExecutionPolicy Bypass -File ".\servidor\herramientas\certificado.ps1"`
+  y pegar la clave en `HTTPS_CLAVE` del `.env` (ver `INSTALAR-OTRA-PC.txt`, paso 7).
+- La guía detallada de instalación está en **`INSTALAR-OTRA-PC.txt`**.
 - No se suben al repositorio: `.env`, `certificados/`, `node_modules/`,
-  `web/subidas/`, `pdf-generados/` y `mysql-portatil/`. **Nunca** hacer
-  `git add -f` sobre ellos.
+  `web/subidas/` y `pdf-generados/`. **Nunca** hacer `git add -f` sobre ellos.
 - Si una contraseña se sube por error, cambiarla de inmediato. Las cuentas de
   prueba traen contraseñas temporales: cambiarlas antes de entregar.

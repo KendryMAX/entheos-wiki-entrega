@@ -6,6 +6,26 @@ servirá de base para armar la guía del proyecto (pendiente, "luego").
 Última sesión: importación de Obsidian aplicada, base reconstruida y
 **las pruebas pasan (10/10)** con el servidor encendido.
 
+## Hecho en esta sesión (instalador, dominio, footer y contadores)
+
+- **Instalador solo con MySQL instalado:** `INSTALAR.bat` pide la contraseña de
+  `root` y crea el `.env` solo (`preparar-env.js` ahora acepta `--clave=`). Se
+  eliminó el camino opcional (MySQL portátil + instalación manual) del README y
+  de `INSTALAR-OTRA-PC.txt`.
+- **Dominio `entheoswiki.localhost`:** renombrado en `index.js`,
+  `certificado.ps1`, `.env.example`, README e `INSTALAR-OTRA-PC.txt`. Nuevo
+  `servidor/herramientas/hosts.ps1` (agrega la línea al archivo hosts, best
+  effort) y `PUERTO=80` por defecto para abrir sin número de puerto.
+- **Footer:** ahora tiene solo las mismas opciones que el menú radial (Inicio,
+  Artículos, Comunidad, Reportes).
+- **Contadores de la izquierda:** pasan a **Artículos, Usuarios, Comentarios y
+  Mensajes en la Comunidad** (consulta en `aplicacion.js` + `cabecera.ejs`).
+- **Páginas de error (404/403/500):** usan el estilo `pagina-auth` (contenido
+  centrado y **sin** los contadores de la izquierda), igual que acceso/registro.
+- **"Ciudades" → "Localidades"** como categoría (las ciudades quedan como
+  `tipo_asentamiento`): renombrado en el esquema, el importador y `inicio.js`, y
+  aplicado también en la base viva.
+
 ## Hecho en esta sesión (distritos fuera, subrazas dentro)
 
 - **Distritos eliminados por completo** (entidad + plantilla + páginas +
@@ -202,7 +222,8 @@ JavaScript hace `SELECT * FROM reporte_1`.
   prueba. Cambiarlas antes de exponer el proyecto.
 - `.env` tiene la contraseña de MySQL y el secreto de sesión. No compartirlo.
 - `certificados/clave.txt` es la clave privada del certificado de HTTPS.
-- El dominio `entheoswiki.local` solo resuelve en el equipo donde se configuró
-  el archivo `hosts`.
+- El dominio `entheoswiki.localhost` apunta a esta PC (el instalador agrega la
+  línea `127.0.0.1 entheoswiki.localhost` al archivo `hosts` de Windows; los
+  navegadores modernos también resuelven `*.localhost` solos).
 - **Escribir siempre con tildes y eñes** en la documentación: este archivo se
   usará después como guía.

@@ -71,11 +71,10 @@ app.use(async function cargarConteos(req, res, next) {
   try {
     const filas = await db.consultar(
       `SELECT
-         (SELECT COUNT(*) FROM articulo)      AS articulo,
-         (SELECT COUNT(*) FROM personaje)     AS personaje,
-         (SELECT COUNT(*) FROM localidad)     AS localidad,
-         (SELECT COUNT(*) FROM reino_estado)  AS reino_estado,
-         (SELECT COUNT(*) FROM item)          AS item`
+         (SELECT COUNT(*) FROM articulo)          AS articulo,
+         (SELECT COUNT(*) FROM usuario)           AS usuario,
+         (SELECT COUNT(*) FROM comentario)        AS comentario,
+         (SELECT COUNT(*) FROM mensaje_comunidad) AS mensaje_comunidad`
     );
     res.locals.conteos = filas[0];
     next();

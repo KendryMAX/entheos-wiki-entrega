@@ -833,7 +833,7 @@ function categoriaDe(entidad, tipoItem) {
   const mapa = {
     continente: 'Continentes',
     zona_geografica: 'Regiones',
-    localidad: 'Ciudades',
+    localidad: 'Localidades',
     reino_estado: 'Regiones',
     raza: 'Razas',
     subraza: 'Razas',
@@ -841,7 +841,7 @@ function categoriaDe(entidad, tipoItem) {
     item: tipoItem === 'Arma' ? 'Armas' : 'Objetos',
     recurso: 'Objetos',
     faccion: 'Facciones',
-    punto_interes: 'Ciudades',
+    punto_interes: 'Localidades',
     religion: 'Facciones',
     lengua: 'Lenguas',
   };

@@ -50,19 +50,18 @@
 
 <section class="bloque">
   <h2 class="bloque-titulo">Explorar por categoría</h2>
-  <ul class="lista-categorias">
+  <div class="botones-categorias">
     <% categorias.forEach(function (categoria) { %>
-      <li>
-        <a class="<%= categoriaActual === categoria.id ? 'activa' : '' %>"
-           href="/articulos?categoria=<%= categoria.id %>">
-          <%= categoria.nombre %><span class="conteo"><%= categoria.articulos %></span>
-        </a>
-      </li>
+      <a class="boton-categoria<%= categoriaActual === categoria.id ? ' activa' : '' %>"
+         href="/articulos?categoria=<%= categoria.id %>">
+        <%= categoria.nombre %>
+        <span class="boton-categoria-conteo"><%= categoria.articulos %></span>
+      </a>
     <% }); %>
     <% if (categoriaActual) { %>
-      <li><a href="/articulos">Todos los artículos</a></li>
+      <a class="boton-categoria" href="/articulos">Todos los artículos</a>
     <% } %>
-  </ul>
+  </div>
 </section>
 
 <%- include('parciales/pie') %>

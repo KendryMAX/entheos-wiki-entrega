@@ -14,18 +14,9 @@ if not exist "node_modules" (
   exit /b 1
 )
 
-rem --- MySQL portatil: si la carpeta esta y MySQL no corre, se levanta ---
-if exist "mysql-portatil\bin\mysqld.exe" (
-  tasklist /fi "imagename eq mysqld.exe" | find /i "mysqld.exe" >nul
-  if errorlevel 1 (
-    echo Iniciando MySQL portatil...
-    start "MySQL Entheos" /min "mysql-portatil\bin\mysqld.exe" --console
-    timeout /t 6 /nobreak >nul
-  )
-)
-
 echo.
 echo Iniciando Entheos Wiki...
+echo Abrir: http://entheoswiki.localhost
 echo Para detenerlo: Ctrl + C
 echo.
 call npm run iniciar

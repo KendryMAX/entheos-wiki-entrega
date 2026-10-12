@@ -12,16 +12,20 @@ contrario. No hace falta ser administrador mas que en dos pasos puntuales
 
 Resumen: 9 pasos. Si algo falla, mirar el final (PROBLEMAS COMUNES).
 
-FORMA RECOMENDADA: los scripts .bat. Es la forma principal de instalar y
-arrancar el proyecto en Windows:
+CAMINO UNICO: los scripts .bat. Esa es la forma de instalar y arrancar el
+proyecto en Windows:
 
-  INSTALAR.bat   Se ejecuta UNA sola vez: instala las librerias, crea el
-                 .env (con secreto aleatorio, sin editar nada) y arma la
-                 base de datos.
+  INSTALAR.bat   Se ejecuta UNA sola vez: instala las librerias, te pide la
+                 contrasena de root de tu MySQL y crea el .env solo, agrega
+                 el dominio entheoswiki.localhost al archivo hosts y arma la
+                 base de datos (esquema + datos + las 3 cuentas del equipo).
   INICIAR.bat    Se ejecuta CADA VEZ para arrancar el proyecto.
 
-Con esos scripts se saltean los pasos 4, 5, 6 y 8 (los cubren). Abajo igual
-esta el paso a paso manual, por si se prefiere no usar los .bat.
+Con esos scripts se saltean los pasos 4, 5, 6, 8 y 9 (los cubren). Abajo
+estan los pasos detallados como referencia, para entender que hace cada parte
+o para resolver problemas.
+
+La pagina se abre en: http://entheoswiki.localhost
 
 
 ----------------------------------------------------------------------------
@@ -68,12 +72,6 @@ PASO 2 - INSTALAR MYSQL
 
    (cambiar MySQL96 por el nombre que haya aparecido arriba si es distinto)
 
-FORMATO ALTERNATIVO (recomendado para el equipo): no hace falta instalar
-MySQL. Si el equipo te pasa la carpeta mysql-portatil\ (un MySQL listo con
-usuario root y contrasena Kendry9922), se descomprime en la raiz del
-proyecto y se pasa directo al paso 3: INSTALAR.bat e INICIAR.bat lo
-levantan y lo usan solos (no hacen falta los pasos 2, 5 ni 6).
-
 
 ----------------------------------------------------------------------------
 PASO 3 - COPIAR EL PROYECTO
@@ -116,14 +114,16 @@ plantilla. Copiarla:
 
      Copy-Item .env.example .env
 
-NOTA: si se ejecuto INSTALAR.bat, el .env ya se creo solo (con un secreto de
-sesion aleatorio) y no hace falta tocar nada, salvo que el MySQL use otra
-contrasena: en ese caso se edita solo BD_USUARIO y BD_CONTRASENA.
+NOTA: si se ejecuto INSTALAR.bat, el .env ya se creo solo (con la contrasena
+de root que escribiste y un secreto de sesion aleatorio) y no hace falta tocar
+nada, salvo que el MySQL use otro usuario: en ese caso se edita BD_USUARIO y
+BD_CONTRASENA.
 
 Abrir el .env con un editor (Notepad, VS Code) y cambiar como minimo:
 
-  - BD_USUARIO        usuario de MySQL (la plantilla trae root)
-  - BD_CONTRASENA     contrasena de ese usuario (la plantilla trae Kendry9922)
+  - BD_USUARIO        usuario de MySQL (INSTALAR.bat deja root)
+  - BD_CONTRASENA     contrasena de ese usuario (INSTALAR.bat deja la que
+                      escribiste durante la instalacion)
   - SESION_SECRETO    valor aleatorio largo. Generarlo con:
 
         node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -137,7 +137,7 @@ Abrir el .env con un editor (Notepad, VS Code) y cambiar como minimo:
 
 Los valores de HTTPS (HTTPS_PFX y HTTPS_CLAVE) son del paso 7. Si todavia no
 se hace el paso 7, se pueden dejar como estan y el proyecto anda igual por
-http://localhost.
+http://entheoswiki.localhost.
 
 IMPORTANTE: el archivo .env nunca se sube al repositorio. Esta en .gitignore.
 
@@ -146,12 +146,10 @@ IMPORTANTE: el archivo .env nunca se sube al repositorio. Esta en .gitignore.
 PASO 6 - CREAR EL USUARIO Y LA BASE DE DATOS
 ----------------------------------------------------------------------------
 
-Abierto el .env, este codigo no hace falta con la configuracion por defecto
-(usuario root y contrasena Kendry9922): una MySQL root ya puede crear la base
-entheos sin crear otro usuario. El bloque de abajo es solo para quien quiera
-usar un usuario dedicado en lugar de root.
-
-Con la configuracion por defecto, pasar directo a "npm run bd:crear".
+Con INSTALAR.bat, el .env ya tiene usuario root y la contrasena de la PC: una
+MySQL root ya puede crear la base entheos sin crear otro usuario, y
+INSTALAR.bat ya corre "npm run bd:crear". El bloque de abajo es solo de
+referencia para quien quiera usar un usuario dedicado en lugar de root.
 
 Para un usuario dedicado, abrir MySQL desde la consola como root (pedira la
 contrasena del paso 2):
@@ -187,15 +185,16 @@ ATENCION: bd:reiniciar borra la base entheos y la vuelve a crear desde cero.
 PASO 7 - (OPCIONAL) DIRECCION CON NOMBRE Y HTTPS
 ----------------------------------------------------------------------------
 
-Por defecto el proyecto se abre en http://localhost:3000. Ese paso no es
-necesario para que funcione. Solo sirve para tener https://entheoswiki.local.
+Por defecto el proyecto se abre en http://entheoswiki.localhost (INSTALAR.bat
+agrega el dominio al archivo hosts de Windows). Este paso es opcional: solo
+sirve para tener https://entheoswiki.localhost.
 
 Hace falta lo mismo en dos partes:
 
-  7.1  Dominio. Abrir PowerShell COMO ADMINISTRADOR y agregar esta linea al
-       archivo hosts:
+  7.1  Dominio. INSTALAR.bat ya agrega la linea al archivo hosts cuando tiene
+       permiso. A mano, abrir PowerShell COMO ADMINISTRADOR y agregar:
 
-         Add-Content -LiteralPath "$env:SystemRoot\System32\drivers\etc\hosts" -Value "127.0.0.1 entheoswiki.local"
+         Add-Content -LiteralPath "$env:SystemRoot\System32\drivers\etc\hosts" -Value "127.0.0.1 entheoswiki.localhost"
          ipconfig /flushdns
 
   7.2  Certificado. El proyecto trae un script que lo crea e instala, y que
@@ -210,8 +209,8 @@ Hace falta lo mismo en dos partes:
 
        Guardar el .env y seguir.
 
-Si se saltea este paso, el proyecto arranca solo en http://localhost. Si se
-hace, arranca en los dos a la vez: HTTPS en el puerto 443 y HTTP en el 3000.
+Si se saltea este paso, el proyecto arranca solo en http://entheoswiki.localhost.
+Si se hace, arranca en los dos a la vez: HTTPS en el puerto 443 y HTTP en el 80.
 
 
 ----------------------------------------------------------------------------
@@ -226,7 +225,7 @@ Debe verse algo asi:
 
      Base de datos conectada: entheos
      Entorno: desarrollo
-     Entheos Wiki escuchando en http://localhost:3000
+     Entheos Wiki escuchando en http://localhost:80
 
 La terminal queda ocupada: es normal, el servidor esta vivo. No cerrar esa
 ventana. npm run dev usa nodemon, asi que si se guarda un cambio de codigo el
@@ -245,9 +244,10 @@ PASO 9 - VER LA PAGINA Y PROBAR QUE ANDA
 
 Abrir el navegador en:
 
-     http://localhost:3000
+     http://entheoswiki.localhost
 
-(Si se hizo el paso 7, tambien https://entheoswiki.local)
+(Si se hizo el paso 7, tambien https://entheoswiki.localhost. Si el puerto 80
+esta ocupado, cambiar PUERTO en .env y abrir http://localhost:PUERTO)
 
 Paginas utiles:
 
@@ -303,19 +303,20 @@ PROBLEMAS COMUNES
   - El archivo se llama .env.txt en vez de .env. Renombrarlo a .env.
   - Falta completar alguna variable (BD_CONTRASENA, SESION_SECRETO, etc.).
 
-"El puerto 3000 ya esta ocupado" (o 443)
+"El puerto 80 ya esta ocupado" (o 443)
   - Ya hay otro servidor corriendo en esa PC. Cerrarlo o cambiar PUERTO en
-    el .env.
+    el .env y abrir http://localhost:PUERTO.
 
 La pagina carga pero sin datos
   - Falta cargar la base: npm run bd:crear.
 
 "No se encontro el certificado ... Solo HTTP"
   - Es un aviso, no un error: significa que no se hizo el paso 7. La pagina
-    igual anda por http://localhost.
+    igual anda por http://entheoswiki.localhost.
 
-El navegador no abre https://entheoswiki.local
-  - Falta la linea en el archivo hosts o falta el certificado (paso 7).
+El navegador no abre entheoswiki.localhost
+  - Falta la linea en el archivo hosts o INSTALAR.bat no tuvo permiso para
+    agregarla. Ejecutar INSTALAR.bat como administrador (o ver el paso 7.1).
 
 "Access denied for user 'entheos'"
   - El usuario de MySQL no existe o la contrasena no coincide. Repetir el

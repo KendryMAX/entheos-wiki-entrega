@@ -19,7 +19,7 @@ if errorlevel 1 (
 )
 
 rem ---------- 2. Dependencias ----------
-echo [1/5] Instalando dependencias (npm install)...
+echo [1/4] Instalando dependencias (npm install)...
 if not exist "node_modules" (
   call npm install
   if errorlevel 1 (
@@ -32,52 +32,51 @@ if not exist "node_modules" (
 )
 
 rem ---------- 3. Archivo .env ----------
-echo [2/5] Preparando el archivo .env...
-call node servidor\herramientas\preparar-env.js
-if errorlevel 1 (
-  echo [ERROR] No se pudo crear el .env.
-  pause
-  exit /b 1
+echo [2/4] Preparando el archivo .env...
+if not exist ".env" (
+  echo       Escribi la contrasena del usuario root de tu MySQL
+  echo       ^(la que pusiste al instalar MySQL^):
+  set /p "CLAVE_BD=Contrasena de root de MySQL: "
+  call node servidor\herramientas\preparar-env.js --clave=%CLAVE_BD%
+  if errorlevel 1 (
+    echo [ERROR] No se pudo crear el .env.
+    pause
+    exit /b 1
+  )
+  echo       Se creo .env con el usuario root y tu contrasena.
+) else (
+  echo       Ya existe .env. Si tu MySQL no usa root, revisa BD_USUARIO.
 )
 
-rem ---------- 4. MySQL ----------
-echo [3/5] Buscando MySQL...
-if exist "mysql-portatil\bin\mysqld.exe" (
-  tasklist /fi "imagename eq mysqld.exe" | find /i "mysqld.exe" >nul
-  if errorlevel 1 (
-    if not exist "mysql-portatil\data" (
-      echo       Primera vez: inicializando la carpeta de datos...
-      "mysql-portatil\bin\mysqld.exe" --initialize-insecure --datadir="%CD%\mysql-portatil\data"
-      start "MySQL Entheos" /min "mysql-portatil\bin\mysqld.exe" --datadir="%CD%\mysql-portatil\data" --console
-      timeout /t 10 /nobreak >nul
-      "mysql-portatil\bin\mysql.exe" -u root -h 127.0.0.1 -P 3306 -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Kendry9922'; FLUSH PRIVILEGES;"
-    ) else (
-      start "MySQL Entheos" /min "mysql-portatil\bin\mysqld.exe" --datadir="%CD%\mysql-portatil\data" --console
-      timeout /t 8 /nobreak >nul
-    )
-    echo       MySQL portatil encendido.
-  ) else (
-    echo       MySQL ya esta encendido; se reutiliza.
-  )
+rem ---------- 4. Dominio local ----------
+echo [3/4] Configurando el dominio entheoswiki.localhost...
+for /f "delims=" %%L in ('powershell -NoProfile -ExecutionPolicy Bypass -File "servidor\herramientas\hosts.ps1"') do set "HOSTS_RES=%%L"
+if "%HOSTS_RES%"=="HOSTS_OK" (
+  echo       Dominio entheoswiki.localhost configurado en el archivo hosts.
 ) else (
-  echo       No se encontro la carpeta mysql-portatil.
-  echo       Se usara el MySQL instalado: debe estar encendido y con el
-  echo       usuario y contrasena que figuran en el .env.
+  echo       No se pudo editar el archivo hosts.
+  echo       Si entheoswiki.localhost no abre, ejecuta INSTALAR.bat como
+  echo       administrador o agrega a mano la linea:  127.0.0.1 entheoswiki.localhost
 )
 
 rem ---------- 5. Base de datos ----------
-echo [4/5] Creando la base de datos y cargando los datos...
+echo [4/4] Creando la base de datos y cargando los datos...
 call npm run bd:crear
 if errorlevel 1 (
   echo.
   echo [ERROR] No se pudo crear la base de datos.
-  echo         Revisa que MySQL este encendido y que BD_USUARIO y BD_CONTRASENA
-  echo         del archivo .env coincidan con el MySQL de esta PC.
+  echo         Revisa que MySQL este encendido y que la contrasena que
+  echo         escribiste sea la del usuario root de esta PC.
   pause
   exit /b 1
 )
 
-echo [5/5] Listo.
 echo.
-echo Para arrancar el proyecto, ejecuta INICIAR.bat
+echo ============================================
+echo   LISTO. Cuentas creadas:
+echo     Kendry   / Kendry123     Administrador
+echo     Angel    / Angel123      Editor
+echo     Adriano  / Adriano123    Lector
+echo ============================================
+echo   Para arrancar: INICIAR.bat  y abrir http://entheoswiki.localhost
 pause

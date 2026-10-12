@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/estilos/estilos.css">
   <link rel="icon" href="/imagenes/icono.svg" type="image/svg+xml">
 </head>
-<body class="<%= (rutaActual === '/acceso' || rutaActual === '/registro') ? 'pagina-auth' : '' %>">
+<body class="<%= (rutaActual === '/acceso' || rutaActual === '/registro' || locals.paginaAuth) ? 'pagina-auth' : '' %>">
 
 <a class="saltar" href="#contenido-principal">Saltar al contenido</a>
 
@@ -83,10 +83,9 @@
 <aside class="contadores" aria-label="Cantidad de contenido">
   <ul>
     <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.articulo %></span><span class="contador-texto">Artículos</span></span></li>
-    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.personaje %></span><span class="contador-texto">Personajes</span></span></li>
-    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.localidad %></span><span class="contador-texto">Lugares</span></span></li>
-    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.reino_estado %></span><span class="contador-texto">Reinos</span></span></li>
-    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.item %></span><span class="contador-texto">Objetos</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.usuario %></span><span class="contador-texto">Usuarios</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.comentario %></span><span class="contador-texto">Comentarios</span></span></li>
+    <li><span class="contador-anillo"><span class="contador-numero"><%= conteos.mensaje_comunidad %></span><span class="contador-texto">Mensajes en la Comunidad</span></span></li>
   </ul>
 </aside>
 

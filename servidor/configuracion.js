@@ -7,7 +7,7 @@ const raiz = path.join(__dirname, '..');
 require('dotenv').config({ path: path.join(raiz, '.env') });
 
 const porDefecto = {
-  PUERTO: 3000,
+  PUERTO: 80,
   ENTORNO: 'desarrollo',
   BD_HOST: '127.0.0.1',
   BD_PUERTO: 3306,

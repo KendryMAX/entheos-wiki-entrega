@@ -6,6 +6,7 @@ function noEncontrado(req, res) {
   res.status(404).render('errores/404', {
     titulo: 'Pagina no encontrada',
     ruta: req.originalUrl,
+    paginaAuth: true,
   });
 }
 
@@ -77,6 +78,7 @@ function manejador(err, req, res, next) {
     mensaje,
     ruta: req.originalUrl,
     detalle: config.esProduccion ? null : err.message,
+    paginaAuth: true,
   });
 }
 

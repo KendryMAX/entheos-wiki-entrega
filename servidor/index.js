@@ -70,7 +70,7 @@ async function arrancar() {
   const credenciales = credencialesDelCertificado();
 
   if (credenciales) {
-    crearServidor(https, credenciales, 'https://entheoswiki.local', PUERTO_HTTPS, false);
+    crearServidor(https, credenciales, 'https://entheoswiki.localhost', PUERTO_HTTPS, false);
   }
 
   crearServidor(http, null, 'http://localhost:' + config.puerto, config.puerto, true);

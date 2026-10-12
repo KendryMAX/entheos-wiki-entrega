@@ -630,7 +630,7 @@ INSERT IGNORE INTO categoria (nombre, descripcion, categoria_padre_id) VALUES
 SET @cat_objetos   := (SELECT id FROM categoria WHERE nombre = 'Objetos');
 
 INSERT IGNORE INTO categoria (nombre, descripcion, categoria_padre_id) VALUES
-  ('Ciudades',   'Asentamientos de tamano urbano o mayor.', NULL),
+  ('Localidades', 'Ciudades, pueblos y aldeas del mundo.',    NULL),
   ('Regiones',   'Zonas geograficas extensas.',            NULL),
   ('Razas',      'Grupos etnicos del mundo.',              NULL),
   ('Armas',      'Armas y equipo de combate.',             @cat_objetos);

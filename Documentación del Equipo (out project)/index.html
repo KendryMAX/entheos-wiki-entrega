@@ -200,7 +200,7 @@ Copy-Item .env.example .env
 npm run bd:crear
 npm run dev
 </code></pre></div>
-<p>Después abrí https://entheoswiki.local en el navegador. Si todavía no configuraste el dominio con nombre, usá http://localhost:3000.</p>
+<p>Después abrí https://entheoswiki.localhost en el navegador. Si todavía no configuraste el dominio con nombre, usá http://localhost:3000.</p>
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-documentos-de-ayuda">
 <h3>Documentos de ayuda</h3>
@@ -219,9 +219,9 @@ npm run dev
 </section>
 <section class="seccion" id="el-proyecto-en-una-mirada-direccion-con-nombre-y">
 <h3>Dirección con nombre y HTTPS</h3>
-<p>El proyecto se sirve en https://entheoswiki.local. Eso depende de dos cosas configurables por computadora, no viene hecho de fábrica:</p>
+<p>El proyecto se sirve en https://entheoswiki.localhost. Eso depende de dos cosas configurables por computadora, no viene hecho de fábrica:</p>
 <ol>
-<li>El dominio apunta a esta PC. El archivo C:\Windows\System32\drivers\etc\hosts necesita la línea 127.0.0.1 entheoswiki.local. Requiere PowerShell como Administrador.</li>
+<li>El dominio apunta a esta PC. El archivo C:\Windows\System32\drivers\etc\hosts necesita la línea 127.0.0.1 entheoswiki.localhost. Requiere PowerShell como Administrador.</li>
 </ol>
 <ol>
 <li>Hay un certificado local. La carpeta certificados/ guarda el PFX, el CER y la clave. Se genera en cada computadora con:</li>
@@ -587,7 +587,7 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <li>npm run dev</li>
 </ol>
 <ol>
-<li>Abrir el navegador en https://entheoswiki.local o en http://localhost:3000. Para apagarlo: Ctrl + C en la terminal donde corre el servidor. Si estas en una computadora nueva, primero lee INSTALAR-OTRA-PC.txt (en la raiz del proyecto).</li>
+<li>Abrir el navegador en https://entheoswiki.localhost o en http://localhost:3000. Para apagarlo: Ctrl + C en la terminal donde corre el servidor. Si estas en una computadora nueva, primero lee INSTALAR-OTRA-PC.txt (en la raiz del proyecto).</li>
 </ol>
 </section>
 <section class="seccion" id="como-arrancar-paso-1-abrir-la-terminal">
@@ -604,11 +604,11 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 </section>
 <section class="seccion" id="como-arrancar-paso-4-arrancar-el-servidor">
 <h3>PASO 4 - ARRANCAR EL SERVIDOR</h3>
-<p>Escribir: npm run dev Debe aparecer algo asi: Base de datos conectada: entheos Entheos Wiki escuchando en http://localhost:3000 (y, si se configuro, tambien en https://entheoswiki.local) En ese momento la terminal queda ocupada. ES NORMAL, no esta trabada. No cerrar esa ventana: mientras siga escribiendo eso, el servidor esta vivo. El comando &quot;npm run dev&quot; usa nodemon, asi que si mas tarde guardas un cambio de codigo, el servidor se reinicia solo.</p>
+<p>Escribir: npm run dev Debe aparecer algo asi: Base de datos conectada: entheos Entheos Wiki escuchando en http://localhost:3000 (y, si se configuro, tambien en https://entheoswiki.localhost) En ese momento la terminal queda ocupada. ES NORMAL, no esta trabada. No cerrar esa ventana: mientras siga escribiendo eso, el servidor esta vivo. El comando &quot;npm run dev&quot; usa nodemon, asi que si mas tarde guardas un cambio de codigo, el servidor se reinicia solo.</p>
 </section>
 <section class="seccion" id="como-arrancar-paso-5-ver-la-pagina">
 <h3>PASO 5 - VER LA PAGINA</h3>
-<p>Abrir el navegador (Chrome o Edge) y escribir en la barra de direcciones: https://entheoswiki.local Presionar Enter. Importante: escribir &quot;https://&quot; adelante. Si se escribe solo &quot;entheoswiki.local&quot;, el navegador lo busca como texto en Google. Si por alguna razon el candado no aparece o sale un aviso, usar esta direccion en su lugar, que funciona igual: http://entheoswiki.local Direcciones utiles: https://entheoswiki.local                Portada https://entheoswiki.local/articulos      Listado de articulos https://entheoswiki.local/articulos/entheos   Un articulo completo https://entheoswiki.local/personajes     Personajes https://entheoswiki.local/lugares        Lugares https://entheoswiki.local/cronologia     Cronologia https://entheoswiki.local/acceso         Iniciar sesion https://entheoswiki.local/no-existe      Pagina de error 404</p>
+<p>Abrir el navegador (Chrome o Edge) y escribir en la barra de direcciones: https://entheoswiki.localhost Presionar Enter. Importante: escribir &quot;https://&quot; adelante. Si se escribe solo &quot;entheoswiki.localhost&quot;, el navegador lo busca como texto en Google. Si por alguna razon el candado no aparece o sale un aviso, usar esta direccion en su lugar, que funciona igual: http://entheoswiki.localhost Direcciones utiles: https://entheoswiki.localhost                Portada https://entheoswiki.localhost/articulos      Listado de articulos https://entheoswiki.localhost/articulos/entheos   Un articulo completo https://entheoswiki.localhost/personajes     Personajes https://entheoswiki.localhost/lugares        Lugares https://entheoswiki.localhost/cronologia     Cronologia https://entheoswiki.localhost/acceso         Iniciar sesion https://entheoswiki.localhost/no-existe      Pagina de error 404</p>
 </section>
 <section class="seccion" id="como-arrancar-paso-6-apagar-el-servidor">
 <h3>PASO 6 - APAGAR EL SERVIDOR</h3>
@@ -616,7 +616,7 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 </section>
 <section class="seccion" id="como-arrancar-cuentas-para-entrar">
 <h3>CUENTAS PARA ENTRAR</h3>
-<p>Ir a https://entheoswiki.local/acceso y usar: Kendry   / Kendry123     Administrador (puede administrar cuentas) Angel    / Angel123      Editor (crea, edita y revisa articulos) Adriano  / Adriano123    Lector (solo lee y comenta) Se puede entrar con el nombre de usuario o con el correo. ATENCION: son cuentas de prueba. Cambiar las contrasenas antes de entregar.</p>
+<p>Ir a https://entheoswiki.localhost/acceso y usar: Kendry   / Kendry123     Administrador (puede administrar cuentas) Angel    / Angel123      Editor (crea, edita y revisa articulos) Adriano  / Adriano123    Lector (solo lee y comenta) Se puede entrar con el nombre de usuario o con el correo. ATENCION: son cuentas de prueba. Cambiar las contrasenas antes de entregar.</p>
 </section>
 <section class="seccion" id="como-arrancar-comandos-que-se-usan-una-sola-vez">
 <h3>COMANDOS QUE SE USAN UNA SOLA VEZ</h3>
@@ -637,8 +637,8 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <p>&quot;Access denied&quot; al escribir en la terminal</p>
 <p>PowerShell con permisos restringidos. Abrir PowerShell normal (no como Administrador) para estas tareas.</p>
 <p>&quot;El navegador dice que la conexion no es privada&quot;</p>
-<p>El certificado no esta instalado en esta PC. O bien entrar por http://entheoswiki.local, que funciona sin certificado. Para arreglar de verdad, ejecutar: powershell -ExecutionPolicy Bypass -File &quot;.\servidor\herramientas\certificado.ps1&quot;</p>
-<p>&quot;entheoswiki.local no resuelve&quot;</p>
+<p>El certificado no esta instalado en esta PC. O bien entrar por http://entheoswiki.localhost, que funciona sin certificado. Para arreglar de verdad, ejecutar: powershell -ExecutionPolicy Bypass -File &quot;.\servidor\herramientas\certificado.ps1&quot;</p>
+<p>&quot;entheoswiki.localhost no resuelve&quot;</p>
 <p>Falta la entrada en el archivo hosts. Ver la seccion de abajo.</p>
 <p>La pagina abre pero sale &quot;No se pudo conectar con MySQL&quot;</p>
 <p>Es el problema de MySQL de esta misma lista.</p>
@@ -646,7 +646,7 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <section class="seccion" id="como-arrancar-si-deja-de-funcionar-la-direccion-">
 <h3>SI DEJA DE FUNCIONAR LA DIRECCION CON NOMBRE</h3>
 <p>La direccion depende de dos cosas, ambas en esta PC: a) El archivo hosts de Windows, que tiene esta linea:</p>
-<p>127.0.0.1 entheoswiki.local Para editarlo hay que abrir PowerShell COMO ADMINISTRADOR y ejecutar: notepad $env:SystemRoot\System32\drivers\etc\hosts Si la linea no esta, agregarla al final y guardar. Despues: ipconfig /flushdns</p>
+<p>127.0.0.1 entheoswiki.localhost Para editarlo hay que abrir PowerShell COMO ADMINISTRADOR y ejecutar: notepad $env:SystemRoot\System32\drivers\etc\hosts Si la linea no esta, agregarla al final y guardar. Despues: ipconfig /flushdns</p>
 <p>b) El certificado, en la carpeta certificados.</p>
 <p>Se regenera con: powershell -ExecutionPolicy Bypass -File &quot;.\servidor\herramientas\certificado.ps1&quot;</p>
 <p>Si ninguna de las dos esta, el proyecto sigue funcionando igual en:</p>
@@ -656,10 +656,10 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <h3>SI QUERES QUITAR EL CERTIFICADO DE LA COMPUTADORA</h3>
 <p>Ejecutar esto en PowerShell:</p>
 <div class="tabla-envoltura"><table><thead><tr><th>Get-ChildItem Cert:\CurrentUser\Root</th></tr></thead><tbody>
-<tr><td>Where-Object { $_.Subject -eq 'CN=entheoswiki.local' }</td></tr>
+<tr><td>Where-Object { $_.Subject -eq 'CN=entheoswiki.localhost' }</td></tr>
 </tbody></table></div>
 <p>Remove-Item</p>
-<p>Despues la pagina sigue abriendo en http://entheoswiki.local</p>
+<p>Despues la pagina sigue abriendo en http://entheoswiki.localhost</p>
 </section>
 </article>
 
@@ -756,14 +756,14 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-paso-7-direccion-co">
 <h3>PASO 7 - DIRECCION CON NOMBRE Y CERTIFICADO</h3>
-<p>Esto es opcional. Si se hace, la pagina abre en https://entheoswiki.local con candado verde. Si no se hace, la pagina abre igual en http://localhost 7.1) Registrar el dominio en el archivo hosts</p>
+<p>Esto es opcional. Si se hace, la pagina abre en https://entheoswiki.localhost con candado verde. Si no se hace, la pagina abre igual en http://localhost 7.1) Registrar el dominio en el archivo hosts</p>
 <ul>
 <li>Buscar &quot;PowerShell&quot; en el menu de inicio.</li>
 <li>Click DERECHO sobre PowerShell -&gt; &quot;Ejecutar como administrador&quot;.</li>
 <li>Aceptar el aviso de Windows.</li>
 <li>Ejecutar:</li>
 </ul>
-<p>Add-Content -LiteralPath &quot;$env:SystemRoot\System32\drivers\etc\hosts&quot; -Value &quot;127.0.0.1 entheoswiki.local&quot;</p>
+<p>Add-Content -LiteralPath &quot;$env:SystemRoot\System32\drivers\etc\hosts&quot; -Value &quot;127.0.0.1 entheoswiki.localhost&quot;</p>
 <ul>
 <li>Ejecutar tambien:</li>
 </ul>
@@ -786,15 +786,15 @@ Quiero saber como esta todo         Este documento</code></pre></div>
 <li>Si el script avisa que el dominio no esta en el hosts, repetir 7.1.</li>
 </ul>
 <p>7.3) Comprobar</p>
-<p>Arrancar el servidor (paso 8) y abrir en el navegador: https://entheoswiki.local</p>
+<p>Arrancar el servidor (paso 8) y abrir en el navegador: https://entheoswiki.localhost</p>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-paso-8-arrancar">
 <h3>PASO 8 - ARRANCAR</h3>
 <p>npm run dev</p>
 <p>Debe aparecer:</p>
-<p>Base de datos conectada: entheos Entheos Wiki escuchando en https://entheoswiki.local Entheos Wiki escuchando en http://localhost:80</p>
+<p>Base de datos conectada: entheos Entheos Wiki escuchando en https://entheoswiki.localhost Entheos Wiki escuchando en http://localhost:80</p>
 <p>La terminal queda ocupada. ES NORMAL. Abrir el navegador en:</p>
-<p>https://entheoswiki.local</p>
+<p>https://entheoswiki.localhost</p>
 <p>Para apagarlo: Ctrl + C en esa terminal.</p>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-paso-9-probar-que-t">
@@ -834,7 +834,7 @@ Adriano  / Adriano123    Lector</code></pre></div>
 <li>npm run dev</li>
 </ol>
 <ol>
-<li>npm run prueba  y abrir https://entheoswiki.local</li>
+<li>npm run prueba  y abrir https://entheoswiki.localhost</li>
 </ol>
 </section>
 <section class="seccion" id="instalar-en-otra-computadora-problemas-comunes-e">
@@ -859,14 +859,14 @@ Adriano  / Adriano123    Lector</code></pre></div>
 <li>Cerrar el otro programa.</li>
 <li>Cambiar PUERTO=3000 en el .env y usar</li>
 </ul>
-<p>http://entheoswiki.local:3000</p>
+<p>http://entheoswiki.localhost:3000</p>
 <ul>
 <li>Ver quien lo ocupa:</li>
 </ul>
 <p>Get-NetTCPConnection -LocalPort 80 -State Listen</p>
 <p>&quot;El navegador dice que la conexion no es privada&quot;</p>
-<p>No se hizo el paso 7, o falta instalar la parte del hosts. Repetir 7.1 y 7.2. Si igual falla, entrar por http://entheoswiki.local que funciona igual.</p>
-<p>&quot;Se abre http://entheoswiki.local pero busca en Google&quot;</p>
+<p>No se hizo el paso 7, o falta instalar la parte del hosts. Repetir 7.1 y 7.2. Si igual falla, entrar por http://entheoswiki.localhost que funciona igual.</p>
+<p>&quot;Se abre http://entheoswiki.localhost pero busca en Google&quot;</p>
 <p>Falta escribir http:// o https:// adelante. El navegador lo toma como texto si se escribe solo el nombre.</p>
 <p>&quot;El PDF no se genera&quot;</p>
 <p>Falta la variable EDGE en el .env, o Edge no esta instalado. Revisar que la ruta apunte al msedge.exe de esa PC. En esta maquina es: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe</p>
@@ -1074,7 +1074,7 @@ npm run formato       Formatea el codigo con Prettier</code></pre></div>
 <p>DESPUES de tener Node, Git y MySQL. El repositorio es PRIVADO: hay que estar como colaborador (KendryMAX, AngelDanielZ4914, adrianodev) y aceptar la invitacion que llega al correo o en https://github.com/KendryMAX/entheos-wiki/invitations. Luego:</p>
 <p>git clone https://github.com/KendryMAX/entheos-wiki.git cd entheos-wiki npm install npm run bd:crear npm run dev</p>
 <p>Y abrir en el navegador:</p>
-<p>https://entheoswiki.local</p>
+<p>https://entheoswiki.localhost</p>
 <p>Si en esta computadora todavia no se configuro el dominio, usar:</p>
 <p>http://localhost:3000</p>
 <p>El archivo package-lock.json SI se sube al repositorio: es el que garantiza que los tres tengan las mismas versiones. Nunca se borra.</p>
@@ -1394,7 +1394,7 @@ Administrador   Todo lo anterior, mas administrar cuentas</code></pre></div>
 <p>Como el proyecto se iba a exponer en una laptop, se\Configuro HTTPS con un certificado local.</p>
 <p>Un certificado de verdad lo paga una autoridad y tarda dias. Para un proyecto local hay una salida: generar un certificado propio, instalarlo en la computadora y agregar el dominio al archivo hosts. El navegador lo acepta porque el certificado esta instalado, aunque la barra no sea verde como en internet.</p>
 <p>Se escribio servidor/herramientas/certificado.ps1 para que todo esto fuera un comando y no una serie de pasos que hay que recordar. El script genera el certificado, lo instala en Windows e imprime la clave que hay que pegar en el .env.</p>
-<p>El dominio quedo como entheoswiki.local, mapeado a 127.0.0.1 en el archivo hosts. Si eso falta, el proyecto igual funciona en http://localhost.</p>
+<p>El dominio quedo como entheoswiki.localhost, mapeado a 127.0.0.1 en el archivo hosts. Si eso falta, el proyecto igual funciona en http://localhost.</p>
 </section>
 <section class="seccion" id="como-se-construyo-este-proyecto-paso-8-la-docume">
 <h3>PASO 8 - LA DOCUMENTACION Y LA ORGANIZACION FINAL</h3>
