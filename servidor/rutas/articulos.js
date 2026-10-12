@@ -4,7 +4,7 @@ const express = require('express');
 
 const db = require('../datos/base');
 const config = require('../configuracion');
-const { markdownAHtml, articuloAHtml, separarFicha, esSubraza } = require('../servicios/contenido');
+const { markdownAHtml, articuloAHtml, separarFicha, esSubraza, enlazarFicha } = require('../servicios/contenido');
 const tablasRaza = require('../servicios/tablasRaza');
 const { reemplazarCuerpo, eliminarSeccion } = require('../servicios/secciones');
 const { requiereSesion } = require('../capas/autenticacion');
@@ -145,7 +145,16 @@ router.get('/:slug', async (req, res, next) => {
     const convertido = articuloAHtml(cuerpo);
     articulo.contenido_html = convertido.html;
     articulo.indice = convertido.indice;
-    articulo.ficha_html = partes.ficha.trim() ? markdownAHtml(partes.ficha) : '';
+
+    // Los valores de la ficha que coinciden con otro artículo se vuelven enlaces.
+    const enlazables = await db.consultar(
+      `SELECT titulo, slug FROM articulo
+        WHERE estado = 'publicado' AND titulo NOT LIKE 'Plantilla%' AND slug <> ?
+        ORDER BY LENGTH(titulo) DESC`,
+      [articulo.slug]
+    );
+    const fichaEnlazada = enlazarFicha(partes.ficha, enlazables);
+    articulo.ficha_html = fichaEnlazada.trim() ? markdownAHtml(fichaEnlazada) : '';
 
     const etiquetas = await db.consultar(
       `SELECT e.nombre FROM etiqueta e

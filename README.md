@@ -176,6 +176,11 @@ o se acepta en <https://github.com/KendryMAX/entheos-wiki/invitations>).
 
 ## Notas
 
+- **Imágenes repetidas:** varias fichas comparten la misma ilustración o reutilizan
+  la de otro artículo. El material gráfico disponible es limitado y se fue
+  reaprovechando —por distintas razones (arte todavía en producción, priorizar
+  que ninguna ficha quede sin imagen, personajes o lugares que aún no tienen
+  arte propio)—; es algo intencional por ahora, no un error.
 - El servidor usa HTTP por defecto en `http://entheoswiki.localhost`. Para
   HTTPS local (`https://entheoswiki.localhost`) hay que generar el certificado:
   `powershell -ExecutionPolicy Bypass -File ".\servidor\herramientas\certificado.ps1"`

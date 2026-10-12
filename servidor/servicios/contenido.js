@@ -103,4 +103,82 @@ function esSubraza(markdown) {
     || campoFicha(markdown, 'Raza principal') !== '';
 }
 
-module.exports = { markdownAHtml, articuloAHtml, separarFicha, campoFicha, esSubraza };
+// --- Enlaces automáticos dentro de la ficha ---------------------------------
+
+function normalizarTexto(texto) {
+  return String(texto)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+function escaparRegex(texto) {
+  return String(texto).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Permite que un título acentuado coincida también con su forma sin tilde
+// (por ejemplo «Ardhorlogck» con «Ärdhorløgck»).
+function patronTitulo(titulo) {
+  return String(titulo)
+    .split('')
+    .map((caracter) => {
+      const base = caracter.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (base && base !== caracter) {
+        return `[${escaparRegex(caracter)}${escaparRegex(base)}]`;
+      }
+      return escaparRegex(caracter);
+    })
+    .join('');
+}
+
+/**
+ * Convierte en enlaces los valores de la ficha que coinciden con el título de
+ * otro artículo. Recibe el Markdown de la ficha y la lista de artículos
+ * ({ titulo, slug }); devuelve la misma ficha con enlaces Markdown.
+ */
+function enlazarFicha(ficha, articulos) {
+  if (!ficha) return ficha;
+
+  const lista = (articulos || []).filter((a) => a && a.titulo && a.slug);
+  if (!lista.length) return ficha;
+
+  const porLongitud = [...lista].sort((a, b) => b.titulo.length - a.titulo.length);
+  const mapa = new Map();
+  for (const a of lista) mapa.set(normalizarTexto(a.titulo), a.slug);
+
+  const alternativas = porLongitud.map((a) => patronTitulo(a.titulo));
+  let patron;
+  try {
+    patron = new RegExp(
+      `(?<![\\p{L}\\p{N}])(?:${alternativas.join('|')})(?![\\p{L}\\p{N}])`,
+      'giu'
+    );
+  } catch {
+    return ficha;
+  }
+
+  return String(ficha)
+    .split('\n')
+    .map((linea) => {
+      if (linea.trim().charAt(0) !== '|') return linea;
+      const celdas = linea.split('|');
+      if (celdas.length < 4) return linea;
+      for (let i = 2; i < celdas.length - 1; i += 1) {
+        celdas[i] = celdas[i].replace(patron, (coincidencia) => {
+          const slug = mapa.get(normalizarTexto(coincidencia));
+          return slug ? `[${coincidencia}](/articulos/${slug})` : coincidencia;
+        });
+      }
+      return celdas.join('|');
+    })
+    .join('\n');
+}
+
+module.exports = {
+  markdownAHtml,
+  articuloAHtml,
+  separarFicha,
+  campoFicha,
+  esSubraza,
+  enlazarFicha,
+};
