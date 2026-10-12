@@ -129,55 +129,23 @@ El `.env` guarda las contraseñas y **no viaja en el repositorio** (está en
 .
 ├── base-de-datos/
 │   ├── base-de-datos.sql         # Esquema (32 tablas) + datos iniciales
-│   └── Reportes/                 # 5 consultas SQL de los reportes
+│   └── Reportes/                 # Consultas SQL de los reportes
 ├── servidor/
-│   ├── index.js                  # Punto de entrada: HTTP y, si hay certificado, HTTPS
-│   ├── aplicacion.js             # Express: seguridad, sesión, contadores y rutas
+│   ├── index.js                  # Punto de entrada (HTTP/HTTPS)
+│   ├── aplicacion.js             # Arma Express: seguridad, sesión y rutas
 │   ├── configuracion.js          # Lee las variables del .env
-│   ├── capas/
-│   │   ├── autenticacion.js      # Sesión del usuario y control de roles
-│   │   └── errores.js            # Manejo de errores (403, 404 y 500)
-│   ├── datos/
-│   │   └── base.js               # Conexión y consultas a MySQL
-│   ├── rutas/
-│   │   ├── inicio.js             # Portada, personajes, lugares y búsqueda
-│   │   ├── articulos.js          # Listado, filtros, ficha y comentarios
-│   │   ├── cuenta.js             # Registro, acceso y cierre de sesión
-│   │   ├── comunidad.js          # Chat y miembros de la comunidad
-│   │   ├── panel.js              # Gestión de artículos, comentarios y usuarios
-│   │   └── reportes.js           # Reportes exportables a PDF
-│   ├── servicios/
-│   │   ├── contenido.js          # Markdown a HTML seguro y resúmenes
-│   │   ├── tablasRaza.js         # Tablas para las fichas de raza
-│   │   ├── secciones.js          # Índice y secciones de los artículos
-│   │   ├── pdf.js                # Generación de PDF con Microsoft Edge
-│   │   └── correo.js             # Envío de correo (opcional)
-│   ├── plantillas/               # Vistas EJS (renderizadas en el servidor)
-│   │   ├── *.ejs                 # Páginas: inicio, artículos, ficha, comunidad, acceso…
-│   │   ├── parciales/            # cabecera (menú radial) y pie
-│   │   ├── panel/                # Gestión: artículos, revisión, comentarios, usuarios
-│   │   └── errores/              # 403, 404 y 500
-│   ├── herramientas/             # Scripts de consola
-│   │   ├── crear-base.js         # Crea la base y carga el esquema + datos
-│   │   ├── crear-admin.js        # Alta de cuentas, contraseñas y roles
-│   │   ├── preparar-env.js       # Genera el .env con un secreto aleatorio
-│   │   ├── hosts.ps1             # Agrega entheoswiki.localhost al archivo hosts
-│   │   ├── certificado.ps1       # Certificado HTTPS local (opcional)
-│   │   ├── importar-obsidian.js  # Importa el vault de Obsidian (interno)
-│   │   └── exportar.js           # Exporta artículos y reportes a PDF
-│   └── pruebas/smoke.test.js     # Pruebas automáticas (node:test)
-├── web/                          # Archivos públicos
-│   ├── estilos/estilos.css       # Hoja de estilos única
-│   ├── scripts/aplicacion.js     # Menú radial, autocompletado y validaciones
-│   ├── imagenes/                 # Fondos e ícono del sitio
-│   ├── fuentes/                  # Tipografía del proyecto
-│   └── subidas/                  # Imágenes subidas (no va al repo)
+│   ├── capas/                    # Sesión, roles y manejo de errores
+│   ├── datos/base.js             # Conexión y consultas a MySQL
+│   ├── rutas/                    # Una ruta por página del sitio
+│   ├── servicios/                # Markdown, PDF, correo y tablas de contenido
+│   ├── plantillas/               # Vistas EJS (páginas, parciales y panel)
+│   ├── herramientas/             # Scripts de consola (base, admin, certificado…)
+│   └── pruebas/                  # Pruebas automáticas
+├── web/                          # Archivos públicos: estilos, scripts e imágenes
 ├── INSTALAR.bat                  # Instalación (una sola vez)
 ├── INICIAR.bat                   # Arranque (cada vez)
 ├── .env.example                  # Plantilla de configuración
-├── .gitignore                    # Archivos que no se suben
-├── package.json                  # Dependencias y comandos
-└── README.md                     # Documentación del proyecto
+└── package.json                  # Dependencias y comandos
 ```
 
 ---
