@@ -6,6 +6,7 @@ const db = require('../datos/base');
 const config = require('../configuracion');
 const { markdownAHtml, articuloAHtml, separarFicha, esSubraza, enlazarFicha } = require('../servicios/contenido');
 const tablasRaza = require('../servicios/tablasRaza');
+const tablasZona = require('../servicios/tablasZona');
 const { reemplazarCuerpo, eliminarSeccion } = require('../servicios/secciones');
 const { requiereSesion } = require('../capas/autenticacion');
 const errores = require('../capas/errores');
@@ -140,6 +141,15 @@ router.get('/:slug', async (req, res, next) => {
       cuerpo = eliminarSeccion(cuerpo, 'Mitos Propios y de Origen');
       cuerpo = reemplazarCuerpo(cuerpo, 'Población Actual', tablas.poblacion);
       cuerpo = reemplazarCuerpo(cuerpo, 'Religiones', tablas.religiones);
+    }
+
+    // Fichas de zona geográfica: las secciones de Localidades y Población se
+    // generan a partir de las localidades ancladas a la zona.
+    if (articulo.categoria === 'Regiones') {
+      const zona = await tablasZona.buscarZona(articulo.titulo);
+      const tablas = zona ? await tablasZona.tablasDeZona(zona) : tablasZona.ejemplos();
+      cuerpo = reemplazarCuerpo(cuerpo, 'Localidades', tablas.localidades);
+      cuerpo = reemplazarCuerpo(cuerpo, 'Población', tablas.poblacion);
     }
 
     const convertido = articuloAHtml(cuerpo);
