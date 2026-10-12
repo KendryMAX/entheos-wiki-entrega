@@ -12,14 +12,16 @@ contrario. No hace falta ser administrador mas que en dos pasos puntuales
 
 Resumen: 9 pasos. Si algo falla, mirar el final (PROBLEMAS COMUNES).
 
-ATAJO PARA WINDOWS: si no queres hacer el paso 4 al 9 a mano, hay dos
-archivos en la raiz del proyecto:
+FORMA RECOMENDADA: los scripts .bat. Es la forma principal de instalar y
+arrancar el proyecto en Windows:
 
   INSTALAR.bat   Se ejecuta UNA sola vez: instala las librerias, crea el
-                 .env y arma la base de datos.
+                 .env (con secreto aleatorio, sin editar nada) y arma la
+                 base de datos.
   INICIAR.bat    Se ejecuta CADA VEZ para arrancar el proyecto.
 
-Si usas esos scripts, podes saltear los pasos 4, 5, 6 y 8 (los cubren).
+Con esos scripts se saltean los pasos 4, 5, 6 y 8 (los cubren). Abajo igual
+esta el paso a paso manual, por si se prefiere no usar los .bat.
 
 
 ----------------------------------------------------------------------------
@@ -66,6 +68,12 @@ PASO 2 - INSTALAR MYSQL
 
    (cambiar MySQL96 por el nombre que haya aparecido arriba si es distinto)
 
+FORMATO ALTERNATIVO (recomendado para el equipo): no hace falta instalar
+MySQL. Si el equipo te pasa la carpeta mysql-portatil\ (un MySQL listo con
+usuario root y contrasena Kendry9922), se descomprime en la raiz del
+proyecto y se pasa directo al paso 3: INSTALAR.bat e INICIAR.bat lo
+levantan y lo usan solos (no hacen falta los pasos 2, 5 ni 6).
+
 
 ----------------------------------------------------------------------------
 PASO 3 - COPIAR EL PROYECTO
@@ -108,10 +116,14 @@ plantilla. Copiarla:
 
      Copy-Item .env.example .env
 
+NOTA: si se ejecuto INSTALAR.bat, el .env ya se creo solo (con un secreto de
+sesion aleatorio) y no hace falta tocar nada, salvo que el MySQL use otra
+contrasena: en ese caso se edita solo BD_USUARIO y BD_CONTRASENA.
+
 Abrir el .env con un editor (Notepad, VS Code) y cambiar como minimo:
 
-  - BD_USUARIO        usuario de MySQL (por defecto entheos)
-  - BD_CONTRASENA     contrasena de ese usuario (la elige uno en el paso 6)
+  - BD_USUARIO        usuario de MySQL (la plantilla trae root)
+  - BD_CONTRASENA     contrasena de ese usuario (la plantilla trae Kendry9922)
   - SESION_SECRETO    valor aleatorio largo. Generarlo con:
 
         node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -134,7 +146,15 @@ IMPORTANTE: el archivo .env nunca se sube al repositorio. Esta en .gitignore.
 PASO 6 - CREAR EL USUARIO Y LA BASE DE DATOS
 ----------------------------------------------------------------------------
 
-Abrir MySQL desde la consola como root (pedira la contrasena del paso 2):
+Abierto el .env, este codigo no hace falta con la configuracion por defecto
+(usuario root y contrasena Kendry9922): una MySQL root ya puede crear la base
+entheos sin crear otro usuario. El bloque de abajo es solo para quien quiera
+usar un usuario dedicado en lugar de root.
+
+Con la configuracion por defecto, pasar directo a "npm run bd:crear".
+
+Para un usuario dedicado, abrir MySQL desde la consola como root (pedira la
+contrasena del paso 2):
 
      mysql -u root -p
 

@@ -14,8 +14,7 @@ if not exist "node_modules" (
   exit /b 1
 )
 
-rem --- MySQL portatil (opcional) ---
-rem Si existe la carpeta mysql-portatil\, se intenta levantar sola.
+rem --- MySQL portatil: si la carpeta esta y MySQL no corre, se levanta ---
 if exist "mysql-portatil\bin\mysqld.exe" (
   tasklist /fi "imagename eq mysqld.exe" | find /i "mysqld.exe" >nul
   if errorlevel 1 (

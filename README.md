@@ -4,6 +4,92 @@ Wiki de consulta sobre el mundo de **Entheos**: continentes, regiones, ciudades,
 
 ---
 
+## Inicio rápido en Windows (recomendado)
+
+La forma normal de instalar y arrancar el proyecto son los dos archivos de la
+raíz. **No hace falta escribir comandos ni editar el `.env` a mano.**
+
+### Requisitos
+
+1. **Node.js 20 o superior** (descargar el instalador **LTS** de <https://nodejs.org> e instalarlo con las opciones por defecto).
+2. **MySQL 8**. Dos opciones:
+   - Una **carpeta `mysql-portatil\`** con un MySQL ya armado por el equipo
+     (usuario `root`, contraseña `Kendry9922`). Los `.bat` la levantan solos.
+   - O un MySQL 8 **instalado** en la PC (cualquier instalación sirve; luego
+     hay que poner su usuario y contraseña en el `.env`).
+
+### Pasos
+
+1. **Descargar/clonar el proyecto** (el repositorio es privado: hay que estar
+   agregado como colaborador).
+
+   ```powershell
+   git clone https://github.com/KendryMAX/entheos-wiki.git
+   cd entheos-wiki
+   ```
+
+2. **Doble clic en `INSTALAR.bat`** — se ejecuta **una sola vez**. Instala las
+   dependencias, crea el `.env` (con un secreto de sesión aleatorio), levanta el
+   MySQL portátil si existe y arma la base de datos con los datos iniciales.
+
+3. **Doble clic en `INICIAR.bat`** — cada vez que se quiera usar el proyecto.
+   Enciende el servidor.
+
+4. Abrir **<http://localhost:3000>** en el navegador.
+
+> Se puede cerrar la ventana de `INICIAR.bat` o usar `Ctrl + C` para apagar el
+> servidor. El puerto por defecto es `3000` (se cambia con `PUERTO` en `.env`).
+
+### Si la base no se pudo crear
+
+`INSTALAR.bat` termina en `[ERROR] No se pudo crear la base de datos`. Es casi
+siempre la contraseña del MySQL:
+
+- Si usás la carpeta `mysql-portatil\`: el `.env` ya trae las credenciales
+  correctas; avisá al equipo si el error persiste.
+- Si tenés MySQL instalado: abrí `.env` con el Bloc de notas y cambiá las
+  líneas `BD_USUARIO` y `BD_CONTRASENA` por las de tu MySQL, y volvé a ejecutar
+  `INSTALAR.bat`.
+
+---
+
+## Instalación manual (alternativa)
+
+Para quien prefiera hacerlo por consola en vez de usar los `.bat`:
+
+```powershell
+# 1. Instalar las librerías
+npm install
+
+# 2. Crear el .env a partir de la plantilla
+Copy-Item .env.example .env
+# y editar .env: BD_USUARIO / BD_CONTRASENA de tu MySQL.
+# SESION_SECRETO se puede generar con:
+#   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# 3. Crear la base, el esquema y los datos iniciales
+npm run bd:crear
+
+# 4. Levantar el servidor (con recarga automática)
+npm run dev
+```
+
+El proyecto queda en `http://localhost:3000` (o el `PUERTO` del `.env`). Para
+apagarlo: `Ctrl + C`. Sin recarga automática: `npm run iniciar`.
+
+> Por defecto el `.env` espera `root / Kendry9922` (la configuración del MySQL
+> portátil). Si preferís un usuario dedicado de MySQL:
+
+> ```sql
+> CREATE USER 'entheos'@'localhost' IDENTIFIED BY 'LaClaveQueElijas123';
+> GRANT ALL PRIVILEGES ON entheos.* TO 'entheos'@'localhost';
+> FLUSH PRIVILEGES;
+> ```
+
+> y poner ese usuario/contraseña en el `.env`.
+
+---
+
 ## Stack Tecnológico
 
 ### Servidor
@@ -32,7 +118,7 @@ Wiki de consulta sobre el mundo de **Entheos**: continentes, regiones, ciudades,
 ```
 .
 ├── base-de-datos/
-│   ├── base-de-datos.sql         # Esquema (33 tablas) + datos iniciales
+│   ├── base-de-datos.sql         # Esquema (32 tablas) + datos iniciales
 │   └── Reportes/                 # Consultas SQL de los reportes
 ├── servidor/
 │   ├── index.js                  # Punto de entrada (HTTP/HTTPS)
@@ -43,7 +129,7 @@ Wiki de consulta sobre el mundo de **Entheos**: continentes, regiones, ciudades,
 │   ├── rutas/                    # inicio, articulos, comunidad, cuenta, panel, reportes
 │   ├── servicios/                # contenido, tablas de raza, secciones, PDF, correo
 │   ├── plantillas/               # Vistas EJS (parciales/, panel/, errores/)
-│   ├── herramientas/             # crear-base, crear-admin, importar, exportar
+│   ├── herramientas/             # crear-base, preparar-env, crear-admin, importar, exportar
 │   └── pruebas/smoke.test.js     # Pruebas automáticas (node:test)
 ├── web/                          # Archivos públicos
 │   ├── estilos/estilos.css
@@ -51,115 +137,11 @@ Wiki de consulta sobre el mundo de **Entheos**: continentes, regiones, ciudades,
 │   ├── imagenes/
 │   ├── fuentes/
 │   └── subidas/                  # Imágenes subidas (no va al repo)
+├── INSTALAR.bat                  # Instalación (una sola vez) ★ camino principal
+├── INICIAR.bat                   # Arranque (cada vez) ★ camino principal
 ├── .env.example                  # Plantilla de configuración
-├── INSTALAR-OTRA-PC.txt          # Guía paso a paso para otra PC
 └── package.json
 ```
-
----
-
-## Requisitos previos
-
-- **Windows 10/11**
-- **Node.js 20 o superior** y **npm**
-- **MySQL 8** (o MariaDB compatible) corriendo localmente
-- **Microsoft Edge** (se usa para generar los PDF)
-- **Git** (opcional, para clonar)
-
----
-
-## Configuración
-
-### 1. Clonar el repositorio
-
-```powershell
-git clone https://github.com/KendryMAX/entheos-wiki.git
-cd entheos-wiki
-```
-
-El repositorio es **privado**: hay que estar agregado como colaborador.
-
-### 2. Instalar las dependencias
-
-```powershell
-npm install
-```
-
-### 3. Crear el archivo `.env`
-
-```powershell
-Copy-Item .env.example .env
-```
-
-y completar como mínimo:
-
-```ini
-PUERTO=3000
-ENTORNO=desarrollo
-
-BD_HOST=127.0.0.1
-BD_PUERTO=3306
-BD_USUARIO=entheos
-BD_CONTRASENA=LaClaveQueElijas123
-BD_NOMBRE=entheos
-
-# Generar con:
-#   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-SESION_SECRETO=cambia_este_valor_por_uno_aleatorio
-
-EDGE=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
-ARTICULOS_PAGINA=12
-```
-
-> El archivo `.env` **no** se sube al repositorio (está en `.gitignore`).
-
-### 4. Crear el usuario y la base de datos
-
-Desde MySQL como `root`:
-
-```sql
-CREATE USER 'entheos'@'localhost' IDENTIFIED BY 'LaClaveQueElijas123';
-GRANT ALL PRIVILEGES ON entheos.* TO 'entheos'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-La contraseña debe coincidir con `BD_CONTRASENA` del `.env`.
-
----
-
-## Instalación y ejecución
-
-```powershell
-# 1. Crear la base, el esquema y los datos iniciales
-npm run bd:crear
-
-# 2. Levantar el servidor (con recarga automática)
-npm run dev
-```
-
-El proyecto queda disponible en `http://localhost:3000` (o el `PUERTO` que tenga el `.env`).
-
-Para probar en modo producción (sin recarga automática):
-
-```powershell
-npm run iniciar
-```
-
-Para apagarlo: `Ctrl + C` en esa terminal.
-
-### Atajo con scripts (.bat)
-
-Para no escribir los comandos a mano en Windows hay dos archivos:
-
-1. **`INSTALAR.bat`** — se ejecuta **una sola vez**: instala las dependencias,
-   crea el `.env` si falta y arma la base de datos.
-2. **`INICIAR.bat`** — se ejecuta **cada vez** que se quiere usar el proyecto:
-   enciende el servidor (y, si existe la carpeta `mysql-portatil\`, también
-   levanta ese MySQL).
-
-> Si preferís no instalar MySQL en la PC, se puede descomprimir un **MySQL
-> portátil** dentro de la carpeta `mysql-portatil\` (esa carpeta no va al
-> repositorio). `INICIAR.bat` lo detecta y lo levanta automáticamente.
 
 ---
 
@@ -198,7 +180,7 @@ npm run formato      # Formatea el código con Prettier
 
 ## Cuentas de prueba
 
-Creadas por `npm run bd:crear`:
+Creadas por `INSTALAR.bat` / `npm run bd:crear`:
 
 | Usuario | Contraseña | Rol           |
 | ------- | ---------- | ------------- |
@@ -226,9 +208,10 @@ tarea, subirla y abrir un Pull Request. No hacer `git push` directo a `main`.
 - El servidor usa HTTP por defecto. Para HTTPS local (`https://entheoswiki.local`)
   hay que agregar una línea en el archivo `hosts` y generar un certificado; ver
   `INSTALAR-OTRA-PC.txt`, paso 7.
-- La guía completa de instalación en otra computadora está en
+- La guía detallada de instalación paso a paso está en
   **`INSTALAR-OTRA-PC.txt`**.
 - No se suben al repositorio: `.env`, `certificados/`, `node_modules/`,
-  `web/subidas/` y `pdf-generados/`. **Nunca** hacer `git add -f` sobre ellos.
+  `web/subidas/`, `pdf-generados/` y `mysql-portatil/`. **Nunca** hacer
+  `git add -f` sobre ellos.
 - Si una contraseña se sube por error, cambiarla de inmediato. Las cuentas de
   prueba traen contraseñas temporales: cambiarlas antes de entregar.
