@@ -131,9 +131,9 @@
     
     <% if (articulo.imagen_ruta) { %>
       <img class="articulo-imagen" src="<%= articulo.imagen_ruta %>" alt="<%= articulo.titulo %>" loading="lazy">
-    <% } else if (articulo.categoria === 'Personajes') { %>
+    <% } else { %>
       <figure class="articulo-lamina">
-        <figcaption class="articulo-lamina-texto">No había fotógrafo ni pintor.</figcaption>
+        <figcaption class="articulo-lamina-texto">Sin imagen</figcaption>
       </figure>
     <% } %>
 
@@ -236,17 +236,21 @@ document.addEventListener("DOMContentLoaded", function() {
   // Hacer las secciones h3 expandibles/collapsibles
   var headings = document.querySelectorAll("h3");
   headings.forEach(function(heading) {
-    // Verificar si ya tiene un sibling de contenido
-    var content = heading.nextElementSibling;
-    if (content && content.tagName && content.tagName.toLowerCase() === "p") {
-      // Verificar si ya está envuelto en details
+    // Buscar el siguiente elemento que sea un bloque de contenido
+    var next = heading.nextElementSibling;
+    while (next && next.nodeType !== 1) {
+      next = next.nextElementSibling;
+    }
+    // Si el siguiente elemento es un bloque (no es un heading mayor)
+    if (next && next.tagName && next.tagName !== 'H1' && next.tagName !== 'H2' && !next.classList.contains('articulo-meta') && !next.classList.contains('articulo-lateral')) {
+      // Ya está envuelto en details?
       if (!heading.parentElement.classList.contains('details-wrapper')) {
         var details = document.createElement("details");
         var summary = document.createElement("summary");
         summary.textContent = heading.textContent;
         details.classList.add('details-wrapper');
         details.appendChild(summary);
-        details.appendChild(content);
+        details.appendChild(next);
         heading.parentNode.replaceChild(details, heading);
       }
     }
