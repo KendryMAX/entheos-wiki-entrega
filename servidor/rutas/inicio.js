@@ -43,7 +43,7 @@ router.get('/', async (req, res, next) => {
     ]);
 
     const publicados = await db.consultarUno(
-      "SELECT COUNT(*) AS total FROM articulo WHERE estado = 'publicado'"
+      "SELECT COUNT(*) AS total FROM articulo WHERE estado = 'publicado' AND titulo NOT LIKE 'Plantilla%'"
     );
 
     const etiquetas = await db.consultar(
@@ -58,15 +58,18 @@ router.get('/', async (req, res, next) => {
     let categorias = await db.consultar(
       `SELECT c.id, c.nombre,
               (SELECT COUNT(*) FROM articulo a
-                WHERE a.categoria_id = c.id AND a.estado = 'publicado') AS articulos,
+                WHERE a.categoria_id = c.id AND a.estado = 'publicado'
+                  AND a.titulo NOT LIKE 'Plantilla%') AS articulos,
               (SELECT i.ruta FROM articulo a
                  JOIN imagen i ON i.id = a.imagen_id
                 WHERE a.categoria_id = c.id AND a.imagen_id IS NOT NULL
+                  AND a.titulo NOT LIKE 'Plantilla%'
                 ORDER BY a.publicado_en DESC, a.id DESC
                 LIMIT 1) AS imagen_ruta
          FROM categoria c
         WHERE EXISTS (SELECT 1 FROM articulo a
-                       WHERE a.categoria_id = c.id AND a.estado = 'publicado')
+                       WHERE a.categoria_id = c.id AND a.estado = 'publicado'
+                         AND a.titulo NOT LIKE 'Plantilla%')
         ORDER BY c.nombre`
     );
 
@@ -143,6 +146,7 @@ router.get('/buscar', async (req, res, next) => {
          LEFT JOIN categoria c ON c.id = a.categoria_id
         WHERE a.estado = 'publicado'
           AND a.titulo LIKE ?
+          AND a.titulo NOT LIKE 'Plantilla%'
         ORDER BY a.titulo
         LIMIT 50`,
       [`%${termino}%`]

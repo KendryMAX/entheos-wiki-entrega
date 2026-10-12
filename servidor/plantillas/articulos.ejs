@@ -13,7 +13,7 @@
   <% if (articulos.length === 0) { %>
     <p class="vacio">No hay artículos todavía.</p>
   <% } else { %>
-    <div class="rejilla">
+    <div class="rejilla<%= categoriaNombre === 'Razas' ? ' rejilla--razas' : '' %>">
       <% articulos.forEach(function (articulo, indice) {
            const esRaza = articulo.categoria === 'Razas' && !/^plantilla/i.test(articulo.titulo);
            const anteriorRaza = indice > 0 && articulos[indice - 1].categoria === 'Razas' && !/^plantilla/i.test(articulos[indice - 1].titulo);

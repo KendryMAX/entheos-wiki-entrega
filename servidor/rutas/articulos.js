@@ -23,6 +23,7 @@ router.get('/', async (req, res, next) => {
 
     if (!res.locals.puede(res.locals.NIVELES.Editor)) {
       condiciones.push("a.estado = 'publicado'");
+      condiciones.push("a.titulo NOT LIKE 'Plantilla%'");
     }
 
     if (req.query.categoria) {

@@ -666,7 +666,7 @@ pre code { color: var(--dorado-claro); }
 }
 .tarjeta--raza .tarjeta-imagen {
   width: 32%;
-  min-width: 140px;
+  min-width: 120px;
   height: auto;
   align-self: stretch;
   object-fit: cover;
@@ -693,15 +693,25 @@ pre code { color: var(--dorado-claro); }
   vertical-align: middle;
 }
 
-/* La raza ocupa media fila (dos columnas). Si no tiene una raza vecina, la
-   tarjeta siguiente arranca en una fila nueva para dejar el hueco. */
+/* Rejilla con razas: exactamente 2 por fila (máximo 2 razas) y del mismo tamaño. */
 @media (min-width: 700px) {
-  .tarjeta--raza { grid-column: span 2; }
+  .rejilla--razas,
+  .rejilla:has(.tarjeta--raza) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .rejilla .corta-fila { grid-column-start: 1; }
-  .rejilla .tarjeta--raza.corta-fila { grid-column: 1 / span 2; }
+  .tarjeta--raza { height: 240px; }
+  .tarjeta--raza .tarjeta-resumen {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 @media (max-width: 699px) {
-  .tarjeta--raza { flex-direction: column; min-height: 0; }
+  .rejilla--razas,
+  .rejilla:has(.tarjeta--raza) { grid-template-columns: 1fr; }
+  .tarjeta--raza { flex-direction: column; min-height: 0; height: auto; }
   .tarjeta--raza .tarjeta-imagen {
     width: 100%;
     min-width: 0;
