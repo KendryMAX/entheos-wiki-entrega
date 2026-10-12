@@ -18,6 +18,11 @@ pdf-generados/
 # MySQL portatil (opcional, se descarga aparte)
 mysql-portatil/
 
+# Documentacion interna del equipo: no se sube al repositorio
+Documentación del Equipo (out project)/
+INSTALAR-OTRA-PC.txt
+PENDIENTES.md
+
 # Sistema operativo y editores
 .DS_Store
 Thumbs.db
