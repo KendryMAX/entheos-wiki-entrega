@@ -23,8 +23,11 @@
 
     <div class="campo">
       <label for="contrasena">Contraseña</label>
-      <input type="password" id="contrasena" name="contrasena" required
-             autocomplete="current-password" data-error="Escribe tu contraseña.">
+      <div class="campo-clave">
+        <input type="password" id="contrasena" name="contrasena" required
+               autocomplete="current-password" data-error="Escribe tu contraseña.">
+        <%- include('parciales/ver-clave', { campo: 'contrasena' }) %>
+      </div>
       <span class="campo-error" data-error-de="contrasena"></span>
     </div>
 

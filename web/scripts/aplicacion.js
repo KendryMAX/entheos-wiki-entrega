@@ -290,6 +290,27 @@ function activarPlantillas(formulario) {
   });
 }
 
+// Muestra u oculta una contraseña sin salir del formulario. El botón lleva el
+// id del campo correspondiente en data-ver-clave.
+function activarVerClaves() {
+  document.querySelectorAll('[data-ver-clave]').forEach((boton) => {
+    const campo = document.getElementById(boton.dataset.verClave);
+
+    if (!campo) return;
+
+    boton.addEventListener('click', () => {
+      const oculto = campo.type === 'password';
+      campo.type = oculto ? 'text' : 'password';
+      boton.classList.toggle('visible', oculto);
+      boton.setAttribute('aria-pressed', String(oculto));
+
+      const etiqueta = oculto ? 'Ocultar contraseña' : 'Mostrar contraseña';
+      boton.setAttribute('aria-label', etiqueta);
+      boton.setAttribute('title', etiqueta);
+    });
+  });
+}
+
 function iniciar() {
   document.querySelectorAll('form[data-validar]').forEach((formulario) => {
     activarValidacion(formulario);
@@ -299,6 +320,7 @@ function iniciar() {
   document.querySelectorAll('[data-autocompletado]').forEach(activarAutocompletado);
   activarMenu();
   activarContadores();
+  activarVerClaves();
 }
 
 if (document.readyState === 'loading') {

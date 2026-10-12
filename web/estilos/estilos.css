@@ -23,6 +23,9 @@
   --serif: Georgia, 'Times New Roman', serif;
   --sans: 'Segoe UI', Tahoma, Verdana, sans-serif;
   --mono: 'Consolas', 'Courier New', monospace;
+
+  /* Los controles nativos (selects, desplegables, barras) se pintan en oscuro. */
+  color-scheme: dark;
 }
 
 @font-face {
@@ -1039,6 +1042,27 @@ pre code { color: var(--dorado-claro); }
 .formulario-nota { font-size: 0.82rem; color: var(--gris); margin: 0; border-left: 2px solid var(--dorado-oscuro); padding-left: 0.7rem; }
 .formulario-en-linea { display: inline-flex; gap: 0.3rem; align-items: center; margin: 0 0.2rem 0.2rem 0; }
 
+/* Campo de contraseña con botón de mostrar u ocultar. */
+.campo-clave { position: relative; display: flex; align-items: center; }
+.campo-clave input { padding-right: 3rem; }
+.ver-clave {
+  position: absolute;
+  right: 0.45rem;
+  background: none;
+  border: 0;
+  color: var(--gris-claro);
+  padding: 0.3rem;
+  line-height: 0;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.ver-clave:hover { color: var(--dorado-claro); }
+.ver-clave:focus-visible { outline: 2px solid var(--dorado); outline-offset: 1px; }
+.ver-clave svg { width: 20px; height: 20px; }
+.ver-clave .clave-tachado { display: none; }
+.ver-clave.visible .clave-ojo { display: none; }
+.ver-clave.visible .clave-tachado { display: inline; }
+
 .alerta { padding: 0.7rem 0.9rem; border-radius: var(--radio-chico); font-size: 0.9rem; margin: 0 0 1.2rem; }
 .alerta-error { background: rgba(122, 43, 43, 0.25); border: 1px solid #7a2b2b; color: #e0a0a0; }
 .alerta-ok { background: rgba(201, 162, 39, 0.08); border: var(--borde-dorado); color: var(--dorado-claro); }
@@ -1212,7 +1236,12 @@ pre code { color: var(--dorado-claro); }
 .tabla td { padding: 0.7rem 0.8rem; border-bottom: var(--borde); vertical-align: middle; }
 .tabla tbody tr:hover { background: var(--negro-3); }
 .tabla-acciones { white-space: nowrap; }
-.selector-chico { background: var(--negro-3); border: var(--borde); border-radius: var(--radio-chico); color: var(--gris-texto); padding: 0.25rem; font-size: 0.82rem; }
+select, select option, .selector-chico {
+  background-color: var(--negro-3);
+  color: var(--blanco);
+}
+select option { background-color: var(--negro-2); color: var(--blanco); }
+.selector-chico { border: var(--borde); border-radius: var(--radio-chico); padding: 0.25rem; font-size: 0.82rem; }
 
 .lista-revision, .lista-comentarios { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem; }
 .revision {
@@ -1371,16 +1400,6 @@ pre code { color: var(--dorado-claro); }
   html { scroll-behavior: auto; }
   .tarjeta, .hoja-cerrar { transition: none; }
 }
-
-/* --- Enlace al panel en la barra de sesión --- */
-.sesion-panel {
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  border: var(--borde);
-  color: var(--gris-texto);
-  font-size: 0.85rem;
-}
-.sesion-panel:hover { color: var(--dorado-claro); border-color: var(--dorado-oscuro); text-decoration: none; }
 
 /* --- Navegación interna del panel --- */
 .panel-nav {

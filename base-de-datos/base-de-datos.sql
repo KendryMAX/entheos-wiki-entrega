@@ -647,13 +647,10 @@ INSERT IGNORE INTO categoria (nombre, descripcion, categoria_padre_id) VALUES
   ('Facciones',   'Organizaciones politicas y religiosas.',      NULL),
   ('Lenguas',     'Idiomas y sistemas de escritura.',            NULL);
 
-SET @cat_objetos   := (SELECT id FROM categoria WHERE nombre = 'Objetos');
-
 INSERT IGNORE INTO categoria (nombre, descripcion, categoria_padre_id) VALUES
   ('Localidades', 'Ciudades, pueblos y aldeas del mundo.',    NULL),
   ('Regiones',   'Zonas geograficas extensas.',            NULL),
-  ('Razas',      'Grupos etnicos del mundo.',              NULL),
-  ('Armas',      'Armas y equipo de combate.',             @cat_objetos);
+  ('Razas',      'Grupos etnicos del mundo.',              NULL);
 
 INSERT IGNORE INTO etiqueta (nombre, descripcion) VALUES
   ('canonico',       'Confirmado por el canon de la wiki.'),

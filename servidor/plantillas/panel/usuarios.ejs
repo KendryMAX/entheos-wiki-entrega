@@ -54,7 +54,10 @@
               </form>
 
               <form action="/panel/usuarios/<%= usuario.id %>/contrasena" method="POST" class="formulario-en-linea">
-                <input type="password" name="contrasena" placeholder="Nueva contraseña" minlength="8" required>
+                <span class="campo-clave">
+                  <input type="password" id="contrasena-<%= usuario.id %>" name="contrasena" placeholder="Nueva contraseña" minlength="8" required>
+                  <%- include('../parciales/ver-clave', { campo: 'contrasena-' + usuario.id }) %>
+                </span>
                 <button type="submit" class="boton boton-plano boton-chico">Cambiar</button>
               </form>
             </td>

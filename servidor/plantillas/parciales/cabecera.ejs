@@ -26,8 +26,11 @@
           { href: '/', texto: 'Inicio', activo: rutaActual === '/' },
           { href: '/articulos', texto: 'Artículos', activo: rutaActual.startsWith('/articulos') },
           { href: '/comunidad', texto: 'Comunidad', activo: rutaActual.startsWith('/comunidad') },
-          { href: '/reportes', texto: 'Reportes', activo: rutaActual === '/reportes' },
         ];
+        if (esEditor) {
+          accesos.push({ href: '/panel/articulos', texto: 'Panel', activo: rutaActual.startsWith('/panel') });
+        }
+        accesos.push({ href: '/reportes', texto: 'Reportes', activo: rutaActual === '/reportes' });
         const anchoTri = 170;
         const angulo = Math.PI / accesos.length;
         const radio = Math.round(anchoTri / (2 * Math.sin(angulo / 2)));
@@ -61,9 +64,6 @@
 
     <div class="sesion">
       <% if (usuario) { %>
-        <% if (esEditor) { %>
-          <a class="sesion-panel" href="/panel/articulos">Panel</a>
-        <% } %>
         <span class="insignia-rol insignia-rol-<%= nivel %>"><%= rol %></span>
         <span class="nombre-usuario" title="<%= usuario.email %>"><%= usuario.nombre_usuario %></span>
         <form action="/salir" method="POST" class="formulario-salir">

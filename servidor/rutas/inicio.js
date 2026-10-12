@@ -14,7 +14,6 @@ const DESCRIPCIONES = {
   Localidades: 'Ciudades, pueblos y aldeas de Entheos.',
   Regiones: 'Tierras y comarcas de cada continente.',
   Razas: 'Pueblos y linajes que habitan Entheos.',
-  Armas: 'Acero, magia y herramientas de guerra.',
 };
 
 const IMAGENES_POR_CATEGORIA = {
