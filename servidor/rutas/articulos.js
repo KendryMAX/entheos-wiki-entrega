@@ -7,6 +7,9 @@ const config = require('../configuracion');
 const { markdownAHtml, articuloAHtml, separarFicha, esSubraza, enlazarFicha } = require('../servicios/contenido');
 const tablasRaza = require('../servicios/tablasRaza');
 const tablasZona = require('../servicios/tablasZona');
+const tablasContinente = require('../servicios/tablasContinente');
+const tablasReino = require('../servicios/tablasReino');
+const tablasLocalidad = require('../servicios/tablasLocalidad');
 const { reemplazarCuerpo, eliminarSeccion } = require('../servicios/secciones');
 const { requiereSesion } = require('../capas/autenticacion');
 const errores = require('../capas/errores');
@@ -150,6 +153,35 @@ router.get('/:slug', async (req, res, next) => {
       const tablas = zona ? await tablasZona.tablasDeZona(zona) : tablasZona.ejemplos();
       cuerpo = reemplazarCuerpo(cuerpo, 'Localidades', tablas.localidades);
       cuerpo = reemplazarCuerpo(cuerpo, 'Población', tablas.poblacion);
+    }
+
+    // Fichas de continente: las secciones de Reinos y Estados Independientes y de
+    // Zonas Geográficas se generan a partir de reino_estado y zona_geografica.
+    // La categoría "Continentes" también alberga reinos (p. ej. Yunxianthar), que
+    // muestran su tabla de Localidades.
+    if (articulo.categoria === 'Continentes') {
+      const continente = await tablasContinente.buscarContinente(articulo.titulo);
+      if (continente) {
+        const tablas = await tablasContinente.tablasDeContinente(continente);
+        cuerpo = reemplazarCuerpo(cuerpo, 'Reinos y Estados Independientes', tablas.reinos);
+        cuerpo = reemplazarCuerpo(cuerpo, 'Zonas Geográficas', tablas.zonas);
+      } else {
+        const reino = await tablasReino.buscarReino(articulo.titulo);
+        if (reino) {
+          const tablas = await tablasReino.tablasDeReino(reino);
+          cuerpo = reemplazarCuerpo(cuerpo, 'Localidades', tablas.localidades);
+        }
+      }
+    }
+
+    // Fichas de localidad: las secciones de Presencia de Razas y de Distritos o
+    // Zonas se generan a partir de raza_localidad (los distritos aún no están
+    // modelados en la base de datos).
+    if (articulo.categoria === 'Localidades') {
+      const localidad = await tablasLocalidad.buscarLocalidad(articulo.titulo);
+      const tablas = localidad ? await tablasLocalidad.tablasDeLocalidad(localidad) : tablasLocalidad.ejemplos();
+      cuerpo = reemplazarCuerpo(cuerpo, 'Presencia de Razas', tablas.razas);
+      cuerpo = reemplazarCuerpo(cuerpo, 'Distritos o Zonas', tablas.distritos);
     }
 
     const convertido = articuloAHtml(cuerpo);

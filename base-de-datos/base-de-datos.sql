@@ -535,12 +535,15 @@ CREATE TABLE `zona_geografica` (
   `descripcion` text COLLATE utf8mb4_unicode_ci,
   `tipo` enum('montana','costa','desierto','selva','bosque','pradera','isla','valle','rio','otro') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'otro',
   `reino_estado_id` smallint unsigned DEFAULT NULL COMMENT 'NULL si la zona es compartida entre varios estados',
+  `continente_id` tinyint unsigned DEFAULT NULL COMMENT 'Continente al que pertenece la zona',
   `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_zona_geografica_nombre` (`nombre`),
   KEY `ix_zona_geografica_reino` (`reino_estado_id`),
   KEY `ix_zona_geografica_tipo` (`tipo`),
-  CONSTRAINT `fk_zona_geografica_reino` FOREIGN KEY (`reino_estado_id`) REFERENCES `reino_estado` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  KEY `ix_zona_geografica_continente` (`continente_id`),
+  CONSTRAINT `fk_zona_geografica_reino` FOREIGN KEY (`reino_estado_id`) REFERENCES `reino_estado` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_zona_geografica_continente` FOREIGN KEY (`continente_id`) REFERENCES `continente` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Montanas, desiertos, selvas y demas zonas naturales';
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

@@ -1335,8 +1335,11 @@ pre code { color: var(--dorado-claro); }
   .navegacion ul a { display: block; padding: 0.55rem 0.7rem; border-radius: var(--radio-chico); }
   .buscador input { width: 100%; }
 
-  .sesion { flex-wrap: wrap; }
+  .sesion { flex-wrap: wrap; flex-shrink: 1; min-width: 0; }
   .nombre-usuario { display: none; }
+
+  .articulo-cuerpo table,
+  .panel-cuerpo table { display: block; width: 100%; overflow-x: auto; }
 
   .portada-titulo { font-size: 2rem; }
   .articulo-cabecera { padding: 1.1rem 1.1rem 0.9rem; }
@@ -1352,10 +1355,13 @@ pre code { color: var(--dorado-claro); }
 }
 
 @media (max-width: 480px) {
-  .marca-texto { font-size: 1.1rem; }
+  .marca-nombre { font-size: 1.35rem; }
+  .marca-texto em { font-size: 0.9rem; }
   .portada { padding: 2.2rem 0.8rem 2rem; }
   .portada-titulo { font-size: 1.7rem; }
-  .barra-interior { gap: 0.5rem; padding: 0.6rem 0.6rem; }
+  .barra-interior { gap: 0.4rem; padding: 0.6rem 0.45rem; }
+  .sesion { gap: 0.2rem; font-size: 0.8rem; }
+  .sesion-link, .sesion-cta { padding: 0.3rem 0.5rem; }
   .rejilla { grid-template-columns: 1fr; }
 }
 
