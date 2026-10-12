@@ -221,14 +221,6 @@ o se acepta en <https://github.com/KendryMAX/entheos-wiki/invitations>).
 Al trabajar en equipo: partir siempre de `main` actualizada, crear una rama por
 tarea, subirla y abrir un Pull Request. No hacer `git push` directo a `main`.
 
-## Seguridad
-
-- `.env` (contraseñas) y `certificados/` (clave privada HTTPS) están ignorados
-  por Git. **Nunca** hacer `git add -f` sobre ellos.
-- Si alguna vez se sube una contraseña por error, cambiarla de inmediato.
-- Las cuentas de prueba tienen contraseñas temporales: cambiarlas antes de
-  entregar.
-
 ## Notas
 
 - El servidor usa HTTP por defecto. Para HTTPS local (`https://entheoswiki.local`)
@@ -237,4 +229,6 @@ tarea, subirla y abrir un Pull Request. No hacer `git push` directo a `main`.
 - La guía completa de instalación en otra computadora está en
   **`INSTALAR-OTRA-PC.txt`**.
 - No se suben al repositorio: `.env`, `certificados/`, `node_modules/`,
-  `web/subidas/` y `pdf-generados/`.
+  `web/subidas/` y `pdf-generados/`. **Nunca** hacer `git add -f` sobre ellos.
+- Si una contraseña se sube por error, cambiarla de inmediato. Las cuentas de
+  prueba traen contraseñas temporales: cambiarlas antes de entregar.
