@@ -195,12 +195,6 @@ o se acepta en <https://github.com/KendryMAX/entheos-wiki/invitations>).
 
 ## ⚠️ Estado de la entrega
 
-Esta versión (rama `desarrollo/razas-colapsable`) es la **entrega final del proyecto** para la fecha límite. El desarrollo **continúa activamente** en el repositorio privado del equipo. La versión definitiva incorporará:
-
-- Revisión y ampliación de nombres provisionales (13 localidades nuevas)
-- Arte propio para todas las fichas (actualmente se reutilizan imágenes de zonas/razas)
-- Corrección de textos y coherencia de lore
-- Mejoras de UX/UI y pulido de estilos
-- Tests adicionales y cobertura
+Esta versión (rama `desarrollo/razas-colapsable`) es la **entrega final del proyecto** para la fecha límite. El desarrollo **continúa activamente** en el repositorio privado del equipo. La versión definitiva incorporará **cambios** posteriores.
 
 Para seguir el desarrollo futuro, consultar el repositorio privado del equipo.
