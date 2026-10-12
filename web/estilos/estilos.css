@@ -1009,7 +1009,7 @@ pre code { color: var(--dorado-claro); }
 
 .panel { background: var(--negro-3); border: var(--borde); border-radius: var(--radio-chico); padding: 1rem 1.1rem; }
 .panel-titulo { font-family: var(--serif); font-size: 1.05rem; color: var(--dorado-claro); margin: 0 0 0.7rem; padding-bottom: 0.4rem; border-bottom: var(--borde); }
-.panel-cuerpo { font-family: var(--sans); font-size: 0.9rem; max-height: 380px; overflow-y: auto; scrollbar-color: var(--gris-oscuro) transparent; }
+.panel-cuerpo { font-family: var(--sans); font-size: 0.9rem; }
 .panel-cuerpo table { width: 100%; border-collapse: collapse; margin: 0; }
 .panel-cuerpo thead { display: none; }
 .panel-cuerpo td { border-bottom: var(--borde); padding: 0.38rem 0.4rem; vertical-align: top; }
