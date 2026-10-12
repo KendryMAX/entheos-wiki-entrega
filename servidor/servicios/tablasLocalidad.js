@@ -14,6 +14,13 @@ function porcentaje(valor) {
   return Number(valor) + '%';
 }
 
+function numero(valor) {
+  if (valor === null || valor === undefined || valor === '') return '—';
+  const n = Number(valor);
+  if (Number.isNaN(n)) return celda(valor);
+  return n.toLocaleString('es-ES');
+}
+
 function tablaRazas(filas) {
   if (!filas.length) return SIN_DATOS;
 
@@ -46,7 +53,7 @@ function tablaDistritos(filas) {
   ];
 
   const cuerpo = filas.map((f) =>
-    ['|', celda(f.distrito), '|', celda(f.categoria), '|', celda(f.poblacion), '|'].join(' ')
+    ['|', celda(f.distrito), '|', celda(f.categoria), '|', numero(f.poblacion), '|'].join(' ')
   );
 
   return encabezado.concat(cuerpo).join('\n');
@@ -84,8 +91,13 @@ async function tablasDeLocalidad(localidad) {
     [localidad.id]
   );
 
-  // Los distritos y zonas de una localidad aún no están modelados en la base.
-  const distritos = [];
+  const distritos = await db.consultar(
+    `SELECT dz.nombre AS distrito, dz.categoria, dz.poblacion
+       FROM distrito_zona dz
+      WHERE dz.localidad_id = ?
+      ORDER BY dz.poblacion IS NULL, dz.poblacion DESC, dz.nombre`,
+    [localidad.id]
+  );
 
   return {
     razas: tablaRazas(razas),

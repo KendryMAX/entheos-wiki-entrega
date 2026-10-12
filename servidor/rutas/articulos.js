@@ -157,26 +157,23 @@ router.get('/:slug', async (req, res, next) => {
 
     // Fichas de continente: las secciones de Reinos y Estados Independientes y de
     // Zonas Geográficas se generan a partir de reino_estado y zona_geografica.
-    // La categoría "Continentes" también alberga reinos (p. ej. Yunxianthar), que
-    // muestran su tabla de Localidades.
     if (articulo.categoria === 'Continentes') {
       const continente = await tablasContinente.buscarContinente(articulo.titulo);
-      if (continente) {
-        const tablas = await tablasContinente.tablasDeContinente(continente);
-        cuerpo = reemplazarCuerpo(cuerpo, 'Reinos y Estados Independientes', tablas.reinos);
-        cuerpo = reemplazarCuerpo(cuerpo, 'Zonas Geográficas', tablas.zonas);
-      } else {
-        const reino = await tablasReino.buscarReino(articulo.titulo);
-        if (reino) {
-          const tablas = await tablasReino.tablasDeReino(reino);
-          cuerpo = reemplazarCuerpo(cuerpo, 'Localidades', tablas.localidades);
-        }
-      }
+      const tablas = continente ? await tablasContinente.tablasDeContinente(continente) : tablasContinente.ejemplos();
+      cuerpo = reemplazarCuerpo(cuerpo, 'Reinos y Estados Independientes', tablas.reinos);
+      cuerpo = reemplazarCuerpo(cuerpo, 'Zonas Geográficas', tablas.zonas);
+    }
+
+    // Fichas de reino o estado: la sección de Localidades se genera a partir de
+    // las localidades ancladas al reino o estado (reino_estado).
+    if (articulo.categoria === 'Reinos y Estados') {
+      const reino = await tablasReino.buscarReino(articulo.titulo);
+      const tablas = reino ? await tablasReino.tablasDeReino(reino) : tablasReino.ejemplos();
+      cuerpo = reemplazarCuerpo(cuerpo, 'Localidades', tablas.localidades);
     }
 
     // Fichas de localidad: las secciones de Presencia de Razas y de Distritos o
-    // Zonas se generan a partir de raza_localidad (los distritos aún no están
-    // modelados en la base de datos).
+    // Zonas se generan a partir de raza_localidad y distrito_zona.
     if (articulo.categoria === 'Localidades') {
       const localidad = await tablasLocalidad.buscarLocalidad(articulo.titulo);
       const tablas = localidad ? await tablasLocalidad.tablasDeLocalidad(localidad) : tablasLocalidad.ejemplos();

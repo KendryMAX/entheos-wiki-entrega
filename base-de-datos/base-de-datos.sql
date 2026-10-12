@@ -132,6 +132,23 @@ CREATE TABLE `continente` (
   UNIQUE KEY `uq_continente_nombre` (`nombre`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Continentes o grandes regiones del mundo';
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `distrito_zona`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `distrito_zona` (
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` text COLLATE utf8mb4_unicode_ci,
+  `categoria` varchar(160) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poblacion` int unsigned DEFAULT NULL,
+  `localidad_id` int unsigned NOT NULL,
+  `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_distrito_zona_nombre` (`nombre`),
+  KEY `ix_distrito_zona_localidad` (`localidad_id`),
+  CONSTRAINT `fk_distrito_zona_localidad` FOREIGN KEY (`localidad_id`) REFERENCES `localidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Distritos y zonas dentro de una localidad';
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `etiqueta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
