@@ -6,6 +6,24 @@ servirá de base para armar la guía del proyecto (pendiente, "luego").
 Última sesión: importación de Obsidian aplicada, base reconstruida y
 **las pruebas pasan (10/10)** con el servidor encendido.
 
+## Hecho en esta sesión (distritos fuera, subrazas dentro)
+
+- **Distritos eliminados por completo** (entidad + plantilla + páginas +
+  contenido): se quitó la tabla `distrito` y la columna `punto_interes.distrito_id`
+  del esquema (33 → 32 tablas), la lógica de distrito en el importador de
+  Obsidian, el campo `Distrito/Zona` de la plantilla de NPC y los 6 artículos de
+  distritos (incluida su plantilla). La mención textual de "distrito" dentro de
+  un artículo se mantiene: es lore, no una entidad.
+- **Subrazas se conservan** tal cual: tabla, importador, columna
+  `personaje.subraza_id`, campo `| Subrazas |` en razas y su plantilla.
+- **Entidades falsas de plantilla borradas** (`Plantilla - …` en `continente`,
+  `zona_geografica`, `localidad`, `item`, `personaje`, `recurso`) y los títulos de
+  las plantillas normalizados a `Plantilla — …`.
+- **Explorar Contenido (inicio):** los recuadros de cada categoría ya tienen el
+  mismo tamaño, tomando como referencia el de **Continentes**. Se logró forzando
+  que la cita reserve 2 líneas (`min-height: 2.8em` en `.categoria-banner-cita`),
+  así todos miden 152 px en lugar de alternar entre 132 y 152.
+
 ## Hecho en la última sesión (importación + seguridad)
 
 ### Importador Obsidian → wiki
@@ -16,7 +34,7 @@ servirá de base para armar la guía del proyecto (pendiente, "luego").
 - Lee el vault (50 notas), convierte frontmatter + cuerpo (quita
   infobox/dataview, `=this.*`, plantillas "Guía a rellenar") y crea/actualiza:
   51 artículos (1 semilla + 50), 2 continentes, 17 zonas, 1 reino,
-  4 localidades, 6 distritos, 5 razas, 3 subrazas, 1 lengua, 1 ítem,
+  4 localidades, 5 razas, 3 subrazas, 1 lengua, 1 ítem,
   1 recurso, 2 facciones, 2 personajes y 32 imágenes en `web/subidas/`
   con sus filas en `imagen`.
 - Es idempotente (vuelve a correr sin duplicar) y usa la capa `datos/base.js`.
