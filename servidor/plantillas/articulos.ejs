@@ -13,28 +13,11 @@
   <% if (articulos.length === 0) { %>
     <p class="vacio">No hay artículos todavía.</p>
   <% } else { %>
-    <%
-      const clasesCategoria = {
-        'Continentes':       'tarjeta--ancho',
-        'Regiones':          'tarjeta--medio',
-        'Distritos o Zonas': 'tarjeta--medio',
-        'Reinos y Estados':  'tarjeta--medio',
-        'Localidades':       'tarjeta--medio',
-        'Personajes':        'tarjeta--retrato',
-        'Objetos':           'tarjeta--retrato',
-        'Razas':             'tarjeta--raza',
-        'Facciones':         '',
-        'Lenguas':           'tarjeta--compacta',
-      };
-    %>
     <div class="rejilla">
-      <% articulos.forEach(function (articulo, indice) {
-           const claseCat = clasesCategoria[articulo.categoria] || '';
-           const clases = ['tarjeta', claseCat].filter(Boolean);
-           if (indice > 0) {
-             const claseAnterior = clasesCategoria[articulos[indice - 1].categoria] || '';
-             if (claseCat !== claseAnterior) clases.push('corta-fila');
-           }
+      <% articulos.forEach(function (articulo) {
+           const clases = ['tarjeta'];
+           if (articulo.categoria === 'Personajes' || articulo.categoria === 'Objetos') clases.push('tarjeta--retrato');
+           else if (articulo.categoria === 'Razas') clases.push('tarjeta--raza');
       %>
         <a class="<%= clases.join(' ') %>" href="/articulos/<%= articulo.slug %>">
           <% if (articulo.imagen_ruta) { %>
