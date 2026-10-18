@@ -13,14 +13,28 @@
   <% if (articulos.length === 0) { %>
     <p class="vacio">No hay artículos todavía.</p>
   <% } else { %>
-    <div class="rejilla<%= categoriaNombre === 'Razas' ? ' rejilla--razas' : '' %>">
+    <%
+      const clasesCategoria = {
+        'Continentes':       'tarjeta--ancho',
+        'Regiones':          'tarjeta--medio',
+        'Distritos o Zonas': 'tarjeta--medio',
+        'Reinos y Estados':  'tarjeta--medio',
+        'Localidades':       'tarjeta--medio',
+        'Personajes':        'tarjeta--retrato',
+        'Objetos':           'tarjeta--retrato',
+        'Razas':             'tarjeta--raza',
+        'Facciones':         '',
+        'Lenguas':           'tarjeta--compacta',
+      };
+    %>
+    <div class="rejilla">
       <% articulos.forEach(function (articulo, indice) {
-           const esRaza = articulo.categoria === 'Razas' && !/^plantilla/i.test(articulo.titulo);
-           const anteriorRaza = indice > 0 && articulos[indice - 1].categoria === 'Razas' && !/^plantilla/i.test(articulos[indice - 1].titulo);
-           const clases = ['tarjeta'];
-           if (esRaza) clases.push('tarjeta--raza');
-           else if (articulo.categoria === 'Personajes') clases.push('tarjeta--retrato');
-           if (indice > 0 && esRaza !== anteriorRaza) clases.push('corta-fila');
+           const claseCat = clasesCategoria[articulo.categoria] || '';
+           const clases = ['tarjeta', claseCat].filter(Boolean);
+           if (indice > 0) {
+             const claseAnterior = clasesCategoria[articulos[indice - 1].categoria] || '';
+             if (claseCat !== claseAnterior) clases.push('corta-fila');
+           }
       %>
         <a class="<%= clases.join(' ') %>" href="/articulos/<%= articulo.slug %>">
           <% if (articulo.imagen_ruta) { %>
